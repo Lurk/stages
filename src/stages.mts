@@ -1,4 +1,4 @@
-import { assert, RenderInputArgs, renderRangeTo } from "./utils.mjs";
+import { assert, RenderRangeArgs, renderRangeTo } from "./utils.mjs";
 
 export type StageEvent = "start" | "end";
 
@@ -128,7 +128,7 @@ export function wave(opts: WaveOpts): Stage {
   };
 }
 
-export function slider(args: RenderInputArgs): Stage {
+export function slider(args: RenderRangeArgs): Stage {
   const element =
     document.getElementById(args.id) || renderRangeTo("controls", args);
   assert(

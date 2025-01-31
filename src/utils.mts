@@ -4,33 +4,41 @@ export function assert(lhs: any, message: string): asserts lhs {
   }
 }
 
-export type RenderInputArgs = {
+export type RenderRangeArgs = {
   id: string;
-  min: number;
-  max: number;
-  value: number;
+  min?: number;
+  max?: number;
+  value?: number;
+  step?: number;
 };
 
 export function renderRangeTo(
   id: string,
-  args: RenderInputArgs,
+  args: RenderRangeArgs,
 ): HTMLInputElement {
+  const min = args.min ?? 1;
+  const step = args.step ?? 1;
+  const max = args.max ?? 100;
+
   const root = document.getElementById(id);
   assert(root, `root element id=${id} not found`);
+  const container = document.createElement("div");
 
-  let label = document.createElement("label");
+  const label = document.createElement("label");
   label.htmlFor = args.id;
   label.innerHTML = args.id;
 
-  let el = document.createElement("input");
-  el.min = String(args.min);
-  el.max = String(args.max);
-  el.value = String(args.value);
+  const el = document.createElement("input");
+  el.min = String(min);
+  el.max = String(max);
+  el.value = String(args.value ?? min);
   el.type = "range";
+  el.step = String(step);
   el.id = args.id;
 
-  root.appendChild(label);
-  root.appendChild(el);
+  container.appendChild(label);
+  container.appendChild(el);
+  root.appendChild(container);
 
   return el;
 }

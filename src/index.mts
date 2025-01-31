@@ -1,3 +1,4 @@
+import { createBuffer } from "./buffer.mjs";
 import { initFullScreenCanvas, path } from "./canvas.mjs";
 import { constant, slider, wave } from "./stages.mjs";
 
@@ -22,13 +23,21 @@ const time2 = wave({
 const distance = wave({
   min: constant(-150),
   max: constant(-50),
-  raise: constant(50000),
-  fall: constant(50000),
+  raise: slider({
+    id: "distance rise time",
+    max: 600_000,
+    value: 50_000,
+  }),
+  fall: slider({
+    id: "distance fall time",
+    max: 600_000,
+    value: 50_000,
+  }),
 });
 
 const speed = wave({
   min: constant(1),
-  max: slider({ id: "speed", min: 1, max: 50, value: 1 }),
+  max: slider({ id: "speed", max: 50, step: 0.1 }),
   raise: constant(50000),
   fall: constant(50000),
 });
@@ -36,8 +45,8 @@ const speed = wave({
 const w = wave({
   max: wave({
     min: wave({
-      min: constant(0),
-      max: constant(max),
+      min: slider({ id: "slider_min", max: 50, step: 0.1 }),
+      max: slider({ id: "slider_max", max: 50, step: 0.1 }),
       raise: constant(3000),
       fall: constant(3000),
     }),
@@ -61,32 +70,6 @@ const w = wave({
 });
 
 const buffer = createBuffer(Math.round(ctx.canvas.width));
-
-function createBuffer(initialSize: number): {
-  iter: () => number[];
-  push: (val: number) => void;
-  resize: (newSize: number) => void;
-} {
-  const storage: Array<number> = [];
-  let size = initialSize;
-  return {
-    push(val: number) {
-      storage.push(val);
-      if (storage.length >= size) {
-        // TODO: Moving every array element on each push sounds wasteful. The alternative would be two pointers
-        // solution or a linked list. Both of them would require iterators or rebuilding arrays for consumption. Since
-        // push and consuming is happening at the same rate, I do not see a clear winner without setting up benchmarks.
-        storage.shift();
-      }
-    },
-    iter() {
-      return storage;
-    },
-    resize(newSize: number) {
-      size = newSize;
-    },
-  };
-}
 
 function a() {
   requestAnimationFrame((now) => {
