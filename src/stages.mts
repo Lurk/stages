@@ -1,4 +1,10 @@
-import { assert, RenderRangeArgs, renderRangeTo } from "./utils.mjs";
+import {
+  assert,
+  RenderRangeArgs,
+  renderRangeTo,
+  RenderTextInputArgs,
+  renderTextInputTo,
+} from "./utils.mjs";
 
 export type StageEvent = "start" | "end";
 
@@ -141,5 +147,39 @@ export function slider(args: RenderRangeArgs): Stage {
     },
     subscribe() {},
     cycle() {},
+  };
+}
+
+export function connect(controls: Controls, args: RenderTextInputArgs): Stage {
+  const element =
+    document.getElementById(args.label) || renderTextInputTo("controls", args);
+  assert(
+    element instanceof HTMLInputElement,
+    `element with id='${args.label}' is not HTMLInputElement`,
+  );
+
+  return {
+    get(now) {
+      return controls.get(element.value)?.get(now) ?? 0;
+    },
+    subscribe() {},
+    cycle() {},
+  };
+}
+
+type Controls = {
+  register(id: string, stage: Stage): void;
+  get(id: string): Stage | undefined;
+};
+
+export function controls(): Controls {
+  const map: Map<string, Stage> = new Map();
+  return {
+    register(id, stage) {
+      map.set(id, stage);
+    },
+    get(id) {
+      return map.get(id);
+    },
   };
 }
