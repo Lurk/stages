@@ -185,19 +185,28 @@ export function inputNumber(args: RenderNumberInputArgs) {
   };
 }
 
+type OnRegisterCallback = (ids: string[]) => void;
+
 export type Controls = {
   register(id: string, stage: Stage): void;
   get(id: string): Stage | undefined;
+  onRegister(fn: OnRegisterCallback): void;
 };
 
 export function controls(): Controls {
   const map: Map<string, Stage> = new Map();
+  const onRegisterCallbacks: OnRegisterCallback[] = [];
   return {
     register(id, stage) {
       map.set(id, stage);
+      const keys = [...map.keys()];
+      onRegisterCallbacks.forEach((fn) => fn(keys));
     },
     get(id) {
       return map.get(id);
+    },
+    onRegister(fn) {
+      onRegisterCallbacks.push(fn);
     },
   };
 }
