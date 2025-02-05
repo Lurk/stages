@@ -1,6 +1,15 @@
 import { createBuffer } from "./buffer.mjs";
 import { initFullScreenCanvas, path } from "./canvas.mjs";
-import { constant, controls, slider, wave, connect } from "./stages.mjs";
+import {
+  constant,
+  controls,
+  slider,
+  wave,
+  connect,
+  inputNumber,
+  Controls,
+} from "./stages.mjs";
+import { getOrCreateControl } from "./utils.mjs";
 
 const ctx = initFullScreenCanvas({
   id: "canvas",
@@ -10,24 +19,81 @@ const ctx = initFullScreenCanvas({
 const ctrl = controls();
 const max = 500;
 
-ctrl.register("slider", slider({ id: "slider", max: 500, value: 50 }));
+ctrl.register("s", slider({ id: "s", max: 500, value: 50 }));
+ctrl.register("s1", slider({ id: "s1", max: 500, value: 50 }));
+ctrl.register("s2", slider({ id: "s2", max: 500, value: 50 }));
+ctrl.register("s3", slider({ id: "s3", max: 500, value: 50 }));
 
-ctrl.register(
-  "lfo",
-  wave({
-    min: constant(1),
-    max: constant(500),
-    raise: constant(50000),
-    fall: constant(50000),
-  }),
-);
+function oscillatorWithNumericInputs(ctrl: Controls, id: string) {
+  const lfoContainer = getOrCreateControl(id);
+  const header = document.createElement("h3");
+  header.innerText = id;
+  lfoContainer.appendChild(header);
+  const controls = document.createElement("div");
+  controls.classList.add("controls");
+  lfoContainer.appendChild(controls);
+  ctrl.register(
+    id,
+    wave({
+      min: slider({
+        id: `${id}_min`,
+        label: "min",
+        value: 50,
+        max: 500,
+        container: controls,
+      }),
+      max: slider({
+        id: `${id}_max`,
+        label: "max",
+        value: 50,
+        max: 500,
+        container: controls,
+      }),
+      raise: slider({
+        id: `${id}_raise`,
+        label: "raise",
+        value: 50,
+        max: 500,
+        container: controls,
+      }),
+      fall: slider({
+        id: `${id}_fall`,
+        label: "fall",
+        value: 50,
+        max: 500,
+        container: controls,
+      }),
+    }),
+  );
+}
 
-const w = wave({
-  max: connect(ctrl, { label: "max" }),
-  min: connect(ctrl, { label: "min", value: "lfo" }),
-  raise: connect(ctrl, { label: "raise", value: "slider" }),
-  fall: connect(ctrl, { label: "fall", value: "slider" }),
-});
+function oscillatorWithConnectInput(ctrl: Controls, id: string) {
+  const wContainer = getOrCreateControl(id);
+  const header = document.createElement("h3");
+  header.innerText = id;
+  wContainer.appendChild(header);
+  ctrl.register(
+    id,
+    wave({
+      min: connect(ctrl, { label: `${id}_min`, container: wContainer }),
+      max: connect(ctrl, { label: `${id}_max`, container: wContainer }),
+      raise: connect(ctrl, {
+        label: `${id}_raise`,
+        container: wContainer,
+      }),
+      fall: connect(ctrl, {
+        label: `${id}_fall`,
+        container: wContainer,
+      }),
+    }),
+  );
+}
+
+oscillatorWithNumericInputs(ctrl, "lfo");
+oscillatorWithNumericInputs(ctrl, "lfo2");
+
+oscillatorWithConnectInput(ctrl, "connected");
+oscillatorWithConnectInput(ctrl, "main");
 
 const buffer = createBuffer(Math.round(ctx.canvas.width));
 
@@ -35,7 +101,7 @@ function a() {
   requestAnimationFrame((now) => {
     buffer.resize(ctx.canvas.width);
     const vHalf = ctx.canvas.height / 2;
-    buffer.push(w.get(now));
+    buffer.push(ctrl.get("main")?.get(now) ?? 0);
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.beginPath();
     ctx.strokeStyle = "#cccccc";

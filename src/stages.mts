@@ -1,5 +1,7 @@
 import {
   assert,
+  RenderNumberInputArgs,
+  renderNumberInputTo,
   RenderRangeArgs,
   renderRangeTo,
   RenderTextInputArgs,
@@ -135,8 +137,7 @@ export function wave(opts: WaveOpts): Stage {
 }
 
 export function slider(args: RenderRangeArgs): Stage {
-  const element =
-    document.getElementById(args.id) || renderRangeTo("controls", args);
+  const element = document.getElementById(args.id) || renderRangeTo(args);
   assert(
     element instanceof HTMLInputElement,
     `element with id=${args.id} is not HTMLInputElement`,
@@ -152,7 +153,7 @@ export function slider(args: RenderRangeArgs): Stage {
 
 export function connect(controls: Controls, args: RenderTextInputArgs): Stage {
   const element =
-    document.getElementById(args.label) || renderTextInputTo("controls", args);
+    document.getElementById(args.label) || renderTextInputTo(args);
   assert(
     element instanceof HTMLInputElement,
     `element with id='${args.label}' is not HTMLInputElement`,
@@ -167,7 +168,24 @@ export function connect(controls: Controls, args: RenderTextInputArgs): Stage {
   };
 }
 
-type Controls = {
+export function inputNumber(args: RenderNumberInputArgs) {
+  const element =
+    document.getElementById(args.label) || renderNumberInputTo(args);
+  assert(
+    element instanceof HTMLInputElement,
+    `element with id='${args.label}' is not HTMLInputElement`,
+  );
+
+  return {
+    get() {
+      return element.valueAsNumber;
+    },
+    subscribe() {},
+    cycle() {},
+  };
+}
+
+export type Controls = {
   register(id: string, stage: Stage): void;
   get(id: string): Stage | undefined;
 };

@@ -1,0 +1,63 @@
+:root {
+	--extra-dark: #1d1c1c;
+	--darker: #2b2a2a;
+	--dark: #403f3f;
+	--medium: #a5a5a5;
+	--light: #cccccc;
+	--lighter: #f2f2f2;
+	--font-size: 22px;
+	--border-radius: 0.15rem;
+}
+
+@font-face {
+	font-family: "dsm";
+	src: url("/DejavuSansMono-5m7L.ttf");
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+	color: #cccccc;
+}
+
+input[type=range] {
+	writing-mode: vertical-lr;
+	direction: rtl;
+	vertical-align: middle;
+}
+
+#canvas {
+	height: 100%;
+	width: 100%;
+}
+
+#fullscreen {
+	justify-content: center;
+	display: flex;
+	align-items: center;
+	height: 70vh;
+}
+
+#controls {
+	display: flex;
+	gap: 10px;
+}
+
+.slider {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+}
+
+.controls {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 5px;
+}
+
+.control {
+	border: 2px solid var(--medium);
+	padding: 5px;
+}
