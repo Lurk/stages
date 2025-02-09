@@ -75,14 +75,24 @@ function oscillatorWithConnectInput(ctrl: Controls, id: string) {
   ctrl.register(
     id,
     wave({
-      min: connect(ctrl, { label: `${id}_min`, container: wContainer }),
-      max: connect(ctrl, { label: `${id}_max`, container: wContainer }),
+      min: connect(ctrl, {
+        id: `${id}_min`,
+        label: "min",
+        container: wContainer,
+      }),
+      max: connect(ctrl, {
+        id: `${id}_max`,
+        label: "max",
+        container: wContainer,
+      }),
       raise: connect(ctrl, {
-        label: `${id}_raise`,
+        id: `${id}_raise`,
+        label: "raise",
         container: wContainer,
       }),
       fall: connect(ctrl, {
-        label: `${id}_fall`,
+        id: `${id}_fall`,
+        label: "fall",
         container: wContainer,
       }),
     }),

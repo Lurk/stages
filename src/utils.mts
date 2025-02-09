@@ -1,5 +1,3 @@
-import { type } from "os";
-
 export function assert(lhs: any, message: string): asserts lhs {
   if (!lhs) {
     throw new Error(message);
@@ -103,6 +101,50 @@ export function renderNumberInputTo(
   root.appendChild(container);
 
   return el;
+}
+
+export type RenderSelectInputArgs = {
+  options: string[];
+  id: string;
+  label?: string;
+  container?: HTMLDivElement;
+};
+
+export function renderSelectInputTo(args: RenderSelectInputArgs): {
+  el: HTMLSelectElement;
+  update: (options: string[]) => void;
+} {
+  const root = args.container ?? getOrCreateControl("controls");
+  const container = document.createElement("div");
+  const label = document.createElement("label");
+  label.htmlFor = args.id;
+  label.innerHTML = args.label ?? args.id;
+
+  const el = document.createElement("select");
+  el.id = args.id;
+  args.options.forEach((o) => {
+    const option = document.createElement("option");
+    option.value = o;
+    option.innerHTML = o;
+    el.options.add(option);
+  });
+
+  container.appendChild(label);
+  container.appendChild(el);
+  root.appendChild(container);
+
+  return {
+    el,
+    update: (options) => {
+      el.options.length = 0;
+      options.forEach((o) => {
+        const option = document.createElement("option");
+        option.value = o;
+        option.innerHTML = o;
+        el.options.add(option);
+      });
+    },
+  };
 }
 
 export function getOrCreateControl(id: string): HTMLDivElement {

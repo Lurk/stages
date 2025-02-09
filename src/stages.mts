@@ -4,6 +4,8 @@ import {
   renderNumberInputTo,
   RenderRangeArgs,
   renderRangeTo,
+  RenderSelectInputArgs,
+  renderSelectInputTo,
   RenderTextInputArgs,
   renderTextInputTo,
 } from "./utils.mjs";
@@ -151,17 +153,23 @@ export function slider(args: RenderRangeArgs): Stage {
   };
 }
 
-export function connect(controls: Controls, args: RenderTextInputArgs): Stage {
-  const element =
-    document.getElementById(args.label) || renderTextInputTo(args);
+export function connect(
+  controls: Controls,
+  args: Omit<RenderSelectInputArgs, "options">,
+): Stage {
+  const element = renderSelectInputTo({ ...args, options: controls.keys() });
+  controls.onRegister((keys) =>
+    element.update(keys.filter((k) => k !== args.id)),
+  );
+
   assert(
-    element instanceof HTMLInputElement,
-    `element with id='${args.label}' is not HTMLInputElement`,
+    element.el instanceof HTMLSelectElement,
+    `element with id='${args.id}' is not HTMLSelectElement`,
   );
 
   return {
     get(now) {
-      return controls.get(element.value)?.get(now) ?? 0;
+      return controls.get(element.el.value)?.get(now) ?? 0;
     },
     subscribe() {},
     cycle() {},
@@ -185,25 +193,29 @@ export function inputNumber(args: RenderNumberInputArgs) {
   };
 }
 
-type OnRegisterCallback = (ids: string[]) => void;
+type OnRegisterCallback = (keys: string[]) => void;
 
 export type Controls = {
-  register(id: string, stage: Stage): void;
-  get(id: string): Stage | undefined;
+  register(key: string, stage: Stage): void;
+  get(key: string): Stage | undefined;
   onRegister(fn: OnRegisterCallback): void;
+  keys(): string[];
 };
 
 export function controls(): Controls {
   const map: Map<string, Stage> = new Map();
   const onRegisterCallbacks: OnRegisterCallback[] = [];
   return {
-    register(id, stage) {
-      map.set(id, stage);
-      const keys = [...map.keys()];
+    register(key, stage) {
+      const keys = this.keys();
+      map.set(key, stage);
       onRegisterCallbacks.forEach((fn) => fn(keys));
     },
-    get(id) {
-      return map.get(id);
+    get(key) {
+      return map.get(key);
+    },
+    keys() {
+      return [...map.keys()];
     },
     onRegister(fn) {
       onRegisterCallbacks.push(fn);
