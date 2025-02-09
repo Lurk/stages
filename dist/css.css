@@ -60,4 +60,12 @@ input[type=range] {
 .control {
 	border: 2px solid var(--medium);
 	padding: 5px;
+	border-radius: 5px;
+}
+
+.select {
+	display: grid;
+	grid-template-columns: 1fr 3fr 2fr;
+	grid-column-gap: 5px;
+	grid-row-gap: 0px;
 }

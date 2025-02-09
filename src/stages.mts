@@ -159,7 +159,7 @@ export function connect(
 ): Stage {
   const element = renderSelectInputTo({ ...args, options: controls.keys() });
   controls.onRegister((keys) =>
-    element.update(keys.filter((k) => k !== args.id)),
+    element.updateOptions(keys.filter((k) => k !== args.id)),
   );
 
   assert(
@@ -169,7 +169,9 @@ export function connect(
 
   return {
     get(now) {
-      return controls.get(element.el.value)?.get(now) ?? 0;
+      const val = controls.get(element.el.value)?.get(now) ?? 0;
+      element.updateValue(val.toFixed(3));
+      return val;
     },
     subscribe() {},
     cycle() {},

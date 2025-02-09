@@ -112,10 +112,13 @@ export type RenderSelectInputArgs = {
 
 export function renderSelectInputTo(args: RenderSelectInputArgs): {
   el: HTMLSelectElement;
-  update: (options: string[]) => void;
+  updateOptions: (options: string[]) => void;
+  updateValue(val: string): void;
 } {
+  let value = "0";
   const root = args.container ?? getOrCreateControl("controls");
   const container = document.createElement("div");
+  container.classList.add("select");
   const label = document.createElement("label");
   label.htmlFor = args.id;
   label.innerHTML = args.label ?? args.id;
@@ -128,14 +131,22 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
     option.innerHTML = o;
     el.options.add(option);
   });
+  const val = document.createElement("span");
+  val.innerHTML = value;
 
   container.appendChild(label);
   container.appendChild(el);
+  container.appendChild(val);
   root.appendChild(container);
+
+  setInterval(() => (val.innerHTML = value), 100);
 
   return {
     el,
-    update: (options) => {
+    updateValue: (v) => {
+      value = v;
+    },
+    updateOptions: (options) => {
       el.options.length = 0;
       options.forEach((o) => {
         const option = document.createElement("option");
