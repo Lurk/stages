@@ -35,7 +35,7 @@ function a() {
     path({
       buffer: buffer.iter(),
       ctx,
-      x: (x) => x * 1,
+      x: (x) => ctx.canvas.width - x,
       y: (y) => vHalf - 500 / 2 + y,
     });
     a();
