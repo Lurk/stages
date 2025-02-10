@@ -124,13 +124,29 @@ oscillatorWithConnectInput(ctrl, "main");
 
 sumWithConnectInputs(ctrl, "sum1");
 
+// Add after other control registrations but before the animation code
+const outputSelector = document.createElement("select");
+outputSelector.id = "output-selector";
+document.body.appendChild(outputSelector);
+
+// Add all registered controls as options
+ctrl.keys().forEach(id => {
+  const option = document.createElement("option");
+  option.value = id;
+  option.text = id;
+  if (id === "main") option.selected = true; // Default to "main"
+  outputSelector.appendChild(option);
+});
+
 const buffer = createBuffer(Math.round(ctx.canvas.width));
 
 function a() {
   requestAnimationFrame((now) => {
     buffer.resize(ctx.canvas.width);
     const vHalf = ctx.canvas.height / 2;
-    buffer.push(ctrl.get("main")?.get(now) ?? 0);
+    const selectedControl = outputSelector.value;
+    buffer.push(ctrl.get(selectedControl)?.get(now) ?? 0);
+    
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.beginPath();
     ctx.strokeStyle = "#cccccc";

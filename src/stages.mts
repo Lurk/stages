@@ -249,16 +249,13 @@ export function sum(ctrl: Controls, options: {
     options.container.appendChild(container);
   }
 
-  const subscribers: EventHandler[] = [];
-
   return {
     get(now: number) {
       const value1 = input1.get(now) || 0;
       const value2 = input2.get(now) || 0;
       return value1 + value2;
     },
-    subscribe(handler: EventHandler) {
-      subscribers.push(handler);
+    subscribe() {
     },
     cycle() {
       // Reset both inputs if needed
