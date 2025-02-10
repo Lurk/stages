@@ -138,6 +138,66 @@ ctrl.keys().forEach(id => {
   outputSelector.appendChild(option);
 });
 
+// Add after other control registrations but before the animation code
+const controlCreationContainer = document.createElement("div");
+controlCreationContainer.id = "control-creation";
+document.body.appendChild(controlCreationContainer);
+
+// Add control type selector
+const controlTypeSelect = document.createElement("select");
+controlTypeSelect.innerHTML = `
+  <option value="slider">Slider</option>
+  <option value="oscillator">Oscillator</option>
+  <option value="connected">Connected Oscillator</option>
+  <option value="sum">Sum</option>
+`;
+
+// Add name input
+const nameInput = document.createElement("input");
+nameInput.type = "text";
+nameInput.placeholder = "Control name";
+
+// Add create button
+const createButton = document.createElement("button");
+createButton.textContent = "Create Control";
+
+controlCreationContainer.appendChild(nameInput);
+controlCreationContainer.appendChild(controlTypeSelect);
+controlCreationContainer.appendChild(createButton);
+
+createButton.addEventListener("click", () => {
+  const type = controlTypeSelect.value;
+  const name = nameInput.value.trim();
+  
+  if (!name) {
+    alert("Please enter a name");
+    return;
+  }
+
+  switch (type) {
+    case "slider":
+      ctrl.register(name, slider({ id: name, max: 500, value: 50 }));
+      break;
+    case "oscillator":
+      oscillatorWithNumericInputs(ctrl, name);
+      break;
+    case "connected":
+      oscillatorWithConnectInput(ctrl, name);
+      break;
+    case "sum":
+      sumWithConnectInputs(ctrl, name);
+      break;
+  }
+
+  // Update output selector
+  const option = document.createElement("option");
+  option.value = name;
+  option.text = name;
+  outputSelector.appendChild(option);
+
+  nameInput.value = ""; // Clear input
+});
+
 const buffer = createBuffer(Math.round(ctx.canvas.width));
 
 function a() {
@@ -157,28 +217,6 @@ function a() {
       x: (x) => x * 1,
       y: (y) => vHalf - max / 2 + y,
     });
-
-    path({
-      buffer: buffer.iter(),
-      ctx,
-      x: (x) => x * 2,
-      y: (y) => vHalf - max / 2 + y + 125,
-    });
-
-    path({
-      buffer: buffer.iter(),
-      ctx,
-      x: (x) => x * 3,
-      y: (y) => vHalf - max / 2 + y + 250,
-    });
-
-    path({
-      buffer: buffer.iter(),
-      ctx,
-      x: (x) => x * 4,
-      y: (y) => vHalf - max / 2 + y + 375,
-    });
-
     a();
   });
 }
