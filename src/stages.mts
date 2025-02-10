@@ -224,3 +224,46 @@ export function controls(): Controls {
     },
   };
 }
+
+export function sum(ctrl: Controls, options: {
+  id: string;
+  label?: string;
+  container?: HTMLElement;
+}): Stage {
+  const container = document.createElement("div");
+  container.classList.add("sum-control");
+  
+  const input1 = connect(ctrl, {
+    id: `${options.id}_in1`,
+    label: `${options.label || ''} Input 1`,
+    container
+  });
+  
+  const input2 = connect(ctrl, {
+    id: `${options.id}_in2`,
+    label: `${options.label || ''} Input 2`,
+    container
+  });
+
+  if (options.container) {
+    options.container.appendChild(container);
+  }
+
+  const subscribers: EventHandler[] = [];
+
+  return {
+    get(now: number) {
+      const value1 = input1.get(now) || 0;
+      const value2 = input2.get(now) || 0;
+      return value1 + value2;
+    },
+    subscribe(handler: EventHandler) {
+      subscribers.push(handler);
+    },
+    cycle() {
+      // Reset both inputs if needed
+      input1.cycle();
+      input2.cycle();
+    }
+  };
+}
