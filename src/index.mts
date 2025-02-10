@@ -1,16 +1,14 @@
 import { createBuffer } from "./buffer.mjs";
 import { initFullScreenCanvas, path } from "./canvas.mjs";
 import {
-  constant,
   controls,
   slider,
-  wave,
-  connect,
-  inputNumber,
-  Controls,
-  sum,
 } from "./stages.mjs";
-import { getOrCreateControl } from "./utils.mjs";
+import { 
+  oscillatorWithNumericInputs, 
+  oscillatorWithConnectInput,
+} from "./controls/oscillator.mjs";
+import { sumWithConnectInputs } from "./controls/sum.mjs";
 
 const ctx = initFullScreenCanvas({
   id: "canvas",
@@ -18,98 +16,6 @@ const ctx = initFullScreenCanvas({
 });
 
 const ctrl = controls();
-
-function oscillatorWithNumericInputs(ctrl: Controls, id: string) {
-  const lfoContainer = getOrCreateControl(id);
-  const header = document.createElement("h3");
-  header.innerText = id;
-  lfoContainer.appendChild(header);
-  const controls = document.createElement("div");
-  controls.classList.add("controls");
-  lfoContainer.appendChild(controls);
-  ctrl.register(
-    id,
-    wave({
-      min: slider({
-        id: `${id}_min`,
-        label: "min",
-        value: 50,
-        max: 500,
-        container: controls,
-      }),
-      max: slider({
-        id: `${id}_max`,
-        label: "max",
-        value: 50,
-        max: 500,
-        container: controls,
-      }),
-      raise: slider({
-        id: `${id}_raise`,
-        label: "raise",
-        value: 50,
-        max: 500,
-        container: controls,
-      }),
-      fall: slider({
-        id: `${id}_fall`,
-        label: "fall",
-        value: 50,
-        max: 500,
-        container: controls,
-      }),
-    }),
-  );
-}
-
-function oscillatorWithConnectInput(ctrl: Controls, id: string) {
-  const wContainer = getOrCreateControl(id);
-  const header = document.createElement("h3");
-  header.innerText = id;
-  wContainer.appendChild(header);
-  ctrl.register(
-    id,
-    wave({
-      min: connect(ctrl, {
-        id: `${id}_min`,
-        label: "min",
-        container: wContainer,
-      }),
-      max: connect(ctrl, {
-        id: `${id}_max`,
-        label: "max",
-        container: wContainer,
-      }),
-      raise: connect(ctrl, {
-        id: `${id}_raise`,
-        label: "raise",
-        container: wContainer,
-      }),
-      fall: connect(ctrl, {
-        id: `${id}_fall`,
-        label: "fall",
-        container: wContainer,
-      }),
-    }),
-  );
-}
-
-function sumWithConnectInputs(ctrl: Controls, id: string) {
-  const sumContainer = getOrCreateControl(id);
-  const header = document.createElement("h3");
-  header.innerText = id;
-  sumContainer.appendChild(header);
-  
-  ctrl.register(
-    id,
-    sum(ctrl, {
-      id: `${id}_sum`,
-      label: "sum",
-      container: sumContainer,
-    })
-  );
-}
-
 
 // Add after other control registrations but before the animation code
 const outputSelector = document.createElement("select");
