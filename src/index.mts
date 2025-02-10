@@ -18,12 +18,6 @@ const ctx = initFullScreenCanvas({
 });
 
 const ctrl = controls();
-const max = 500;
-
-ctrl.register("s", slider({ id: "s", max: 500, value: 50 }));
-ctrl.register("s1", slider({ id: "s1", max: 500, value: 50 }));
-ctrl.register("s2", slider({ id: "s2", max: 500, value: 50 }));
-ctrl.register("s3", slider({ id: "s3", max: 500, value: 50 }));
 
 function oscillatorWithNumericInputs(ctrl: Controls, id: string) {
   const lfoContainer = getOrCreateControl(id);
@@ -116,13 +110,6 @@ function sumWithConnectInputs(ctrl: Controls, id: string) {
   );
 }
 
-oscillatorWithNumericInputs(ctrl, "lfo");
-oscillatorWithNumericInputs(ctrl, "lfo2");
-
-oscillatorWithConnectInput(ctrl, "connected");
-oscillatorWithConnectInput(ctrl, "main");
-
-sumWithConnectInputs(ctrl, "sum1");
 
 // Add after other control registrations but before the animation code
 const outputSelector = document.createElement("select");
@@ -215,7 +202,7 @@ function a() {
       buffer: buffer.iter(),
       ctx,
       x: (x) => x * 1,
-      y: (y) => vHalf - max / 2 + y,
+      y: (y) => vHalf - 500 / 2 + y,
     });
     a();
   });
