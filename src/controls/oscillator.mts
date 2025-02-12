@@ -9,7 +9,7 @@ export function oscillatorWithNumericInputs(ctrl: Controls, id: string) {
   const controls = document.createElement("div");
   controls.classList.add("controls");
   lfoContainer.appendChild(controls);
-  
+
   ctrl.register(
     id,
     wave({
@@ -50,30 +50,31 @@ export function oscillatorWithConnectInput(ctrl: Controls, id: string) {
   const header = document.createElement("h3");
   header.innerText = id;
   wContainer.appendChild(header);
-  
+
   ctrl.register(
     id,
     wave({
-      min: connect(ctrl, {
+      min: connect(ctrl, id, {
         id: `${id}_min`,
         label: "min",
         container: wContainer,
       }),
-      max: connect(ctrl, {
+      max: connect(ctrl, id, {
         id: `${id}_max`,
         label: "max",
         container: wContainer,
       }),
-      raise: connect(ctrl, {
+      raise: connect(ctrl, id, {
         id: `${id}_raise`,
         label: "raise",
         container: wContainer,
       }),
-      fall: connect(ctrl, {
+      fall: connect(ctrl, id, {
         id: `${id}_fall`,
         label: "fall",
         container: wContainer,
       }),
     }),
   );
-} 
+}
+

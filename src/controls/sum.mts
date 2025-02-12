@@ -6,13 +6,14 @@ export function sumWithConnectInputs(ctrl: Controls, id: string) {
   const header = document.createElement("h3");
   header.innerText = id;
   sumContainer.appendChild(header);
-  
+
   ctrl.register(
     id,
     sum(ctrl, {
       id: `${id}_sum`,
       label: "sum",
       container: sumContainer,
-    })
+    }),
   );
-} 
+}
+

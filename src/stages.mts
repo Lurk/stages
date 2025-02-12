@@ -6,8 +6,6 @@ import {
   renderRangeTo,
   RenderSelectInputArgs,
   renderSelectInputTo,
-  RenderTextInputArgs,
-  renderTextInputTo,
 } from "./utils.mjs";
 
 export type StageEvent = "start" | "end";
@@ -155,12 +153,13 @@ export function slider(args: RenderRangeArgs): Stage {
 
 export function connect(
   controls: Controls,
+  omit: string,
   args: Omit<RenderSelectInputArgs, "options">,
 ): Stage {
   const element = renderSelectInputTo({ ...args, options: controls.keys() });
-  controls.onRegister((keys) =>
-    element.updateOptions(keys.filter((k) => k !== args.id)),
-  );
+  controls.onRegister((keys) => {
+    element.updateOptions(keys.filter((k) => k !== omit));
+  });
 
   assert(
     element.el instanceof HTMLSelectElement,
@@ -209,8 +208,8 @@ export function controls(): Controls {
   const onRegisterCallbacks: OnRegisterCallback[] = [];
   return {
     register(key, stage) {
-      const keys = this.keys();
       map.set(key, stage);
+      const keys = this.keys();
       onRegisterCallbacks.forEach((fn) => fn(keys));
     },
     get(key) {
@@ -225,24 +224,27 @@ export function controls(): Controls {
   };
 }
 
-export function sum(ctrl: Controls, options: {
-  id: string;
-  label?: string;
-  container?: HTMLElement;
-}): Stage {
+export function sum(
+  ctrl: Controls,
+  options: {
+    id: string;
+    label?: string;
+    container?: HTMLElement;
+  },
+): Stage {
   const container = document.createElement("div");
   container.classList.add("sum-control");
-  
-  const input1 = connect(ctrl, {
+
+  const input1 = connect(ctrl, options.id, {
     id: `${options.id}_in1`,
-    label: `${options.label || ''} Input 1`,
-    container
+    label: `${options.label || ""} Input 1`,
+    container,
   });
-  
-  const input2 = connect(ctrl, {
+
+  const input2 = connect(ctrl, options.id, {
     id: `${options.id}_in2`,
-    label: `${options.label || ''} Input 2`,
-    container
+    label: `${options.label || ""} Input 2`,
+    container,
   });
 
   if (options.container) {
@@ -255,12 +257,11 @@ export function sum(ctrl: Controls, options: {
       const value2 = input2.get(now) || 0;
       return value1 + value2;
     },
-    subscribe() {
-    },
+    subscribe() {},
     cycle() {
       // Reset both inputs if needed
       input1.cycle();
       input2.cycle();
-    }
+    },
   };
 }
