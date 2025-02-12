@@ -1,15 +1,15 @@
 import { Controls } from "../stages.mjs";
 import { slider } from "../stages.mjs";
-import { 
-  oscillatorWithNumericInputs, 
-  oscillatorWithConnectInput 
+import {
+  oscillatorWithNumericInputs,
+  oscillatorWithConnectInput,
 } from "./oscillator.mjs";
 import { sumWithConnectInputs } from "./sum.mjs";
 
 export function createControlCreator(
-  parent: HTMLElement, 
-  ctrl: Controls, 
-  outputSelector: HTMLSelectElement
+  parent: HTMLElement,
+  ctrl: Controls,
+  outputSelector: HTMLSelectElement,
 ) {
   const controlCreationContainer = document.createElement("div");
   controlCreationContainer.id = "control-creation";
@@ -37,7 +37,7 @@ export function createControlCreator(
   createButton.addEventListener("click", () => {
     const type = controlTypeSelect.value;
     const name = nameInput.value.trim();
-    
+
     if (!name) {
       alert("Please enter a name");
       return;
@@ -65,4 +65,5 @@ export function createControlCreator(
 
     nameInput.value = "";
   });
-} 
+}
+

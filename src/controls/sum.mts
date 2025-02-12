@@ -16,4 +16,3 @@ export function sumWithConnectInputs(ctrl: Controls, id: string) {
     }),
   );
 }
-

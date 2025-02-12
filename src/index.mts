@@ -27,7 +27,7 @@ function a() {
     const vHalf = ctx.canvas.height / 2;
     const selectedControl = outputSelector.value;
     buffer.push(ctrl.get(selectedControl)?.get(now) ?? 0);
-    
+
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.beginPath();
     ctx.strokeStyle = "#cccccc";
