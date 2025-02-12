@@ -125,10 +125,11 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
 
   const el = document.createElement("select");
   el.id = args.id;
-  args.options.forEach((o) => {
+  args.options.forEach((key) => {
     const option = document.createElement("option");
-    option.value = o;
-    option.innerHTML = o;
+    option.value = key;
+    option.innerHTML = key;
+    option.id = `${el.id}_${key}`;
     el.options.add(option);
   });
   const val = document.createElement("span");
@@ -141,19 +142,28 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
 
   setInterval(() => (val.innerHTML = value), 100);
 
+  let keys = new Set(args.options);
+
   return {
     el,
     updateValue: (v) => {
       value = v;
     },
     updateOptions: (options) => {
-      el.options.length = 0;
-      options.forEach((o) => {
-        const option = document.createElement("option");
-        option.value = o;
-        option.innerHTML = o;
-        el.options.add(option);
+      const newKeys = new Set(options);
+      const diff = newKeys.symmetricDifference(keys);
+      diff.forEach((key) => {
+        if (keys.has(key)) {
+          document.getElementById(`${el.id}_key`)?.remove();
+        } else {
+          const option = document.createElement("option");
+          option.value = key;
+          option.innerHTML = key;
+          option.id = `${el.id}_${key}`;
+          el.options.add(option);
+        }
       });
+      keys = newKeys;
     },
   };
 }
