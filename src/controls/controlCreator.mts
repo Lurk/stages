@@ -6,11 +6,7 @@ import {
 } from "./oscillator.mjs";
 import { sumWithConnectInputs } from "./sum.mjs";
 
-export function createControlCreator(
-  parent: HTMLElement,
-  ctrl: Controls,
-  outputSelector: HTMLSelectElement,
-) {
+export function createControlCreator(parent: HTMLElement, ctrl: Controls) {
   const controlCreationContainer = document.createElement("div");
   controlCreationContainer.id = "control-creation";
   parent.appendChild(controlCreationContainer);
@@ -58,12 +54,6 @@ export function createControlCreator(
         break;
     }
 
-    const option = document.createElement("option");
-    option.value = name;
-    option.text = name;
-    outputSelector.appendChild(option);
-
     nameInput.value = "";
   });
 }
-

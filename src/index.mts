@@ -1,6 +1,8 @@
 import { initFullScreenCanvas, path } from "./canvas.mjs";
 import { controls } from "./stages.mjs";
 import { initOutputs } from "./outputs.mjs";
+import { createControlCreator } from "./controls/controlCreator.mjs";
+import { assert } from "./utils.mjs";
 
 const ctx = initFullScreenCanvas({
   id: "canvas",
@@ -9,6 +11,13 @@ const ctx = initFullScreenCanvas({
 
 const ctrl = controls();
 const outputs = initOutputs(ctx.canvas.width, ctrl);
+
+const controlsContainer = document.getElementById("control-creation");
+assert(
+  controlsContainer instanceof HTMLDivElement,
+  "control creation root is not found",
+);
+createControlCreator(controlsContainer, ctrl);
 
 function a() {
   requestAnimationFrame((now) => {
