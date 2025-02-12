@@ -237,13 +237,13 @@ export function sum(
 
   const input1 = connect(ctrl, options.id, {
     id: `${options.id}_in1`,
-    label: `${options.label || ""} Input 1`,
+    label: `lhs`,
     container,
   });
 
   const input2 = connect(ctrl, options.id, {
     id: `${options.id}_in2`,
-    label: `${options.label || ""} Input 2`,
+    label: `rhs`,
     container,
   });
 
