@@ -1,8 +1,10 @@
-export function createBuffer(initialSize: number): {
+export type CapedLIFO = {
   iter: () => number[];
   push: (val: number) => void;
   resize: (newSize: number) => void;
-} {
+};
+
+export function createCapedLIFO(initialSize: number): CapedLIFO {
   const storage: Array<number> = [];
   let size = initialSize;
   return {
