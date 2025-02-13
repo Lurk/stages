@@ -1,6 +1,17 @@
 import { Controls, slider } from "../stages.mjs";
+import { getOrCreateControl } from "../utils.mjs";
 
 export function sliderWithNumericInputs(ctrl: Controls, name: string) {
-  ctrl.register(name, slider({ id: name, max: 500, value: 50 }));
-}
+  const container = getOrCreateControl(name);
+  const header = document.createElement("h3");
+  header.innerText = name;
+  container.appendChild(header);
+  const controls = document.createElement("div");
+  controls.classList.add("controls");
+  container.appendChild(controls);
 
+  ctrl.register(
+    name,
+    slider({ id: name, max: 500, value: 50, container: controls, label: "" }),
+  );
+}

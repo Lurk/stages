@@ -55,6 +55,7 @@ input[type=range] {
 	flex-direction: row;
 	flex-wrap: wrap;
 	gap: 5px;
+	justify-content: center;
 }
 
 .control {

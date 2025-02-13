@@ -4,6 +4,7 @@ import { initOutputs } from "./outputs.mjs";
 import { createControlCreator } from "./controls/controlCreator.mjs";
 import { assert } from "./utils.mjs";
 import { oscillatorWithConnectInput } from "./controls/oscillator.mjs";
+import { sliderWithNumericInputs } from "./controls/slider.mjs";
 
 const ctx = initFullScreenCanvas({
   id: "canvas",
@@ -13,9 +14,9 @@ const ctx = initFullScreenCanvas({
 const ctrl = controls();
 const outputs = initOutputs(ctx.canvas.width, ctrl);
 
-ctrl.register("min", slider({ id: "min", max: 500, value: 0 }));
-ctrl.register("max", slider({ id: "max", max: 500, value: 50 }));
-ctrl.register("time", slider({ id: "time", max: 5000, value: 50 }));
+sliderWithNumericInputs(ctrl, "min");
+sliderWithNumericInputs(ctrl, "max");
+sliderWithNumericInputs(ctrl, "time");
 oscillatorWithConnectInput(ctrl, "main");
 
 const controlsContainer = document.getElementById("control-creation");

@@ -1,10 +1,10 @@
 import { Controls } from "../stages.mjs";
-import { slider } from "../stages.mjs";
 import {
   oscillatorWithNumericInputs,
   oscillatorWithConnectInput,
 } from "./oscillator.mjs";
 import { mixer } from "./mixer.mjs";
+import { sliderWithNumericInputs } from "./slider.mjs";
 
 export function createControlCreator(parent: HTMLElement, ctrl: Controls) {
   const controlCreationContainer = document.createElement("div");
@@ -41,7 +41,7 @@ export function createControlCreator(parent: HTMLElement, ctrl: Controls) {
 
     switch (type) {
       case "slider":
-        ctrl.register(name, slider({ id: name, max: 500, value: 50 }));
+        sliderWithNumericInputs(ctrl, name);
         break;
       case "oscillator":
         oscillatorWithNumericInputs(ctrl, name);
