@@ -10,13 +10,24 @@ export function initOutputs(
     { selector: HTMLSelectElement; buffer: CapedLIFO }
   > = new Map();
 
+  let keys = new Set(ctrl.keys());
+
   const addMore = () => {
     const el = document.createElement("select");
-    outputs.set(outputs.size, {
+    const id = outputs.size;
+    outputs.set(id, {
       selector: el,
       buffer: createCapedLIFO(Math.round(width)),
     });
     document.getElementById("outputs")?.appendChild(el);
+
+    keys.forEach((key) => {
+      const option = document.createElement("option");
+      option.value = key;
+      option.innerHTML = key;
+      option.id = `output_${id}_${key}`;
+      el.options.add(option);
+    });
   };
 
   const add = document.createElement("button");
@@ -25,8 +36,6 @@ export function initOutputs(
   document.getElementById("outputs")?.appendChild(add);
 
   addMore();
-
-  let keys = new Set(ctrl.keys());
 
   ctrl.onRegister((newKeys) => {
     const newSet = new Set(newKeys);
@@ -45,6 +54,7 @@ export function initOutputs(
         }
       });
     });
+
     keys = newSet;
   });
 
