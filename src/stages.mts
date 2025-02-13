@@ -224,7 +224,7 @@ export function controls(): Controls {
   };
 }
 
-export function sum(
+export function renderMixer(
   ctrl: Controls,
   options: {
     id: string;
@@ -233,17 +233,35 @@ export function sum(
   },
 ): Stage {
   const container = document.createElement("div");
-  container.classList.add("sum-control");
+  container.classList.add("mix-control");
 
   const input1 = connect(ctrl, options.id, {
     id: `${options.id}_in1`,
-    label: `lhs`,
+    label: `1`,
     container,
   });
 
   const input2 = connect(ctrl, options.id, {
     id: `${options.id}_in2`,
-    label: `rhs`,
+    label: `2`,
+    container,
+  });
+
+  const input3 = connect(ctrl, options.id, {
+    id: `${options.id}_in3`,
+    label: `3`,
+    container,
+  });
+
+  const input4 = connect(ctrl, options.id, {
+    id: `${options.id}_in4`,
+    label: `4`,
+    container,
+  });
+
+  const input5 = connect(ctrl, options.id, {
+    id: `${options.id}_in5`,
+    label: `5`,
     container,
   });
 
@@ -253,15 +271,15 @@ export function sum(
 
   return {
     get(now: number) {
-      const value1 = input1.get(now) || 0;
-      const value2 = input2.get(now) || 0;
-      return value1 + value2;
+      return (
+        (input1.get(now) || 0) +
+        (input2.get(now) || 0) +
+        (input3.get(now) || 0) +
+        (input4.get(now) || 0) +
+        (input5.get(now) || 0)
+      );
     },
     subscribe() {},
-    cycle() {
-      // Reset both inputs if needed
-      input1.cycle();
-      input2.cycle();
-    },
+    cycle() {},
   };
 }

@@ -4,7 +4,7 @@ import {
   oscillatorWithNumericInputs,
   oscillatorWithConnectInput,
 } from "./oscillator.mjs";
-import { sumWithConnectInputs } from "./sum.mjs";
+import { mixer } from "./mixer.mjs";
 
 export function createControlCreator(parent: HTMLElement, ctrl: Controls) {
   const controlCreationContainer = document.createElement("div");
@@ -16,7 +16,7 @@ export function createControlCreator(parent: HTMLElement, ctrl: Controls) {
     <option value="slider">Slider</option>
     <option value="oscillator">Oscillator</option>
     <option value="connected">Connected Oscillator</option>
-    <option value="sum">Sum</option>
+    <option value="mixer">Mixer</option>
   `;
 
   const nameInput = document.createElement("input");
@@ -49,8 +49,8 @@ export function createControlCreator(parent: HTMLElement, ctrl: Controls) {
       case "connected":
         oscillatorWithConnectInput(ctrl, name);
         break;
-      case "sum":
-        sumWithConnectInputs(ctrl, name);
+      case "mixer":
+        mixer(ctrl, name);
         break;
     }
 
