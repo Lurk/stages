@@ -269,15 +269,27 @@ export function renderMixer(
     options.container.appendChild(container);
   }
 
+  const { el: mode } = renderSelectInputTo({
+    id: `${options.id}_mode`,
+    label: "mode",
+    options: ["sum", "avg"],
+    container,
+  });
+
+  const sum = (now: number) =>
+    (input1.get(now) || 0) +
+    (input2.get(now) || 0) +
+    (input3.get(now) || 0) +
+    (input4.get(now) || 0) +
+    (input5.get(now) || 0);
+
   return {
     get(now: number) {
-      return (
-        (input1.get(now) || 0) +
-        (input2.get(now) || 0) +
-        (input3.get(now) || 0) +
-        (input4.get(now) || 0) +
-        (input5.get(now) || 0)
-      );
+      const m = mode.value;
+      if (m === "avg") {
+        return sum(now) / 5;
+      }
+      return sum(now);
     },
     subscribe() {},
     cycle() {},
