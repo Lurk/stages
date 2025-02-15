@@ -1,4 +1,4 @@
-import { connect, Controls, renderMixer } from "../stages.mjs";
+import { connect, Controls } from "../stages.mjs";
 import { renderControl, renderSelectInputTo } from "../utils.mjs";
 
 export function mixer(ctrl: Controls, id: string) {

@@ -35,17 +35,8 @@ export function renderRangeTo(args: RenderRangeArgs): HTMLInputElement {
   el.step = String(step);
   el.id = args.id;
 
-  const val = document.createElement("span");
-  val.innerHTML = String(args.value ?? min);
-
-  el.onchange = (e) => {
-    e.stopPropagation();
-    val.innerHTML = el.value;
-  };
-
   container.appendChild(label);
   container.appendChild(el);
-  container.appendChild(val);
   args.container.appendChild(container);
 
   return el;
@@ -112,10 +103,7 @@ export type RenderSelectInputArgs = {
 export function renderSelectInputTo(args: RenderSelectInputArgs): {
   el: HTMLSelectElement;
   updateOptions: (options: string[]) => void;
-  updateValue(val: string): void;
 } {
-  let value = "0";
-  const val = document.createElement("span");
   const el = document.createElement("select");
 
   const container = document.createElement("div");
@@ -132,22 +120,15 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
     option.id = `${el.id}_${key}`;
     el.options.add(option);
   });
-  val.innerHTML = value;
 
   container.appendChild(label);
   container.appendChild(el);
-  container.appendChild(val);
   args.container.appendChild(container);
-
-  setInterval(() => (val.innerHTML = value), 100);
 
   let keys = new Set(args.options);
 
   return {
     el,
-    updateValue: (v) => {
-      value = v;
-    },
     updateOptions: (options) => {
       const newKeys = new Set(options);
       const diff = newKeys.symmetricDifference(keys);

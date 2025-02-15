@@ -168,9 +168,7 @@ export function connect(
 
   return {
     get(now) {
-      const val = controls.get(element.el.value)?.get(now) ?? 0;
-      element.updateValue(val.toFixed(3));
-      return val;
+      return controls.get(element.el.value)?.get(now) ?? 0;
     },
     subscribe() {},
     cycle() {},
