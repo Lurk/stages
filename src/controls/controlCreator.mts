@@ -1,7 +1,7 @@
-import { Controls } from "../stages.mjs";
 import { oscillatorWithConnectInput } from "./oscillator.mjs";
 import { mixer } from "./mixer.mjs";
 import { sliderWithNumericInputs } from "./slider.mjs";
+import { Controls } from "../controls.mjs";
 
 export function createControlCreator(parent: HTMLElement, ctrl: Controls) {
   const controlCreationContainer = document.createElement("div");
