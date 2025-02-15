@@ -26,7 +26,7 @@ export function renderRangeTo(args: RenderRangeArgs): HTMLInputElement {
 
   const label = document.createElement("label");
   label.htmlFor = args.id;
-  label.innerHTML = args.label ?? args.id;
+  label.innerText = args.label ?? args.id;
 
   el.min = String(min);
   el.max = String(max);
@@ -62,7 +62,7 @@ export function renderTextInputTo(args: RenderTextInputArgs): HTMLInputElement {
   const container = document.createElement("div");
   const label = document.createElement("label");
   label.htmlFor = args.label;
-  label.innerHTML = args.label;
+  label.innerText = args.label;
 
   el.value = String(args.value ?? "");
   el.type = "text";
@@ -88,7 +88,7 @@ export function renderNumberInputTo(
   const container = document.createElement("div");
   const label = document.createElement("label");
   label.htmlFor = args.label;
-  label.innerHTML = args.label;
+  label.innerText = args.label;
 
   const el = document.createElement("input");
   el.value = String(args.value ?? "0");
@@ -128,7 +128,7 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
   args.options.forEach((key) => {
     const option = document.createElement("option");
     option.value = key;
-    option.innerHTML = key;
+    option.innerText = key;
     option.id = `${el.id}_${key}`;
     el.options.add(option);
   });
@@ -157,7 +157,7 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
         } else {
           const option = document.createElement("option");
           option.value = key;
-          option.innerHTML = key;
+          option.innerText = key;
           option.id = `${el.id}_${key}`;
           el.options.add(option);
         }
@@ -167,17 +167,34 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
   };
 }
 
-export function renderControl(id: string): { container: HTMLDivElement } {
+export function renderControl(id: string): {
+  container: HTMLDivElement;
+  showValue(val: number): void;
+} {
   const root = document.getElementById("controls");
   assert(root, 'root element id="controls" not found');
-  const control = document.createElement("div");
-  control.classList.add("control");
-  root.appendChild(control);
-  const header = document.createElement("h3");
-  header.innerText = id;
-  control.appendChild(header);
   const container = document.createElement("div");
-  control.appendChild(container);
+  const control = document.createElement("div");
+  const header = document.createElement("h3");
+  let lastVal = 0;
+  let lastTime = Date.now();
+
+  control.classList.add("control");
   container.classList.add("inputs");
-  return { container };
+  header.innerText = `${id}: ${lastVal}`;
+
+  root.appendChild(control);
+  control.appendChild(header);
+  control.appendChild(container);
+
+  return {
+    container,
+    showValue: (val) => {
+      if (lastVal !== val && Date.now() - lastTime > 100) {
+        header.innerText = `${id}: ${val.toPrecision(4)}`;
+        lastVal = val;
+        lastTime = Date.now();
+      }
+    },
+  };
 }
