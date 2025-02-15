@@ -27,6 +27,10 @@ input[type=range] {
 	vertical-align: middle;
 }
 
+input[type=number] {
+	width: 60px;
+}
+
 #canvas {
 	height: 100%;
 	width: 100%;
@@ -64,9 +68,9 @@ input[type=range] {
 	border-radius: 5px;
 }
 
-.select {
+.input {
 	display: grid;
-	grid-template-columns: 1fr 3fr;
+	grid-template-columns: 1fr 2fr;
 	grid-column-gap: 5px;
 	grid-row-gap: 0px;
 }

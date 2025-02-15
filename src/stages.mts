@@ -136,21 +136,6 @@ export function wave(opts: WaveOpts): Stage {
   };
 }
 
-export function slider(args: RenderRangeArgs): Stage {
-  const element = document.getElementById(args.id) || renderRangeTo(args);
-  assert(
-    element instanceof HTMLInputElement,
-    `element with id=${args.id} is not HTMLInputElement`,
-  );
-  return {
-    get() {
-      return element.valueAsNumber;
-    },
-    subscribe() {},
-    cycle() {},
-  };
-}
-
 export function connect(
   controls: Controls,
   omit: string,
@@ -176,11 +161,10 @@ export function connect(
 }
 
 export function inputNumber(args: RenderNumberInputArgs) {
-  const element =
-    document.getElementById(args.label) || renderNumberInputTo(args);
+  const element = document.getElementById(args.id) || renderNumberInputTo(args);
   assert(
     element instanceof HTMLInputElement,
-    `element with id='${args.label}' is not HTMLInputElement`,
+    `element with id='${args.id}' is not HTMLInputElement`,
   );
 
   return {
