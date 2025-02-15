@@ -1,5 +1,5 @@
 import { initFullScreenCanvas, path } from "./canvas.mjs";
-import { controls, slider } from "./stages.mjs";
+import { controls } from "./stages.mjs";
 import { initOutputs } from "./outputs.mjs";
 import { createControlCreator } from "./controls/controlCreator.mjs";
 import { assert } from "./utils.mjs";

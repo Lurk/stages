@@ -11,7 +11,7 @@ export type RenderRangeArgs = {
   max?: number;
   value?: number;
   step?: number;
-  container?: HTMLDivElement;
+  container: HTMLDivElement;
 };
 
 export function renderRangeTo(args: RenderRangeArgs): HTMLInputElement {
@@ -19,7 +19,8 @@ export function renderRangeTo(args: RenderRangeArgs): HTMLInputElement {
   const step = args.step ?? 1;
   const max = args.max ?? 100;
 
-  const root = args.container ?? getOrCreateControl("controls");
+  const el = document.createElement("input");
+
   const container = document.createElement("div");
   container.classList.add("slider");
 
@@ -27,7 +28,6 @@ export function renderRangeTo(args: RenderRangeArgs): HTMLInputElement {
   label.htmlFor = args.id;
   label.innerHTML = args.label ?? args.id;
 
-  const el = document.createElement("input");
   el.min = String(min);
   el.max = String(max);
   el.value = String(args.value ?? min);
@@ -46,7 +46,7 @@ export function renderRangeTo(args: RenderRangeArgs): HTMLInputElement {
   container.appendChild(label);
   container.appendChild(el);
   container.appendChild(val);
-  root.appendChild(container);
+  args.container.appendChild(container);
 
   return el;
 }
@@ -54,38 +54,37 @@ export function renderRangeTo(args: RenderRangeArgs): HTMLInputElement {
 export type RenderTextInputArgs = {
   value?: string;
   label: string;
-  container?: HTMLDivElement;
+  container: HTMLDivElement;
 };
 
 export function renderTextInputTo(args: RenderTextInputArgs): HTMLInputElement {
-  const root = args.container ?? getOrCreateControl("controls");
+  const el = document.createElement("input");
   const container = document.createElement("div");
   const label = document.createElement("label");
   label.htmlFor = args.label;
   label.innerHTML = args.label;
 
-  const el = document.createElement("input");
   el.value = String(args.value ?? "");
   el.type = "text";
   el.id = args.label;
 
   container.appendChild(label);
   container.appendChild(el);
-  root.appendChild(container);
 
+  args.container.appendChild(container);
   return el;
 }
 
 export type RenderNumberInputArgs = {
   value?: number;
   label: string;
-  container?: HTMLDivElement;
+  container: HTMLDivElement;
 };
 
 export function renderNumberInputTo(
   args: RenderNumberInputArgs,
 ): HTMLInputElement {
-  const root = args.container ?? getOrCreateControl("controls");
+  const root = args.container;
   const container = document.createElement("div");
   const label = document.createElement("label");
   label.htmlFor = args.label;
@@ -107,7 +106,7 @@ export type RenderSelectInputArgs = {
   options: string[];
   id: string;
   label?: string;
-  container?: HTMLDivElement;
+  container: HTMLDivElement;
 };
 
 export function renderSelectInputTo(args: RenderSelectInputArgs): {
@@ -116,14 +115,15 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
   updateValue(val: string): void;
 } {
   let value = "0";
-  const root = args.container ?? getOrCreateControl("controls");
+  const val = document.createElement("span");
+  const el = document.createElement("select");
+
   const container = document.createElement("div");
   container.classList.add("select");
   const label = document.createElement("label");
   label.htmlFor = args.id;
   label.innerHTML = args.label ?? args.id;
 
-  const el = document.createElement("select");
   el.id = args.id;
   args.options.forEach((key) => {
     const option = document.createElement("option");
@@ -132,13 +132,12 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
     option.id = `${el.id}_${key}`;
     el.options.add(option);
   });
-  const val = document.createElement("span");
   val.innerHTML = value;
 
   container.appendChild(label);
   container.appendChild(el);
   container.appendChild(val);
-  root.appendChild(container);
+  args.container.appendChild(container);
 
   setInterval(() => (val.innerHTML = value), 100);
 
@@ -168,22 +167,17 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
   };
 }
 
-export function getOrCreateControl(id: string): HTMLDivElement {
-  let control = document.getElementById(id);
-  if (!control) {
-    const root = document.getElementById("controls");
-    assert(root, 'root element id="controls" not found');
-    control = document.createElement("div");
-    control.classList.add("control");
-    root.appendChild(control);
-  }
-  assert(
-    control instanceof HTMLDivElement,
-    `HTML element with id="${id}" is not HTMLDivElement`,
-  );
+export function renderControl(id: string): { container: HTMLDivElement } {
+  const root = document.getElementById("controls");
+  assert(root, 'root element id="controls" not found');
+  const control = document.createElement("div");
+  control.classList.add("control");
+  root.appendChild(control);
   const header = document.createElement("h3");
   header.innerText = id;
   control.appendChild(header);
-
-  return control;
+  const container = document.createElement("div");
+  control.appendChild(container);
+  container.classList.add("inputs");
+  return { container };
 }

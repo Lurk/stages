@@ -1,6 +1,8 @@
+import { Controls, wave, connect } from "../stages.mjs";
+import { renderControl } from "../utils.mjs";
 
 export function oscillatorWithConnectInput(ctrl: Controls, id: string) {
-  const wContainer = getOrCreateControl(id);
+  const { container } = renderControl(id);
 
   ctrl.register(
     id,
@@ -8,22 +10,22 @@ export function oscillatorWithConnectInput(ctrl: Controls, id: string) {
       min: connect(ctrl, id, {
         id: `${id}_min`,
         label: "min",
-        container: wContainer,
+        container,
       }),
       max: connect(ctrl, id, {
         id: `${id}_max`,
         label: "max",
-        container: wContainer,
+        container,
       }),
       raise: connect(ctrl, id, {
         id: `${id}_raise`,
         label: "raise",
-        container: wContainer,
+        container,
       }),
       fall: connect(ctrl, id, {
         id: `${id}_fall`,
         label: "fall",
-        container: wContainer,
+        container,
       }),
     }),
   );

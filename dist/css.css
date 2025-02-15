@@ -50,9 +50,9 @@ input[type=range] {
 	flex-direction: column;
 }
 
-.controls {
+.inputs {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	flex-wrap: wrap;
 	gap: 5px;
 	justify-content: center;
