@@ -25,6 +25,7 @@ input[type=range] {
 	writing-mode: vertical-lr;
 	direction: rtl;
 	vertical-align: middle;
+	height: 110px;
 }
 
 input[type=number] {
