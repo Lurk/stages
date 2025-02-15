@@ -1,8 +1,5 @@
 import { Controls } from "../stages.mjs";
-import {
-  oscillatorWithNumericInputs,
-  oscillatorWithConnectInput,
-} from "./oscillator.mjs";
+import { oscillatorWithConnectInput } from "./oscillator.mjs";
 import { mixer } from "./mixer.mjs";
 import { sliderWithNumericInputs } from "./slider.mjs";
 
@@ -15,7 +12,6 @@ export function createControlCreator(parent: HTMLElement, ctrl: Controls) {
   controlTypeSelect.innerHTML = `
     <option value="slider">Slider</option>
     <option value="oscillator">Oscillator</option>
-    <option value="connected">Connected Oscillator</option>
     <option value="mixer">Mixer</option>
   `;
 
@@ -44,9 +40,6 @@ export function createControlCreator(parent: HTMLElement, ctrl: Controls) {
         sliderWithNumericInputs(ctrl, name);
         break;
       case "oscillator":
-        oscillatorWithNumericInputs(ctrl, name);
-        break;
-      case "connected":
         oscillatorWithConnectInput(ctrl, name);
         break;
       case "mixer":
