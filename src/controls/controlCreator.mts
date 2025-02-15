@@ -2,29 +2,27 @@ import { oscillatorWithConnectInput } from "./oscillator.mjs";
 import { mixer } from "./mixer.mjs";
 import { sliderWithNumericInputs } from "./slider.mjs";
 import { Controls } from "../controls.mjs";
+import { renderControl, renderSelectInputTo } from "../utils.mjs";
 
-export function createControlCreator(parent: HTMLElement, ctrl: Controls) {
-  const controlCreationContainer = document.createElement("div");
-  controlCreationContainer.id = "control-creation";
-  parent.appendChild(controlCreationContainer);
-
-  const controlTypeSelect = document.createElement("select");
-  controlTypeSelect.innerHTML = `
-    <option value="slider">Slider</option>
-    <option value="oscillator">Oscillator</option>
-    <option value="mixer">Mixer</option>
-  `;
+export function createControlCreator(ctrl: Controls) {
+  const { container } = renderControl("control");
 
   const nameInput = document.createElement("input");
   nameInput.type = "text";
   nameInput.placeholder = "Control name";
+  container.appendChild(nameInput);
+
+  const { el: controlTypeSelect } = renderSelectInputTo({
+    container,
+    options: ["slider", "oscillator", "mixer"],
+    id: "control-creation-select",
+    label: "type:",
+  });
 
   const createButton = document.createElement("button");
   createButton.textContent = "Create Control";
 
-  controlCreationContainer.appendChild(nameInput);
-  controlCreationContainer.appendChild(controlTypeSelect);
-  controlCreationContainer.appendChild(createButton);
+  container.appendChild(createButton);
 
   createButton.addEventListener("click", () => {
     const type = controlTypeSelect.value;
