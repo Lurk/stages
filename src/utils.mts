@@ -181,5 +181,9 @@ export function getOrCreateControl(id: string): HTMLDivElement {
     control instanceof HTMLDivElement,
     `HTML element with id="${id}" is not HTMLDivElement`,
   );
+  const header = document.createElement("h3");
+  header.innerText = id;
+  control.appendChild(header);
+
   return control;
 }

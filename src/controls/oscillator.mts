@@ -3,9 +3,6 @@ import { getOrCreateControl } from "../utils.mjs";
 
 export function oscillatorWithNumericInputs(ctrl: Controls, id: string) {
   const lfoContainer = getOrCreateControl(id);
-  const header = document.createElement("h3");
-  header.innerText = id;
-  lfoContainer.appendChild(header);
   const controls = document.createElement("div");
   controls.classList.add("controls");
   lfoContainer.appendChild(controls);
@@ -47,9 +44,6 @@ export function oscillatorWithNumericInputs(ctrl: Controls, id: string) {
 
 export function oscillatorWithConnectInput(ctrl: Controls, id: string) {
   const wContainer = getOrCreateControl(id);
-  const header = document.createElement("h3");
-  header.innerText = id;
-  wContainer.appendChild(header);
 
   ctrl.register(
     id,

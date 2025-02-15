@@ -3,9 +3,6 @@ import { getOrCreateControl } from "../utils.mjs";
 
 export function sliderWithNumericInputs(ctrl: Controls, name: string) {
   const container = getOrCreateControl(name);
-  const header = document.createElement("h3");
-  header.innerText = name;
-  container.appendChild(header);
   const controls = document.createElement("div");
   controls.classList.add("controls");
   container.appendChild(controls);
