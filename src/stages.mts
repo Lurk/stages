@@ -233,7 +233,6 @@ export function renderMixer(
   },
 ): Stage {
   const container = document.createElement("div");
-  container.classList.add("mix-control");
 
   const input1 = connect(ctrl, options.id, {
     id: `${options.id}_in1`,
