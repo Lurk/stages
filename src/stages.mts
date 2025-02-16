@@ -141,6 +141,7 @@ export function connect(
   args: Omit<RenderSelectInputArgs, "options">,
 ): Stage {
   const element = renderSelectInputTo({ ...args, options: controls.keys() });
+  // TODO this is definitely leaks memory. When deleting the control with connected input this cb is not deleted.
   controls.onChange((keys) => {
     element.updateOptions(keys.filter((k) => k !== omit));
   });

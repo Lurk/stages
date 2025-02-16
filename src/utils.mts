@@ -136,7 +136,7 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
       const diff = newKeys.symmetricDifference(keys);
       diff.forEach((key) => {
         if (keys.has(key)) {
-          document.getElementById(`${el.id}_${key}`)?.remove();
+          document.getElementById(`${args.id}_${key}`)?.remove();
         } else {
           const option = document.createElement("option");
           option.value = key;

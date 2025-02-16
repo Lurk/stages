@@ -11,8 +11,10 @@ const ctx = initFullScreenCanvas({
 });
 
 const ctrl = controls();
-const outputs = initOutputs(ctx.canvas.width, ctrl);
-createControlCreator(ctrl);
+const { outputs, add } = initOutputs(ctrl, ctx);
+
+createControlCreator(ctrl, add);
+add("first");
 
 sliderWithNumericInputs(ctrl, "min");
 sliderWithNumericInputs(ctrl, "max");

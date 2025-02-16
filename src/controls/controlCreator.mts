@@ -4,7 +4,10 @@ import { sliderWithNumericInputs } from "./slider.mjs";
 import { Controls } from "../controls.mjs";
 import { renderControl, renderSelectInputTo } from "../utils.mjs";
 
-export function createControlCreator(ctrl: Controls) {
+export function createControlCreator(
+  ctrl: Controls,
+  add: (name: string) => void,
+) {
   const { container } = renderControl("control");
 
   const nameInput = document.createElement("input");
@@ -14,7 +17,7 @@ export function createControlCreator(ctrl: Controls) {
 
   const { el: controlTypeSelect } = renderSelectInputTo({
     container,
-    options: ["slider", "oscillator", "mixer"],
+    options: ["slider", "oscillator", "mixer", "output"],
     id: "control-creation-select",
     label: "type:",
   });
@@ -42,6 +45,9 @@ export function createControlCreator(ctrl: Controls) {
         break;
       case "mixer":
         mixer(ctrl, name);
+        break;
+      case "output":
+        add(name);
         break;
     }
 

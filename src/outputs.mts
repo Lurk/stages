@@ -1,62 +1,45 @@
 import { CapedLIFO, createCapedLIFO } from "./buffer.mjs";
 import { Controls } from "./controls.mjs";
+import { renderControl, renderSelectInputTo } from "./utils.mjs";
+
+type Outputs = {
+  outputs: Map<number, { selector: HTMLSelectElement; buffer: CapedLIFO }>;
+  add: (name: string) => void;
+};
 
 export function initOutputs(
-  width: number,
   ctrl: Controls,
-): Map<number, { selector: HTMLSelectElement; buffer: CapedLIFO }> {
+  ctx: CanvasRenderingContext2D,
+): Outputs {
   const outputs: Map<
     number,
     { selector: HTMLSelectElement; buffer: CapedLIFO }
   > = new Map();
 
-  let keys = new Set(ctrl.keys());
-
-  const addMore = () => {
-    const el = document.createElement("select");
-    const id = outputs.size;
-    outputs.set(id, {
-      selector: el,
-      buffer: createCapedLIFO(Math.round(width)),
-    });
-    document.getElementById("outputs")?.appendChild(el);
-
-    keys.forEach((key) => {
-      const option = document.createElement("option");
-      option.value = key;
-      option.innerHTML = key;
-      option.id = `output_${id}_${key}`;
-      el.options.add(option);
-    });
-  };
-
-  const add = document.createElement("button");
-  add.onclick = addMore;
-  add.innerHTML = "+";
-  document.getElementById("outputs")?.appendChild(add);
-
-  addMore();
-
-  ctrl.onChange((newKeys) => {
-    const newSet = new Set(newKeys);
-    const diff = newSet.symmetricDifference(keys);
-
-    outputs.entries().forEach(([id, val]) => {
-      diff.forEach((key) => {
-        if (keys.has(key)) {
-          document.getElementById(`output_${id}_${key}`)?.remove();
-        } else {
-          const option = document.createElement("option");
-          option.value = key;
-          option.innerHTML = key;
-          option.id = `output_${id}_${key}`;
-          val.selector.options.add(option);
-        }
+  return {
+    outputs,
+    add(name) {
+      const id = outputs.size;
+      const updater = (keys: string[]) => updateOptions(keys);
+      const { container } = renderControl(name, () => {
+        ctrl.unsubscribe(updater);
+        outputs.delete(id);
       });
-    });
 
-    keys = newSet;
-  });
+      const { el, updateOptions } = renderSelectInputTo({
+        container,
+        options: ctrl.keys(),
+        id: `${name}_y_input`,
+        label: "y",
+      });
 
-  return outputs;
+      outputs.set(id, {
+        selector: el,
+        buffer: createCapedLIFO(Math.round(ctx.canvas.width)),
+      });
+      container.appendChild(el);
+
+      ctrl.onChange(updater);
+    },
+  };
 }

@@ -7,6 +7,7 @@ export type Controls = {
   unregister(key: string): void;
   get(key: string): Stage | undefined;
   onChange(fn: OnRegisterCallback): void;
+  unsubscribe(fn: OnRegisterCallback): void;
   keys(): string[];
 };
 
@@ -38,6 +39,12 @@ export function controls(): Controls {
     },
     onChange(fn) {
       onRegisterCallbacks.push(fn);
+    },
+    unsubscribe(fn) {
+      const index = onRegisterCallbacks.indexOf(fn);
+      if (index > -1) {
+        onRegisterCallbacks.splice(index, 1);
+      }
     },
   };
 }
