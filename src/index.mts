@@ -16,6 +16,7 @@ const { outputs, add } = initOutputs(ctrl, ctx);
 createControlCreator(ctrl, add);
 add("first");
 
+sliderWithNumericInputs(ctrl, "speed");
 sliderWithNumericInputs(ctrl, "min");
 sliderWithNumericInputs(ctrl, "max");
 sliderWithNumericInputs(ctrl, "time");
@@ -27,14 +28,15 @@ function a() {
     ctx.beginPath();
     ctx.strokeStyle = "#cccccc";
     ctx.lineWidth = 1;
-    outputs.values().forEach(({ selector, buffer }) => {
+    outputs.values().forEach(({ selector, buffer, speed }) => {
       buffer.resize(ctx.canvas.width);
       const selectedControl = selector.value;
       buffer.push(ctrl.get(selectedControl)?.get(now) ?? 0);
       path({
         buffer: buffer.iter(),
         ctx,
-        x: (x) => ctx.canvas.width - x,
+        x: (x) =>
+          x === 0 ? ctx.canvas.width : ctx.canvas.width - x * speed.get(now),
         y: (y) => y,
       });
     });

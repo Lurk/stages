@@ -73,6 +73,15 @@ input[type=text] {
 	border-radius: 5px;
 }
 
+.control>h3 {
+	margin-bottom: 0;
+}
+
+.control>span {
+	margin-bottom: 5px;
+	display: block;
+}
+
 .input {
 	display: grid;
 	grid-template-columns: 1fr 2fr;

@@ -16,7 +16,7 @@ export type RenderRangeArgs = {
 
 export function renderRangeTo(args: RenderRangeArgs): HTMLInputElement {
   const min = args.min ?? 1;
-  const step = args.step ?? 1;
+  const step = args.step ?? 0.1;
   const max = args.max ?? 100;
 
   const el = document.createElement("input");
@@ -106,25 +106,27 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
   el: HTMLSelectElement;
   updateOptions: (options: string[]) => void;
 } {
-  const el = document.createElement("select");
-
   const container = document.createElement("div");
   container.classList.add("input");
-  const label = document.createElement("label");
-  label.htmlFor = args.id;
-  label.innerHTML = args.label ?? args.id;
 
-  el.id = args.id;
+  const el = document.createElement("select");
+  el.id = args.id + "___aaa___";
+
   args.options.forEach((key) => {
     const option = document.createElement("option");
     option.value = key;
     option.innerText = key;
-    option.id = `${el.id}_${key}`;
+    option.id = `${args.id}_${key}`;
     el.options.add(option);
   });
 
+  const label = document.createElement("label");
+  label.htmlFor = args.id;
+  label.innerHTML = args.label ?? args.id;
+
   container.appendChild(label);
   container.appendChild(el);
+
   args.container.appendChild(container);
 
   let keys = new Set(args.options);
@@ -162,8 +164,11 @@ export function renderControl(
   const container = document.createElement("div");
   const control = document.createElement("div");
   const header = document.createElement("h3");
+  const value = document.createElement("span");
   let lastVal = 0;
   let lastTime = Date.now();
+
+  value.innerText = lastVal.toPrecision(4);
 
   if (onremove) {
     const remove = document.createElement("button");
@@ -178,17 +183,18 @@ export function renderControl(
 
   control.classList.add("control");
   container.classList.add("inputs");
-  header.innerText = `${id}: ${lastVal}`;
+  header.innerText = `${id}:`;
 
   root.appendChild(control);
   control.appendChild(header);
+  control.appendChild(value);
   control.appendChild(container);
 
   return {
     container,
     showValue: (val) => {
       if (lastVal !== val && Date.now() - lastTime > 100) {
-        header.innerText = `${id}: ${val.toPrecision(4)}`;
+        value.innerText = val.toPrecision(4);
         lastVal = val;
         lastTime = Date.now();
       }

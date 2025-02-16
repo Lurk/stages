@@ -1,9 +1,12 @@
 import { CapedLIFO, createCapedLIFO } from "./buffer.mjs";
 import { Controls } from "./controls.mjs";
+import { connect, Stage } from "./stages.mjs";
 import { renderControl, renderSelectInputTo } from "./utils.mjs";
 
+type Output = { selector: HTMLSelectElement; buffer: CapedLIFO; speed: Stage };
+
 type Outputs = {
-  outputs: Map<number, { selector: HTMLSelectElement; buffer: CapedLIFO }>;
+  outputs: Map<number, Output>;
   add: (name: string) => void;
 };
 
@@ -11,10 +14,7 @@ export function initOutputs(
   ctrl: Controls,
   ctx: CanvasRenderingContext2D,
 ): Outputs {
-  const outputs: Map<
-    number,
-    { selector: HTMLSelectElement; buffer: CapedLIFO }
-  > = new Map();
+  const outputs: Map<number, Output> = new Map();
 
   return {
     outputs,
@@ -36,8 +36,12 @@ export function initOutputs(
       outputs.set(id, {
         selector: el,
         buffer: createCapedLIFO(Math.round(ctx.canvas.width)),
+        speed: connect(ctrl, "", {
+          container,
+          id: `${name}_speed_input`,
+          label: "speed",
+        }),
       });
-      container.appendChild(el);
 
       ctrl.onChange(updater);
     },
