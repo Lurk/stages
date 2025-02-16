@@ -4,7 +4,9 @@ import { renderControl, renderSelectInputTo } from "../utils.mjs";
 
 export function mixer(ctrl: Controls, id: string) {
   ctrl.register(id, () => {
-    const { container, showValue } = renderControl(id);
+    const { container, showValue } = renderControl(id, () =>
+      ctrl.unregister(id),
+    );
 
     const { el: mode } = renderSelectInputTo({
       id: `${id}_mode`,

@@ -79,3 +79,7 @@ input[type=text] {
 	grid-column-gap: 5px;
 	grid-row-gap: 0px;
 }
+
+.remove {
+	float: right;
+}

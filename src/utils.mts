@@ -150,7 +150,10 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
   };
 }
 
-export function renderControl(id: string): {
+export function renderControl(
+  id: string,
+  onremove?: () => void,
+): {
   container: HTMLDivElement;
   showValue(val: number): void;
 } {
@@ -161,6 +164,17 @@ export function renderControl(id: string): {
   const header = document.createElement("h3");
   let lastVal = 0;
   let lastTime = Date.now();
+
+  if (onremove) {
+    const remove = document.createElement("button");
+    remove.classList.add("remove");
+    remove.innerText = "x";
+    remove.onclick = () => {
+      onremove();
+      control.remove();
+    };
+    control.appendChild(remove);
+  }
 
   control.classList.add("control");
   container.classList.add("inputs");

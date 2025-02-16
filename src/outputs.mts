@@ -1,5 +1,5 @@
 import { CapedLIFO, createCapedLIFO } from "./buffer.mjs";
-import { Controls } from "./stages.mjs";
+import { Controls } from "./controls.mjs";
 
 export function initOutputs(
   width: number,
@@ -37,7 +37,7 @@ export function initOutputs(
 
   addMore();
 
-  ctrl.onRegister((newKeys) => {
+  ctrl.onChange((newKeys) => {
     const newSet = new Set(newKeys);
     const diff = newSet.symmetricDifference(keys);
 

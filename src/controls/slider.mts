@@ -7,7 +7,9 @@ import {
 
 export function sliderWithNumericInputs(ctrl: Controls, name: string) {
   ctrl.register(name, () => {
-    const { container, showValue } = renderControl(name);
+    const { container, showValue } = renderControl(name, () =>
+      ctrl.unregister(name),
+    );
 
     const to = renderNumberInputTo({
       id: `${name}_to`,

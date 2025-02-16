@@ -141,7 +141,7 @@ export function connect(
   args: Omit<RenderSelectInputArgs, "options">,
 ): Stage {
   const element = renderSelectInputTo({ ...args, options: controls.keys() });
-  controls.onRegister((keys) => {
+  controls.onChange((keys) => {
     element.updateOptions(keys.filter((k) => k !== omit));
   });
 

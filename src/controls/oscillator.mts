@@ -4,7 +4,9 @@ import { renderControl } from "../utils.mjs";
 
 export function oscillatorWithConnectInput(ctrl: Controls, id: string) {
   ctrl.register(id, () => {
-    const { container, showValue } = renderControl(id);
+    const { container, showValue } = renderControl(id, () =>
+      ctrl.unregister(id),
+    );
 
     const w = wave({
       min: connect(ctrl, id, {

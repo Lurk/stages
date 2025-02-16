@@ -4,8 +4,9 @@ export type OnRegisterCallback = (keys: string[]) => void;
 
 export type Controls = {
   register(key: string, stage: () => Stage): void;
+  unregister(key: string): void;
   get(key: string): Stage | undefined;
-  onRegister(fn: OnRegisterCallback): void;
+  onChange(fn: OnRegisterCallback): void;
   keys(): string[];
 };
 
@@ -22,13 +23,20 @@ export function controls(): Controls {
         onRegisterCallbacks.forEach((fn) => fn(keys));
       }
     },
+    unregister(key) {
+      if (map.has(key)) {
+        map.delete(key);
+        const keys = this.keys();
+        onRegisterCallbacks.forEach((fn) => fn(keys));
+      }
+    },
     get(key) {
       return map.get(key);
     },
     keys() {
       return [...map.keys()];
     },
-    onRegister(fn) {
+    onChange(fn) {
       onRegisterCallbacks.push(fn);
     },
   };
