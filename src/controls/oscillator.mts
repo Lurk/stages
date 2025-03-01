@@ -32,13 +32,15 @@ export function oscillatorWithConnectInput(ctrl: Controls, id: string) {
     });
 
     return {
-      get(now) {
-        const val = w.get(now);
+      get(now, i) {
+        const val = w.get(now, i);
         showValue(val);
         return val;
       },
       subscribe() {},
-      cycle() {},
+      cycle() {
+        w.cycle();
+      },
     };
   });
 }

@@ -1,49 +1,42 @@
-import { CapedLIFO, createCapedLIFO } from "./buffer.mjs";
 import { Controls } from "./controls.mjs";
 import { connect, Stage } from "./stages.mjs";
-import { renderControl, renderSelectInputTo } from "./utils.mjs";
+import { renderControl } from "./utils.mjs";
 
-type Output = { selector: HTMLSelectElement; buffer: CapedLIFO; speed: Stage };
+type Output = { y: Stage; x: Stage; resolution: Stage };
 
 type Outputs = {
   outputs: Map<number, Output>;
   add: (name: string) => void;
 };
 
-export function initOutputs(
-  ctrl: Controls,
-  ctx: CanvasRenderingContext2D,
-): Outputs {
+export function initOutputs(ctrl: Controls): Outputs {
   const outputs: Map<number, Output> = new Map();
 
   return {
     outputs,
     add(name) {
       const id = outputs.size;
-      const updater = (keys: string[]) => updateOptions(keys);
       const { container } = renderControl(name, () => {
-        ctrl.unsubscribe(updater);
         outputs.delete(id);
       });
 
-      const { el, updateOptions } = renderSelectInputTo({
-        container,
-        options: ctrl.keys(),
-        id: `${name}_y_input`,
-        label: "y",
-      });
-
       outputs.set(id, {
-        selector: el,
-        buffer: createCapedLIFO(Math.round(ctx.canvas.width)),
-        speed: connect(ctrl, "", {
+        y: connect(ctrl, "", {
           container,
-          id: `${name}_speed_input`,
-          label: "speed",
+          id: `${name}_y_input`,
+          label: "y",
+        }),
+        x: connect(ctrl, "", {
+          container,
+          id: `${name}_x_input`,
+          label: "x",
+        }),
+        resolution: connect(ctrl, "", {
+          container,
+          id: `${name}_resolution_input`,
+          label: "res",
         }),
       });
-
-      ctrl.onChange(updater);
     },
   };
 }

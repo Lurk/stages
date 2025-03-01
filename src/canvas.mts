@@ -1,3 +1,4 @@
+import { Stage } from "./stages.mjs";
 import { assert } from "./utils.mjs";
 
 type InitFullScreenCanvasArgs = {
@@ -82,5 +83,30 @@ export function path(opts: PathOpts) {
       opts.ctx.lineTo(opts.x?.(x) || x, opts.y?.(y) || y);
     }
   });
+  opts.ctx.stroke();
+}
+
+export type BufferlessPathOptions = {
+  len: number;
+  resolution: number;
+  now: number;
+  ctx: CanvasRenderingContext2D;
+  x: Stage;
+  y: Stage;
+};
+
+export function buferlessPath(opts: BufferlessPathOptions) {
+  const now = Math.floor(opts.now / opts.resolution) * opts.resolution;
+  //console.log(now);
+  opts.ctx.moveTo(opts.x.get(now, 0), opts.y.get(now, 0));
+  const arr = [];
+  for (let i = 1; i < opts.len; i++) {
+    let foo = now + i * opts.resolution;
+    arr.push(opts.y.get(foo, i));
+    opts.ctx.lineTo(opts.x.get(foo, i), opts.y.get(foo, i));
+  }
+  //opts.y.cycle();
+  //opts.x.cycle();
+  //console.log(arr);
   opts.ctx.stroke();
 }

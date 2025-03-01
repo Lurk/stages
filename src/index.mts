@@ -1,4 +1,4 @@
-import { initFullScreenCanvas, path } from "./canvas.mjs";
+import { buferlessPath, initFullScreenCanvas, path } from "./canvas.mjs";
 import { initOutputs } from "./outputs.mjs";
 import { createControlCreator } from "./controls/controlCreator.mjs";
 import { oscillatorWithConnectInput } from "./controls/oscillator.mjs";
@@ -11,16 +11,19 @@ const ctx = initFullScreenCanvas({
 });
 
 const ctrl = controls();
-const { outputs, add } = initOutputs(ctrl, ctx);
+const { outputs, add } = initOutputs(ctrl);
 
 createControlCreator(ctrl, add);
 add("first");
 
-sliderWithNumericInputs(ctrl, "speed");
+oscillatorWithConnectInput(ctrl, "y");
+sliderWithNumericInputs(ctrl, "res");
+oscillatorWithConnectInput(ctrl, "x");
 sliderWithNumericInputs(ctrl, "min");
-sliderWithNumericInputs(ctrl, "max");
-sliderWithNumericInputs(ctrl, "time");
-oscillatorWithConnectInput(ctrl, "main");
+sliderWithNumericInputs(ctrl, "ymax");
+sliderWithNumericInputs(ctrl, "xmax");
+sliderWithNumericInputs(ctrl, "t1");
+sliderWithNumericInputs(ctrl, "t2");
 
 function a() {
   requestAnimationFrame((now) => {
@@ -28,18 +31,17 @@ function a() {
     ctx.beginPath();
     ctx.strokeStyle = "#cccccc";
     ctx.lineWidth = 1;
-    outputs.values().forEach(({ selector, buffer, speed }) => {
-      buffer.resize(ctx.canvas.width);
-      const selectedControl = selector.value;
-      buffer.push(ctrl.get(selectedControl)?.get(now) ?? 0);
-      path({
-        buffer: buffer.iter(),
+    for (const { y, x, resolution } of outputs.values()) {
+      buferlessPath({
         ctx,
-        x: (x) =>
-          x === 0 ? ctx.canvas.width : ctx.canvas.width - x * speed.get(now),
-        y: (y) => y,
+        now,
+        len: ctx.canvas.width,
+        resolution: resolution.get(now, 0),
+        x,
+        y,
       });
-    });
+    }
+
     a();
   });
 }

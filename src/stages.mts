@@ -1,3 +1,4 @@
+import { duplexPair } from "stream";
 import { Controls } from "./controls.mjs";
 import {
   assert,
@@ -13,7 +14,7 @@ export type EventHandler = (e: StageEvent) => void;
 
 export interface Stage {
   subscribe: (handler: EventHandler) => void;
-  get: (now: number) => number;
+  get: (now: number, i: number) => number;
   cycle: () => void;
 }
 
@@ -29,16 +30,16 @@ export function stage({ start, target, duration }: StageOpts): Stage {
   let since = 0;
 
   return {
-    get(now) {
-      const startValue = start.get(now);
-      const targetValue = target.get(now);
-      const durationValue = duration.get(now);
+    get(now, i) {
+      const startValue = start.get(now, i);
+      const targetValue = target.get(now, i);
+      const durationValue = duration.get(now, i);
 
-      if (since === 0) {
-        since = now;
-        subscribers.forEach((cb) => cb("start"));
-        return startValue;
-      }
+      //if (since === 0) {
+      //  //since = now;
+      //  subscribers.forEach((cb) => cb("start"));
+      //  return startValue;
+      //}
 
       if (now - since > durationValue) {
         subscribers.forEach((cb) => cb("end"));
@@ -58,6 +59,9 @@ export function stage({ start, target, duration }: StageOpts): Stage {
     },
     cycle() {
       since = 0;
+      start.cycle();
+      target.cycle();
+      duration.cycle();
     },
     subscribe(handler) {
       subscribers.push(handler);
@@ -80,8 +84,8 @@ export function sequence(stages: Stage[]): Stage {
     });
   });
   return {
-    get(now) {
-      return stages[currentStage]?.get(now);
+    get(now, i) {
+      return stages[currentStage]?.get(now, i);
     },
     subscribe(cb) {
       subscribers.push(cb);
@@ -112,6 +116,7 @@ export type WaveOpts = {
 
 export function wave(opts: WaveOpts): Stage {
   const subscribers: EventHandler[] = [];
+
   const s = sequence([
     stage({ start: opts.min, target: opts.max, duration: opts.raise }),
     stage({ start: opts.max, target: opts.min, duration: opts.fall }),
@@ -125,8 +130,27 @@ export function wave(opts: WaveOpts): Stage {
   });
 
   return {
-    get(now) {
-      return s.get(now);
+    get(now, i) {
+      const raise = opts.raise.get(now, i);
+      const fall = opts.fall.get(now, i);
+      const min = opts.min.get(now, i);
+      const max = opts.max.get(now, i);
+
+      const duration = fall + raise;
+
+      const beginigOfCycle = Math.floor(now / duration) * duration;
+      const since = now - beginigOfCycle;
+      const distance = max - min;
+
+      if (since < raise) {
+        const speed = distance / raise;
+        const distanceCovered = since * speed;
+        return min + distanceCovered;
+      } else {
+        const speed = distance / fall;
+        const distanceCovered = (since - raise) * speed;
+        return max - distanceCovered;
+      }
     },
     subscribe(cb) {
       subscribers.push(cb);
@@ -152,11 +176,13 @@ export function connect(
   );
 
   return {
-    get(now) {
-      return controls.get(element.el.value)?.get(now) ?? 0;
+    get(now, i) {
+      return controls.get(element.el.value)?.get(now, i) ?? 0;
     },
     subscribe() {},
-    cycle() {},
+    cycle() {
+      controls.get(element.el.value)?.cycle();
+    },
   };
 }
 

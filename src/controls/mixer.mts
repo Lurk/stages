@@ -45,17 +45,17 @@ export function mixer(ctrl: Controls, id: string) {
       container,
     });
 
-    const sum = (now: number) =>
-      (input1.get(now) || 0) +
-      (input2.get(now) || 0) +
-      (input3.get(now) || 0) +
-      (input4.get(now) || 0) +
-      (input5.get(now) || 0);
+    const sum = (now: number, i: number) =>
+      (input1.get(now, i) || 0) +
+      (input2.get(now, i) || 0) +
+      (input3.get(now, i) || 0) +
+      (input4.get(now, i) || 0) +
+      (input5.get(now, i) || 0);
 
     return {
-      get(now: number) {
+      get(now, i) {
         const m = mode.value;
-        let val = sum(now);
+        let val = sum(now, i);
         if (m === "avg") {
           val /= 5;
         }
