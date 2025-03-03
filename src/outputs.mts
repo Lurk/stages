@@ -33,8 +33,8 @@ export function initOutputs(ctrl: Controls): Outputs {
         }),
         resolution: connect(ctrl, "", {
           container,
-          id: `${name}_resolution_input`,
-          label: "res",
+          id: `${name}_sr_input`,
+          label: "sr",
         }),
       });
     },
