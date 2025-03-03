@@ -4,6 +4,7 @@ import { createControlCreator } from "./controls/controlCreator.mjs";
 import { oscillatorWithConnectInput } from "./controls/oscillator.mjs";
 import { sliderWithNumericInputs } from "./controls/slider.mjs";
 import { controls } from "./controls.mjs";
+import { height, monotonic, width, zero } from "./controls/defaults.mjs";
 
 const ctx = initFullScreenCanvas({
   id: "canvas",
@@ -15,13 +16,14 @@ const { outputs, add } = initOutputs(ctrl);
 
 createControlCreator(ctrl, add);
 add("first");
+width(ctrl, ctx);
+height(ctrl, ctx);
+zero(ctrl);
+monotonic(ctrl);
 
 oscillatorWithConnectInput(ctrl, "y");
-sliderWithNumericInputs(ctrl, "res");
 oscillatorWithConnectInput(ctrl, "x");
-sliderWithNumericInputs(ctrl, "min");
-sliderWithNumericInputs(ctrl, "ymax");
-sliderWithNumericInputs(ctrl, "xmax");
+sliderWithNumericInputs(ctrl, "sr");
 sliderWithNumericInputs(ctrl, "t1");
 sliderWithNumericInputs(ctrl, "t2");
 
