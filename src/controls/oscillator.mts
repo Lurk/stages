@@ -1,5 +1,5 @@
 import { Controls } from "../controls.mjs";
-import { wave, connect } from "../stages.mjs";
+import { wave, connect } from "../value.mjs";
 import { renderControl } from "../utils.mjs";
 
 export function oscillatorWithConnectInput(ctrl: Controls, id: string) {
@@ -31,16 +31,10 @@ export function oscillatorWithConnectInput(ctrl: Controls, id: string) {
       }),
     });
 
-    return {
-      get(now, i) {
-        const val = w.get(now, i);
-        showValue(val);
-        return val;
-      },
-      subscribe() {},
-      cycle() {
-        w.cycle();
-      },
+    return (now, i) => {
+      const val = w(now, i);
+      showValue(val);
+      return val;
     };
   });
 }

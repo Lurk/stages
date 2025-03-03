@@ -41,14 +41,10 @@ export function sliderWithNumericInputs(ctrl: Controls, name: string) {
       s.max = to.value;
     });
 
-    return {
-      get() {
-        const val = s.valueAsNumber;
-        showValue(val);
-        return val;
-      },
-      subscribe() {},
-      cycle() {},
+    return () => {
+      const val = s.valueAsNumber;
+      showValue(val);
+      return val;
     };
   });
 }

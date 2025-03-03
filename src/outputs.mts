@@ -1,8 +1,8 @@
 import { Controls } from "./controls.mjs";
-import { connect, Stage } from "./stages.mjs";
+import { connect, Value } from "./value.mjs";
 import { renderControl } from "./utils.mjs";
 
-type Output = { y: Stage; x: Stage; resolution: Stage };
+type Output = { y: Value; x: Value; resolution: Value };
 
 type Outputs = {
   outputs: Map<number, Output>;

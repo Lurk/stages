@@ -1,5 +1,5 @@
 import { Controls } from "../controls.mjs";
-import { connect } from "../stages.mjs";
+import { connect } from "../value.mjs";
 import { renderControl, renderSelectInputTo } from "../utils.mjs";
 
 export function mixer(ctrl: Controls, id: string) {
@@ -46,24 +46,20 @@ export function mixer(ctrl: Controls, id: string) {
     });
 
     const sum = (now: number, i: number) =>
-      (input1.get(now, i) || 0) +
-      (input2.get(now, i) || 0) +
-      (input3.get(now, i) || 0) +
-      (input4.get(now, i) || 0) +
-      (input5.get(now, i) || 0);
+      (input1(now, i) || 0) +
+      (input2(now, i) || 0) +
+      (input3(now, i) || 0) +
+      (input4(now, i) || 0) +
+      (input5(now, i) || 0);
 
-    return {
-      get(now, i) {
-        const m = mode.value;
-        let val = sum(now, i);
-        if (m === "avg") {
-          val /= 5;
-        }
-        showValue(val);
-        return val;
-      },
-      subscribe() {},
-      cycle() {},
+    return (now, i) => {
+      const m = mode.value;
+      let val = sum(now, i);
+      if (m === "avg") {
+        val /= 5;
+      }
+      showValue(val);
+      return val;
     };
   });
 }

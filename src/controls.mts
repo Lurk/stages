@@ -1,18 +1,18 @@
-import { Stage } from "./stages.mjs";
+import { Value } from "./value.mjs";
 
 export type OnRegisterCallback = (keys: string[]) => void;
 
 export type Controls = {
-  register(key: string, stage: () => Stage): void;
+  register(key: string, stage: () => Value): void;
   unregister(key: string): void;
-  get(key: string): Stage | undefined;
+  get(key: string): Value | undefined;
   onChange(fn: OnRegisterCallback): void;
   unsubscribe(fn: OnRegisterCallback): void;
   keys(): string[];
 };
 
 export function controls(): Controls {
-  const map: Map<string, Stage> = new Map();
+  const map: Map<string, Value> = new Map();
   const onRegisterCallbacks: OnRegisterCallback[] = [];
   return {
     register(key, stage) {

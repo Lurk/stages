@@ -1,4 +1,4 @@
-import { buferlessPath, initFullScreenCanvas, path } from "./canvas.mjs";
+import { path, initFullScreenCanvas } from "./canvas.mjs";
 import { initOutputs } from "./outputs.mjs";
 import { createControlCreator } from "./controls/controlCreator.mjs";
 import { oscillatorWithConnectInput } from "./controls/oscillator.mjs";
@@ -32,11 +32,11 @@ function a() {
     ctx.strokeStyle = "#cccccc";
     ctx.lineWidth = 1;
     for (const { y, x, resolution } of outputs.values()) {
-      buferlessPath({
+      path({
         ctx,
         now,
         len: ctx.canvas.width,
-        resolution: resolution.get(now, 0),
+        resolution: resolution(now, 0),
         x,
         y,
       });

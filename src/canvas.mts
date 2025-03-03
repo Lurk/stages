@@ -1,4 +1,4 @@
-import { Stage } from "./stages.mjs";
+import { Value } from "./value.mjs";
 import { assert } from "./utils.mjs";
 
 type InitFullScreenCanvasArgs = {
@@ -68,45 +68,23 @@ export function createMeter({
   };
 }
 
-export type PathOpts = {
-  buffer: number[];
-  ctx: CanvasRenderingContext2D;
-  y?: (y: number) => number;
-  x?: (x: number) => number;
-};
-
-export function path(opts: PathOpts) {
-  opts.buffer.forEach((y, x) => {
-    if (x === 0) {
-      opts.ctx.moveTo(opts.x?.(x) || x, opts.y?.(y) || y);
-    } else {
-      opts.ctx.lineTo(opts.x?.(x) || x, opts.y?.(y) || y);
-    }
-  });
-  opts.ctx.stroke();
-}
-
-export type BufferlessPathOptions = {
+export type PathOptions = {
   len: number;
   resolution: number;
   now: number;
   ctx: CanvasRenderingContext2D;
-  x: Stage;
-  y: Stage;
+  x: Value;
+  y: Value;
 };
 
-export function buferlessPath(opts: BufferlessPathOptions) {
+export function path(opts: PathOptions) {
   const now = Math.floor(opts.now / opts.resolution) * opts.resolution;
-  //console.log(now);
-  opts.ctx.moveTo(opts.x.get(now, 0), opts.y.get(now, 0));
+  opts.ctx.moveTo(opts.x(now, 0), opts.y(now, 0));
   const arr = [];
   for (let i = 1; i < opts.len; i++) {
     let foo = now + i * opts.resolution;
-    arr.push(opts.y.get(foo, i));
-    opts.ctx.lineTo(opts.x.get(foo, i), opts.y.get(foo, i));
+    arr.push(opts.y(foo, i));
+    opts.ctx.lineTo(opts.x(foo, i), opts.y(foo, i));
   }
-  //opts.y.cycle();
-  //opts.x.cycle();
-  //console.log(arr);
   opts.ctx.stroke();
 }
