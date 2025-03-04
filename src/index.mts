@@ -5,6 +5,7 @@ import { oscillatorWithConnectInput } from "./controls/oscillator.mjs";
 import { sliderWithNumericInputs } from "./controls/slider.mjs";
 import { controls } from "./controls.mjs";
 import { height, monotonic, width, zero } from "./controls/defaults.mjs";
+import { random } from "./controls/random.mjs";
 
 document.getElementById("fullscreen")?.addEventListener("click", (e) => {
   e.preventDefault();
@@ -34,6 +35,7 @@ sliderWithNumericInputs(ctrl, "sr");
 sliderWithNumericInputs(ctrl, "t1");
 sliderWithNumericInputs(ctrl, "t2");
 sliderWithNumericInputs(ctrl, "dots");
+random(ctrl, "random");
 
 function a() {
   requestAnimationFrame((now) => {

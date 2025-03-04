@@ -3,6 +3,7 @@ import { mixer } from "./mixer.mjs";
 import { sliderWithNumericInputs } from "./slider.mjs";
 import { Controls } from "../controls.mjs";
 import { renderControl, renderSelectInputTo } from "../utils.mjs";
+import { random } from "./random.mjs";
 
 export function createControlCreator(
   ctrl: Controls,
@@ -17,7 +18,7 @@ export function createControlCreator(
 
   const { el: controlTypeSelect } = renderSelectInputTo({
     container,
-    options: ["slider", "oscillator", "mixer", "output"],
+    options: ["slider", "oscillator", "mixer", "output", "random"],
     id: "control-creation-select",
     label: "type:",
   });
@@ -48,6 +49,9 @@ export function createControlCreator(
         break;
       case "output":
         add(name);
+        break;
+      case "random":
+        random(ctrl, name);
         break;
     }
 
