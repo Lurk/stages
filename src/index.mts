@@ -33,6 +33,7 @@ oscillatorWithConnectInput(ctrl, "x");
 sliderWithNumericInputs(ctrl, "sr");
 sliderWithNumericInputs(ctrl, "t1");
 sliderWithNumericInputs(ctrl, "t2");
+sliderWithNumericInputs(ctrl, "dots");
 
 function a() {
   requestAnimationFrame((now) => {
@@ -40,11 +41,11 @@ function a() {
     ctx.beginPath();
     ctx.strokeStyle = "#cccccc";
     ctx.lineWidth = 1;
-    for (const { y, x, resolution } of outputs.values()) {
+    for (const { y, x, resolution, dots: len } of outputs.values()) {
       path({
         ctx,
         now,
-        len: ctx.canvas.width,
+        len: len(now, 0),
         resolution: resolution(now, 0),
         x,
         y,

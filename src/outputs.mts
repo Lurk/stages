@@ -2,7 +2,7 @@ import { Controls } from "./controls.mjs";
 import { connect, Value } from "./value.mjs";
 import { renderControl } from "./utils.mjs";
 
-type Output = { y: Value; x: Value; resolution: Value };
+type Output = { y: Value; x: Value; resolution: Value; dots: Value };
 
 type Outputs = {
   outputs: Map<number, Output>;
@@ -35,6 +35,11 @@ export function initOutputs(ctrl: Controls): Outputs {
           container,
           id: `${name}_sr_input`,
           label: "sr",
+        }),
+        dots: connect(ctrl, "", {
+          container,
+          id: `${name}_dots_input`,
+          label: "dots",
         }),
       });
     },
