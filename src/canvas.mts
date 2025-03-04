@@ -16,6 +16,7 @@ export function initFullScreenCanvas({
 
   const canvasElement = document.getElementById(id);
   assert(canvasElement, `canvas with id='${id}' must be present`);
+  canvasElement.style.backgroundColor = backgroundCollor;
   assert(
     canvasElement instanceof HTMLCanvasElement,
     `element with id='${id}' found but it is not canvas`,
