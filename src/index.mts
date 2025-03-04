@@ -6,6 +6,13 @@ import { sliderWithNumericInputs } from "./controls/slider.mjs";
 import { controls } from "./controls.mjs";
 import { height, monotonic, width, zero } from "./controls/defaults.mjs";
 
+document.getElementById("fullscreen")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  if (e.target instanceof HTMLElement) {
+    e.target.requestFullscreen();
+  }
+});
+
 const ctx = initFullScreenCanvas({
   id: "canvas",
   backgroundCollor: "#403f3f",
