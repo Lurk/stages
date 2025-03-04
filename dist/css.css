@@ -48,6 +48,12 @@ input[type=text] {
 	height: 70vh;
 }
 
+@media (display-mode: fullscreen) {
+	#fullscreen {
+		height: 100vh;
+	}
+}
+
 #controls {
 	display: flex;
 	gap: 10px;
