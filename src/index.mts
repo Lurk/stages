@@ -23,14 +23,15 @@ const ctrl = controls();
 const { outputs, add } = initOutputs(ctrl);
 
 createControlCreator(ctrl, add, animate);
+
 add("first");
 width(ctrl, ctx);
 height(ctrl, ctx);
 zero(ctrl);
 monotonic(ctrl);
 
-oscillatorWithConnectInput(ctrl, "y");
 oscillatorWithConnectInput(ctrl, "x");
+oscillatorWithConnectInput(ctrl, "y");
 sliderWithNumericInputs(ctrl, "sr");
 sliderWithNumericInputs(ctrl, "t1");
 sliderWithNumericInputs(ctrl, "t2");
@@ -38,6 +39,7 @@ sliderWithNumericInputs(ctrl, "dots");
 random(ctrl, "random");
 
 let isRunning = true;
+
 function animate() {
   requestAnimationFrame((now) => {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -61,6 +63,7 @@ function animate() {
 }
 
 animate();
+
 window.onerror = (e) => {
   alert(e);
   isRunning = false;

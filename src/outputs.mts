@@ -21,15 +21,15 @@ export function initOutputs(ctrl: Controls): Outputs {
       });
 
       outputs.set(id, {
-        y: connect(ctrl, "", {
-          container,
-          id: `${name}_y_input`,
-          label: "y",
-        }),
         x: connect(ctrl, "", {
           container,
           id: `${name}_x_input`,
           label: "x",
+        }),
+        y: connect(ctrl, "", {
+          container,
+          id: `${name}_y_input`,
+          label: "y",
         }),
         resolution: connect(ctrl, "", {
           container,
