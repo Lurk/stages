@@ -22,7 +22,7 @@ const ctx = initFullScreenCanvas({
 const ctrl = controls();
 const { outputs, add } = initOutputs(ctrl);
 
-createControlCreator(ctrl, add);
+createControlCreator(ctrl, add, animate);
 add("first");
 width(ctrl, ctx);
 height(ctrl, ctx);
@@ -37,7 +37,8 @@ sliderWithNumericInputs(ctrl, "t2");
 sliderWithNumericInputs(ctrl, "dots");
 random(ctrl, "random");
 
-function a() {
+let isRunning = true;
+function animate() {
   requestAnimationFrame((now) => {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.beginPath();
@@ -54,8 +55,13 @@ function a() {
       });
     }
 
-    a();
+    isRunning = true;
+    animate();
   });
 }
 
-a();
+animate();
+window.onerror = (e) => {
+  alert(e);
+  isRunning = false;
+};

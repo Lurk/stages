@@ -8,6 +8,7 @@ import { random } from "./random.mjs";
 export function createControlCreator(
   ctrl: Controls,
   add: (name: string) => void,
+  run: () => void,
 ) {
   const { container } = renderControl("control");
 
@@ -57,4 +58,9 @@ export function createControlCreator(
 
     nameInput.value = "";
   });
+
+  const runButton = document.createElement("button");
+  runButton.textContent = "Run";
+  container.appendChild(runButton);
+  runButton.addEventListener("click", run);
 }
