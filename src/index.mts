@@ -28,31 +28,65 @@ height(ctrl, ctx);
 zero(ctrl);
 monotonic(ctrl);
 
-sliderWithNumericInputs({ ctrl, name: "sr", min: 0.01, max: 10, value: 1 });
-sliderWithNumericInputs({ ctrl, name: "t1", min: 0.01, max: 100, value: 37 });
-sliderWithNumericInputs({ ctrl, name: "t2", min: 0.01, max: 100, value: 38 });
 sliderWithNumericInputs({
   ctrl,
-  name: "vertices",
-  min: 100,
-  max: 2000,
-  value: 1000,
+  name: "x_t",
+  min: 0.0001,
+  max: 1,
+  value: 0.4706,
 });
 oscillatorWithConnectInput({
   ctrl,
   name: "x",
-  min: "zero",
   max: "width",
-  raise: "t2",
-  fall: "t2",
+  min: "zero",
+  raise: "x_t",
+  fall: "x_t",
+});
+sliderWithNumericInputs({
+  ctrl,
+  name: "lfo_min",
+  max: 0.7499,
+  min: 0.7494,
+  value: 0.7499,
+});
+sliderWithNumericInputs({
+  ctrl,
+  name: "lfo_max",
+  max: 0.75,
+  min: 0.7499,
+  value: 0.74997,
+});
+sliderWithNumericInputs({
+  ctrl,
+  name: "lfo_t",
+  max: 100_000,
+  min: 2,
+  value: 100_000,
+});
+oscillatorWithConnectInput({
+  ctrl,
+  name: "lfo",
+  max: "lfo_max",
+  min: "lfo_min",
+  raise: "lfo_t",
+  fall: "lfo_t",
 });
 oscillatorWithConnectInput({
   ctrl,
   name: "y",
-  min: "zero",
   max: "height",
-  raise: "t1",
-  fall: "t1",
+  min: "zero",
+  raise: "lfo",
+  fall: "lfo",
+});
+sliderWithNumericInputs({ ctrl, name: "sr", max: 2, min: 0.001, value: 1 });
+sliderWithNumericInputs({
+  ctrl,
+  name: "vertices",
+  max: 2000,
+  min: 100,
+  value: 650,
 });
 add({ name: "first", x: "x", y: "y", resolution: "sr", vertices: "vertices" });
 

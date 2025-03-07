@@ -19,6 +19,8 @@ export function sliderWithNumericInputs(args: SliderArgs) {
       args.ctrl.unregister(args.name),
     );
 
+    showValue(args.value ?? 50);
+
     const to = renderNumberInputTo({
       id: `${args.name}_to`,
       label: "to",
@@ -49,6 +51,8 @@ export function sliderWithNumericInputs(args: SliderArgs) {
     to.addEventListener("change", () => {
       s.max = to.value;
     });
+
+    s.value = String(args.value ?? 50);
 
     return () => {
       const val = s.valueAsNumber;

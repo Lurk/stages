@@ -16,7 +16,7 @@ export type RenderRangeArgs = {
 
 export function renderRangeTo(args: RenderRangeArgs): HTMLInputElement {
   const min = args.min ?? 0;
-  const step = args.step ?? 0.01;
+  const step = args.step ?? 0.00001;
   const max = args.max ?? 100;
 
   const el = document.createElement("input");
@@ -28,10 +28,10 @@ export function renderRangeTo(args: RenderRangeArgs): HTMLInputElement {
   label.htmlFor = args.id;
   label.innerText = args.label ?? args.id;
 
+  el.type = "range";
   el.min = String(min);
   el.max = String(max);
   el.value = String(args.value ?? min);
-  el.type = "range";
   el.step = String(step);
   el.id = args.id;
 
