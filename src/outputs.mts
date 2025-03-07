@@ -3,10 +3,17 @@ import { connect, Value } from "./value.mjs";
 import { renderControl } from "./utils.mjs";
 
 type Output = { y: Value; x: Value; resolution: Value; dots: Value };
+export type AddOutputArgs = {
+  name: string;
+  x?: string;
+  y?: string;
+  resolution?: string;
+  dots?: string;
+};
 
 type Outputs = {
   outputs: Map<number, Output>;
-  add: (name: string) => void;
+  add: (args: AddOutputArgs) => void;
 };
 
 export function initOutputs(ctrl: Controls): Outputs {
@@ -14,31 +21,35 @@ export function initOutputs(ctrl: Controls): Outputs {
 
   return {
     outputs,
-    add(name) {
+    add(args: AddOutputArgs) {
       const id = outputs.size;
-      const { container } = renderControl(name, () => {
+      const { container } = renderControl(args.name, () => {
         outputs.delete(id);
       });
 
       outputs.set(id, {
         x: connect(ctrl, "", {
           container,
-          id: `${name}_x_input`,
+          id: `${args.name}_x_input`,
+          selected: args.x,
           label: "x",
         }),
         y: connect(ctrl, "", {
           container,
-          id: `${name}_y_input`,
+          id: `${args.name}_y_input`,
+          selected: args.y,
           label: "y",
         }),
         resolution: connect(ctrl, "", {
           container,
-          id: `${name}_sr_input`,
+          id: `${args.name}_sr_input`,
+          selected: args.resolution,
           label: "sr",
         }),
         dots: connect(ctrl, "", {
           container,
-          id: `${name}_dots_input`,
+          id: `${args.name}_dots_input`,
+          selected: args.dots,
           label: "dots",
         }),
       });

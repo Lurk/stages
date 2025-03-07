@@ -4,10 +4,11 @@ import { sliderWithNumericInputs } from "./slider.mjs";
 import { Controls } from "../controls.mjs";
 import { renderControl, renderSelectInputTo } from "../utils.mjs";
 import { random } from "./random.mjs";
+import { AddOutputArgs } from "../outputs.mjs";
 
 export function createControlCreator(
   ctrl: Controls,
-  add: (name: string) => void,
+  add: (args: AddOutputArgs) => void,
   run: () => void,
 ) {
   const { container } = renderControl("control");
@@ -40,16 +41,16 @@ export function createControlCreator(
 
     switch (type) {
       case "slider":
-        sliderWithNumericInputs(ctrl, name);
+        sliderWithNumericInputs({ ctrl, name });
         break;
       case "oscillator":
-        oscillatorWithConnectInput(ctrl, name);
+        oscillatorWithConnectInput({ ctrl, name });
         break;
       case "mixer":
         mixer(ctrl, name);
         break;
       case "output":
-        add(name);
+        add({ name });
         break;
       case "random":
         random(ctrl, name);

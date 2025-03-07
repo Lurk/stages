@@ -97,6 +97,7 @@ export function renderNumberInputTo(
 
 export type RenderSelectInputArgs = {
   options: string[];
+  selected?: string;
   id: string;
   label?: string;
   container: HTMLDivElement;
@@ -117,6 +118,7 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
     option.value = key;
     option.innerText = key;
     option.id = `${args.id}_${key}`;
+    option.selected = key === args.selected;
     el.options.add(option);
   });
 
@@ -168,7 +170,7 @@ export function renderControl(
   let lastVal = 0;
   let lastTime = Date.now();
 
-  value.innerText = lastVal.toPrecision(4);
+  value.innerText = lastVal.toPrecision(6);
 
   if (onremove) {
     const remove = document.createElement("button");
@@ -194,7 +196,7 @@ export function renderControl(
     container,
     showValue: (val) => {
       if (lastVal !== val && Date.now() - lastTime > 100) {
-        value.innerText = val.toPrecision(4);
+        value.innerText = val.toPrecision(6);
         lastVal = val;
         lastTime = Date.now();
       }

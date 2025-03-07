@@ -5,32 +5,41 @@ import {
   renderRangeTo,
 } from "../utils.mjs";
 
-export function sliderWithNumericInputs(ctrl: Controls, name: string) {
-  ctrl.register(name, () => {
-    const { container, showValue } = renderControl(name, () =>
-      ctrl.unregister(name),
+export type SliderArgs = {
+  min?: number;
+  max?: number;
+  value?: number;
+  name: string;
+  ctrl: Controls;
+};
+
+export function sliderWithNumericInputs(args: SliderArgs) {
+  args.ctrl.register(args.name, () => {
+    const { container, showValue } = renderControl(args.name, () =>
+      args.ctrl.unregister(args.name),
     );
 
     const to = renderNumberInputTo({
-      id: `${name}_to`,
+      id: `${args.name}_to`,
       label: "to",
       container,
-      value: 500,
+      value: args.max ?? 500,
     });
 
     const s = renderRangeTo({
-      id: name,
-      max: 500,
-      value: 50,
+      id: args.name,
+      max: args.max ?? 500,
+      min: args.min ?? 0,
+      value: args.value ?? 50,
       container,
       label: "",
     });
 
     const from = renderNumberInputTo({
-      id: `${name}_from`,
+      id: `${args.name}_from`,
       label: "from",
       container,
-      value: 0,
+      value: args.min ?? 0,
     });
 
     from.addEventListener("change", () => {
