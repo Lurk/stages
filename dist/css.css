@@ -90,7 +90,7 @@ input[type=text] {
 
 .input {
 	display: grid;
-	grid-template-columns: 1fr 2fr;
+	grid-template-columns: auto auto;
 	grid-column-gap: 5px;
 	grid-row-gap: 0px;
 }

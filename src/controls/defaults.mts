@@ -13,5 +13,5 @@ export function zero(ctrl: Controls) {
 }
 
 export function monotonic(ctrl: Controls) {
-  ctrl.register("monotonic", () => (now, i) => i);
+  ctrl.register("i", () => (now, i) => i);
 }

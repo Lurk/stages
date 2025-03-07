@@ -33,7 +33,7 @@ sliderWithNumericInputs({ ctrl, name: "t1", min: 0.01, max: 100, value: 37 });
 sliderWithNumericInputs({ ctrl, name: "t2", min: 0.01, max: 100, value: 38 });
 sliderWithNumericInputs({
   ctrl,
-  name: "dots",
+  name: "vertices",
   min: 100,
   max: 2000,
   value: 1000,
@@ -54,7 +54,7 @@ oscillatorWithConnectInput({
   raise: "t1",
   fall: "t1",
 });
-add({ name: "first", x: "x", y: "y", resolution: "sr", dots: "dots" });
+add({ name: "first", x: "x", y: "y", resolution: "sr", vertices: "vertices" });
 
 let isRunning = true;
 
@@ -64,11 +64,11 @@ function animate() {
     ctx.beginPath();
     ctx.strokeStyle = "#cccccc";
     ctx.lineWidth = 1;
-    for (const { y, x, resolution, dots: len } of outputs.values()) {
+    for (const { y, x, resolution, vertices } of outputs.values()) {
       path({
         ctx,
         now,
-        len: len(now, 0),
+        len: vertices(now, 0),
         resolution: resolution(now, 0),
         x,
         y,
