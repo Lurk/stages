@@ -10,13 +10,12 @@ export type SliderArgs = {
   max?: number;
   value?: number;
   name: string;
-  ctrl: Controls;
 };
 
-export function sliderWithNumericInputs(args: SliderArgs) {
-  args.ctrl.register(args.name, () => {
+export function sliderWithNumericInputs(ctrl: Controls, args: SliderArgs) {
+  ctrl.register(args.name, () => {
     const { container, showValue } = renderControl(args.name, () =>
-      args.ctrl.unregister(args.name),
+      ctrl.unregister(args.name),
     );
 
     showValue(args.value ?? 50);

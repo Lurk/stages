@@ -2,12 +2,12 @@ import { Controls } from "./controls.mjs";
 import { connect, Value } from "./value.mjs";
 import { renderControl } from "./utils.mjs";
 
-type Output = { y: Value; x: Value; resolution: Value; vertices: Value };
+type Output = { y: Value; x: Value; sr: Value; vertices: Value };
 export type AddOutputArgs = {
   name: string;
   x?: string;
   y?: string;
-  resolution?: string;
+  sr?: string;
   vertices?: string;
 };
 
@@ -40,10 +40,10 @@ export function initOutputs(ctrl: Controls): Outputs {
           selected: args.y,
           label: "y",
         }),
-        resolution: connect(ctrl, "", {
+        sr: connect(ctrl, "", {
           container,
           id: `${args.name}_sr_input`,
-          selected: args.resolution,
+          selected: args.sr,
           label: "sr",
         }),
         vertices: connect(ctrl, "", {

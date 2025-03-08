@@ -2,19 +2,23 @@ import { Controls } from "../controls.mjs";
 import { renderControl } from "../utils.mjs";
 import { connect } from "../value.mjs";
 
-export function random(ctrl: Controls, id: string) {
-  ctrl.register(id, () => {
-    const { container, showValue } = renderControl(id, () =>
-      ctrl.unregister(id),
+export type RandomArgs = {
+  name: string;
+};
+
+export function random(ctrl: Controls, args: RandomArgs) {
+  ctrl.register(args.name, () => {
+    const { container, showValue } = renderControl(args.name, () =>
+      ctrl.unregister(args.name),
     );
 
-    const min = connect(ctrl, id, {
-      id: `${id}_min`,
+    const min = connect(ctrl, args.name, {
+      id: `${args.name}_min`,
       label: "min",
       container,
     });
-    const max = connect(ctrl, id, {
-      id: `${id}_max`,
+    const max = connect(ctrl, args.name, {
+      id: `${args.name}_max`,
       label: "max",
       container,
     });
