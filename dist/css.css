@@ -21,11 +21,27 @@ body {
 	color: #cccccc;
 }
 
+select,
+input,
+button {
+	appearance: none;
+	padding: 0px 5px;
+	margin: 0;
+	cursor: inherit;
+	line-height: inherit;
+	background-color: var(--medium);
+	color: var(--extra-dark);
+	border-radius: var(--border-radius);
+	border: 1px solid var(--dark);
+}
+
 input[type=range] {
 	writing-mode: vertical-lr;
 	direction: rtl;
 	vertical-align: middle;
 	height: 110px;
+	padding: 0;
+	width: 2px;
 }
 
 input[type=number] {
@@ -35,6 +51,7 @@ input[type=number] {
 input[type=text] {
 	width: 125px;
 }
+
 
 #canvas {
 	height: 100%;
