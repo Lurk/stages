@@ -1,9 +1,10 @@
-import { Controls } from "../controls.mjs";
+import { controls, Controls } from "../controls.mjs";
 import {
   renderControl,
   renderNumberInputTo,
   renderRangeTo,
 } from "../utils.mjs";
+import { Updater } from "./controlCreator.mjs";
 
 export type SliderArgs = {
   min?: number;
@@ -12,7 +13,10 @@ export type SliderArgs = {
   name: string;
 };
 
-export function sliderWithNumericInputs(ctrl: Controls, args: SliderArgs) {
+export function sliderWithNumericInputs(
+  ctrl: Controls,
+  args: SliderArgs,
+): Updater {
   const { container, showValue } = renderControl(args.name, () =>
     ctrl.unregister(args.name),
   );
@@ -57,4 +61,18 @@ export function sliderWithNumericInputs(ctrl: Controls, args: SliderArgs) {
     showValue(val);
     return val;
   });
+
+  return (control) => {
+    if (control.type !== "slider") {
+      throw new Error("Invalid control type");
+    }
+
+    if (control.args.name !== args.name) {
+      throw new Error("Invalid control name");
+    }
+
+    s.min = String(control.args.min) ?? s.min;
+    s.max = String(control.args.max) ?? s.max;
+    s.value = String(control.args.value ?? s.value);
+  };
 }

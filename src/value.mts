@@ -49,7 +49,7 @@ export function connect(
   controls: Controls,
   omit: string,
   args: Omit<RenderSelectInputArgs, "options">,
-): { value: Value } {
+): { value: Value; update: (val?: string) => void } {
   const element = renderSelectInputTo({ ...args, options: controls.keys() });
   // TODO this is definitely leaks memory. When deleting the control with connected input this cb is not deleted.
   controls.onChange((keys) => {
@@ -64,6 +64,11 @@ export function connect(
   return {
     value: (now, i) => {
       return controls.get(element.el.value)?.(now, i) ?? 0;
+    },
+    update: (val) => {
+      if (val) {
+        element.el.value = val;
+      }
     },
   };
 }

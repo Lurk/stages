@@ -42,38 +42,37 @@ export function controlTypeGuard(t: unknown): t is CreatorArgs["type"] {
   );
 }
 
+export type Updater = (control: CreatorArgs) => void;
+
 const creator = (
   ctrl: Controls,
-  addOutput: (args: AddOutputArgs) => void,
+  addOutput: (args: AddOutputArgs) => Updater,
   { type, args }: CreatorArgs,
-) => {
+): Updater => {
   if (!args.name) {
     alert("Please enter a name");
-    return;
+    throw new Error("Please enter a name");
   }
 
   switch (type) {
     case "slider":
-      sliderWithNumericInputs(ctrl, args);
-      break;
+      return sliderWithNumericInputs(ctrl, args);
     case "oscillator":
-      oscillatorWithConnectInput(ctrl, args);
-      break;
+      return oscillatorWithConnectInput(ctrl, args);
     case "mixer":
-      mixer(ctrl, args);
-      break;
+      return mixer(ctrl, args);
     case "output":
-      addOutput(args);
-      break;
+      return addOutput(args);
     case "random":
-      random(ctrl, args);
-      break;
+      return random(ctrl, args);
+    default:
+      throw new Error("Invalid control type");
   }
 };
 
 export type InitControlsArgs = {
   ctrl: Controls;
-  addOutput: (args: AddOutputArgs) => void;
+  addOutput: (args: AddOutputArgs) => Updater;
   animate: () => void;
   controls: CreatorArgs[];
 };
@@ -118,5 +117,14 @@ export function initControls({
   container.appendChild(runButton);
   runButton.addEventListener("click", animate);
 
-  controls.forEach((control) => creator(ctrl, addOutput, control));
+  const u = controls.map((control) => ({
+    updater: creator(ctrl, addOutput, control),
+    control,
+  }));
+
+  // TODO: come up with a better way to do this.
+  // Because controls can be in random order, first, we need to create them all. And only then connect.
+  setTimeout(() => {
+    u.forEach(({ updater, control }) => updater(control));
+  }, 10);
 }

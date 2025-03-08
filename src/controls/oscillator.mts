@@ -1,6 +1,7 @@
 import { Controls } from "../controls.mjs";
 import { wave, connect } from "../value.mjs";
 import { renderControl } from "../utils.mjs";
+import { Updater } from "./controlCreator.mjs";
 
 export type OscillatorArgs = {
   name: string;
@@ -13,30 +14,30 @@ export type OscillatorArgs = {
 export function oscillatorWithConnectInput(
   ctrl: Controls,
   args: OscillatorArgs,
-) {
+): Updater {
   const { container, showValue } = renderControl(args.name, () =>
     ctrl.unregister(args.name),
   );
 
-  const { value: min } = connect(ctrl, args.name, {
+  const { value: min, update: updateMin } = connect(ctrl, args.name, {
     id: `${args.name}_min`,
     label: "min",
     selected: args.min,
     container,
   });
-  const { value: max } = connect(ctrl, args.name, {
+  const { value: max, update: updateMax } = connect(ctrl, args.name, {
     id: `${args.name}_max`,
     label: "max",
     selected: args.max,
     container,
   });
-  const { value: raise } = connect(ctrl, args.name, {
+  const { value: raise, update: updateRaise } = connect(ctrl, args.name, {
     id: `${args.name}_raise`,
     label: "raise",
     selected: args.raise,
     container,
   });
-  const { value: fall } = connect(ctrl, args.name, {
+  const { value: fall, update: updateFall } = connect(ctrl, args.name, {
     id: `${args.name}_fall`,
     label: "fall",
     selected: args.fall,
@@ -55,4 +56,19 @@ export function oscillatorWithConnectInput(
     showValue(val);
     return val;
   });
+
+  return (container) => {
+    if (container.type !== "oscillator") {
+      throw new Error("Invalid container type");
+    }
+
+    if (container.args.name !== args.name) {
+      throw new Error("Invalid container name");
+    }
+
+    updateMin(container.args.min);
+    updateMax(container.args.max);
+    updateRaise(container.args.raise);
+    updateFall(container.args.fall);
+  };
 }

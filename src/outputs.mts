@@ -1,6 +1,7 @@
 import { Controls } from "./controls.mjs";
 import { connect, Value } from "./value.mjs";
 import { renderControl } from "./utils.mjs";
+import { Updater } from "./controls/controlCreator.mjs";
 
 type Output = { y: Value; x: Value; sr: Value; vertices: Value };
 export type AddOutputArgs = {
@@ -13,7 +14,7 @@ export type AddOutputArgs = {
 
 type Outputs = {
   outputs: Map<number, Output>;
-  add: (args: AddOutputArgs) => void;
+  add: (args: AddOutputArgs) => Updater;
 };
 
 export function initOutputs(ctrl: Controls): Outputs {
@@ -21,31 +22,31 @@ export function initOutputs(ctrl: Controls): Outputs {
 
   return {
     outputs,
-    add(args: AddOutputArgs) {
+    add(args) {
       const id = outputs.size;
       const { container } = renderControl(args.name, () => {
         outputs.delete(id);
       });
 
-      const { value: x } = connect(ctrl, "", {
+      const { value: x, update: updateX } = connect(ctrl, "", {
         container,
         id: `${args.name}_x_input`,
         selected: args.x,
         label: "x",
       });
-      const { value: y } = connect(ctrl, "", {
+      const { value: y, update: updateY } = connect(ctrl, "", {
         container,
         id: `${args.name}_y_input`,
         selected: args.y,
         label: "y",
       });
-      const { value: sr } = connect(ctrl, "", {
+      const { value: sr, update: updateSr } = connect(ctrl, "", {
         container,
         id: `${args.name}_sr_input`,
         selected: args.sr,
         label: "sr",
       });
-      const { value: vertices } = connect(ctrl, "", {
+      const { value: vertices, update: updateVertices } = connect(ctrl, "", {
         container,
         id: `${args.name}_dots_input`,
         selected: args.vertices,
@@ -57,6 +58,20 @@ export function initOutputs(ctrl: Controls): Outputs {
         sr,
         vertices,
       });
+      return (container) => {
+        if (container.type !== "output") {
+          throw new Error("Invalid container type");
+        }
+
+        if (container.args.name !== args.name) {
+          throw new Error("Invalid container name");
+        }
+
+        updateX(container.args.x);
+        updateY(container.args.y);
+        updateSr(container.args.sr);
+        updateVertices(container.args.vertices);
+      };
     },
   };
 }
