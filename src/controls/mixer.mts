@@ -18,31 +18,31 @@ export function mixer(ctrl: Controls, args: MixerArgs) {
     container,
   });
 
-  const input1 = connect(ctrl, args.name, {
+  const { value: input1 } = connect(ctrl, args.name, {
     id: `${args.name}_in1`,
     label: `1`,
     container,
   });
 
-  const input2 = connect(ctrl, args.name, {
+  const { value: input2 } = connect(ctrl, args.name, {
     id: `${args.name}_in2`,
     label: `2`,
     container,
   });
 
-  const input3 = connect(ctrl, args.name, {
+  const { value: input3 } = connect(ctrl, args.name, {
     id: `${args.name}_in3`,
     label: `3`,
     container,
   });
 
-  const input4 = connect(ctrl, args.name, {
+  const { value: input4 } = connect(ctrl, args.name, {
     id: `${args.name}_in4`,
     label: `4`,
     container,
   });
 
-  const input5 = connect(ctrl, args.name, {
+  const { value: input5 } = connect(ctrl, args.name, {
     id: `${args.name}_in5`,
     label: `5`,
     container,

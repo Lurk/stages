@@ -18,31 +18,36 @@ export function oscillatorWithConnectInput(
     ctrl.unregister(args.name),
   );
 
+  const { value: min } = connect(ctrl, args.name, {
+    id: `${args.name}_min`,
+    label: "min",
+    selected: args.min,
+    container,
+  });
+  const { value: max } = connect(ctrl, args.name, {
+    id: `${args.name}_max`,
+    label: "max",
+    selected: args.max,
+    container,
+  });
+  const { value: raise } = connect(ctrl, args.name, {
+    id: `${args.name}_raise`,
+    label: "raise",
+    selected: args.raise,
+    container,
+  });
+  const { value: fall } = connect(ctrl, args.name, {
+    id: `${args.name}_fall`,
+    label: "fall",
+    selected: args.fall,
+    container,
+  });
+
   const w = wave({
-    min: connect(ctrl, args.name, {
-      id: `${args.name}_min`,
-      label: "min",
-      selected: args.min,
-      container,
-    }),
-    max: connect(ctrl, args.name, {
-      id: `${args.name}_max`,
-      label: "max",
-      selected: args.max,
-      container,
-    }),
-    raise: connect(ctrl, args.name, {
-      id: `${args.name}_raise`,
-      label: "raise",
-      selected: args.raise,
-      container,
-    }),
-    fall: connect(ctrl, args.name, {
-      id: `${args.name}_fall`,
-      label: "fall",
-      selected: args.fall,
-      container,
-    }),
+    min,
+    max,
+    raise,
+    fall,
   });
 
   ctrl.register(args.name, (now, i) => {

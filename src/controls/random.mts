@@ -11,12 +11,12 @@ export function random(ctrl: Controls, args: RandomArgs) {
     ctrl.unregister(args.name),
   );
 
-  const min = connect(ctrl, args.name, {
+  const { value: min } = connect(ctrl, args.name, {
     id: `${args.name}_min`,
     label: "min",
     container,
   });
-  const max = connect(ctrl, args.name, {
+  const { value: max } = connect(ctrl, args.name, {
     id: `${args.name}_max`,
     label: "max",
     container,

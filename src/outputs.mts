@@ -27,31 +27,35 @@ export function initOutputs(ctrl: Controls): Outputs {
         outputs.delete(id);
       });
 
+      const { value: x } = connect(ctrl, "", {
+        container,
+        id: `${args.name}_x_input`,
+        selected: args.x,
+        label: "x",
+      });
+      const { value: y } = connect(ctrl, "", {
+        container,
+        id: `${args.name}_y_input`,
+        selected: args.y,
+        label: "y",
+      });
+      const { value: sr } = connect(ctrl, "", {
+        container,
+        id: `${args.name}_sr_input`,
+        selected: args.sr,
+        label: "sr",
+      });
+      const { value: vertices } = connect(ctrl, "", {
+        container,
+        id: `${args.name}_dots_input`,
+        selected: args.vertices,
+        label: "vertices",
+      });
       outputs.set(id, {
-        x: connect(ctrl, "", {
-          container,
-          id: `${args.name}_x_input`,
-          selected: args.x,
-          label: "x",
-        }),
-        y: connect(ctrl, "", {
-          container,
-          id: `${args.name}_y_input`,
-          selected: args.y,
-          label: "y",
-        }),
-        sr: connect(ctrl, "", {
-          container,
-          id: `${args.name}_sr_input`,
-          selected: args.sr,
-          label: "sr",
-        }),
-        vertices: connect(ctrl, "", {
-          container,
-          id: `${args.name}_dots_input`,
-          selected: args.vertices,
-          label: "vertices",
-        }),
+        x,
+        y,
+        sr,
+        vertices,
       });
     },
   };
