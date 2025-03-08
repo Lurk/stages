@@ -1,78 +1,100 @@
 import { Controls } from "../controls.mjs";
-import { connect } from "../value.mjs";
-import { renderControl, renderSelectInputTo } from "../utils.mjs";
+import { connect, Value } from "../value.mjs";
+import { renderControl, renderSelectInputTo, spanWithText } from "../utils.mjs";
 import { Updater } from "./controlCreator.mjs";
 
 export type MixerArgs = {
   name: string;
-  input1?: string;
-  input2?: string;
-  input3?: string;
-  input4?: string;
-  input5?: string;
+  mode1?: string;
+  lhs1?: string;
+  rhs1?: string;
+  mode2?: string;
+  lhs2?: string;
+  rhs2?: string;
 };
+
+const options = ["sum", "avg", "neg", "mul"] as const;
+
+function evaluate(
+  o: string,
+  lhs: Value,
+  rhs: Value,
+  now: number,
+  i: number,
+): number {
+  switch (o) {
+    case "sum":
+      return lhs(now, i) + rhs(now, i);
+    case "avg":
+      return (lhs(now, i) + rhs(now, i)) / 2;
+    case "neg":
+      return lhs(now, i) - rhs(now, i);
+    case "mul":
+      return lhs(now, i) * rhs(now, i);
+    default:
+      throw new Error(`option: ${o} is not supported`);
+  }
+}
 
 export function mixer(ctrl: Controls, args: MixerArgs): Updater {
   const { container, showValue } = renderControl(args.name, () =>
     ctrl.unregister(args.name),
   );
 
-  const { el: mode } = renderSelectInputTo({
-    id: `${args.name}_mode`,
+  const { el: mode_a } = renderSelectInputTo({
+    id: `${args.name}_mode_a`,
     label: "mode",
-    options: ["sum", "avg"],
+    selected: args.mode1,
+    options,
     container,
   });
 
-  const { value: input1, update: u1 } = connect(ctrl, args.name, {
-    id: `${args.name}_in1`,
-    label: `1`,
+  const { value: lhs1, update: lhs1_u } = connect(ctrl, args.name, {
+    id: `${args.name}_lhs1`,
+    label: `lhs`,
     container,
-    selected: args.input1,
+    selected: args.lhs1,
   });
 
-  const { value: input2, update: u2 } = connect(ctrl, args.name, {
-    id: `${args.name}_in2`,
-    label: `2`,
+  const { value: rhs1, update: rhs1_u } = connect(ctrl, args.name, {
+    id: `${args.name}_rhs1`,
+    label: `rhs`,
     container,
-    selected: args.input2,
+    selected: args.rhs2,
   });
 
-  const { value: input3, update: u3 } = connect(ctrl, args.name, {
-    id: `${args.name}_in3`,
-    label: `3`,
+  const showValue2 = spanWithText(container, "0");
+  const { el: mode_b } = renderSelectInputTo({
+    id: `${args.name}_mode_b`,
+    label: "mode",
+    selected: args.mode2,
+    options,
     container,
-    selected: args.input3,
   });
 
-  const { value: input4, update: u4 } = connect(ctrl, args.name, {
+  const { value: lhs2, update: lhs2_u } = connect(ctrl, args.name, {
+    id: `${args.name}_lhs2`,
+    label: `lhs`,
+    container,
+    selected: args.lhs2,
+  });
+
+  const { value: rhs2, update: rhs2_u } = connect(ctrl, args.name, {
     id: `${args.name}_in4`,
-    label: `4`,
+    label: `rhs`,
     container,
-    selected: args.input4,
+    selected: args.rhs2,
   });
 
-  const { value: input5, update: u5 } = connect(ctrl, args.name, {
-    id: `${args.name}_in5`,
-    label: `5`,
-    container,
-    selected: args.input5,
-  });
-
-  const sum = (now: number, i: number) =>
-    (input1(now, i) || 0) +
-    (input2(now, i) || 0) +
-    (input3(now, i) || 0) +
-    (input4(now, i) || 0) +
-    (input5(now, i) || 0);
-
-  ctrl.register(args.name, (now, i) => {
-    const m = mode.value;
-    let val = sum(now, i);
-    if (m === "avg") {
-      val /= 5;
-    }
+  ctrl.register(`${args.name}_a`, (now, i) => {
+    const val = evaluate(mode_a.value, lhs1, rhs1, now, i);
     showValue(val);
+    return val;
+  });
+
+  ctrl.register(`${args.name}_b`, (now, i) => {
+    const val = evaluate(mode_b.value, lhs2, rhs2, now, i);
+    showValue2(val.toPrecision(6));
     return val;
   });
 
@@ -85,10 +107,9 @@ export function mixer(ctrl: Controls, args: MixerArgs): Updater {
       throw new Error("Invalid container name");
     }
 
-    u1(container.args.input1);
-    u2(container.args.input2);
-    u3(container.args.input3);
-    u4(container.args.input4);
-    u5(container.args.input5);
+    lhs1_u(container.args.lhs1);
+    rhs1_u(container.args.rhs2);
+    lhs2_u(container.args.lhs2);
+    rhs2_u(container.args.rhs2);
   };
 }

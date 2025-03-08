@@ -97,7 +97,7 @@ export function renderNumberInputTo(
 }
 
 export type RenderSelectInputArgs = {
-  options: string[];
+  options: readonly string[];
   selected?: string;
   id: string;
   label?: string;
@@ -167,11 +167,7 @@ export function renderControl(
   const container = document.createElement("div");
   const control = document.createElement("div");
   const header = document.createElement("h3");
-  const value = document.createElement("span");
-  let lastVal = 0;
-  let lastTime = Date.now();
-
-  value.innerText = lastVal.toPrecision(6);
+  const value = spanWithText(container, "0");
 
   if (onremove) {
     const remove = document.createElement("button");
@@ -190,17 +186,40 @@ export function renderControl(
 
   root.appendChild(control);
   control.appendChild(header);
-  control.appendChild(value);
   control.appendChild(container);
 
   return {
     container,
-    showValue: (val) => {
-      if (lastVal !== val && Date.now() - lastTime > 100) {
-        value.innerText = val.toPrecision(6);
-        lastVal = val;
-        lastTime = Date.now();
-      }
-    },
+    showValue: limiter(100, (val) => {
+      value(val.toPrecision(6));
+    }),
+  };
+}
+
+export function spanWithText(
+  container: HTMLDivElement,
+  text: string,
+): (text: string) => void {
+  const span = document.createElement("span");
+  span.innerText = text;
+  container.appendChild(span);
+
+  return (text: string) => {
+    span.innerText = text;
+  };
+}
+
+export function limiter(
+  limit: number,
+  cb: (val: number) => void,
+): (val: number) => void {
+  let lastVal = 0;
+  let lastTime = Date.now();
+  return (val: number) => {
+    if (lastVal !== val && Date.now() - lastTime > limit) {
+      cb(val);
+      lastVal = val;
+      lastTime = Date.now();
+    }
   };
 }
