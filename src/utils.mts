@@ -51,6 +51,7 @@ export type RenderTextInputArgs = {
 export function renderTextInputTo(args: RenderTextInputArgs): HTMLInputElement {
   const el = document.createElement("input");
   const container = document.createElement("div");
+  container.classList.add("input");
   const label = document.createElement("label");
   label.htmlFor = args.label;
   label.innerText = args.label;

@@ -2,7 +2,11 @@ import { OscillatorArgs, oscillatorWithConnectInput } from "./oscillator.mjs";
 import { mixer, MixerArgs } from "./mixer.mjs";
 import { SliderArgs, sliderWithNumericInputs } from "./slider.mjs";
 import { Controls } from "../controls.mjs";
-import { renderControl, renderSelectInputTo } from "../utils.mjs";
+import {
+  renderControl,
+  renderSelectInputTo,
+  renderTextInputTo,
+} from "../utils.mjs";
 import { random, RandomArgs } from "./random.mjs";
 import { AddOutputArgs } from "../outputs.mjs";
 
@@ -45,10 +49,10 @@ export function createControlCreator(
 ) {
   const { container } = renderControl("control");
 
-  const nameInput = document.createElement("input");
-  nameInput.type = "text";
-  nameInput.placeholder = "Control name";
-  container.appendChild(nameInput);
+  const nameInput = renderTextInputTo({
+    label: "name:",
+    container,
+  });
 
   const { el: controlTypeSelect } = renderSelectInputTo({
     container,
