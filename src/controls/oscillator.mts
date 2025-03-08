@@ -14,42 +14,40 @@ export function oscillatorWithConnectInput(
   ctrl: Controls,
   args: OscillatorArgs,
 ) {
-  ctrl.register(args.name, () => {
-    const { container, showValue } = renderControl(args.name, () =>
-      ctrl.unregister(args.name),
-    );
+  const { container, showValue } = renderControl(args.name, () =>
+    ctrl.unregister(args.name),
+  );
 
-    const w = wave({
-      min: connect(ctrl, args.name, {
-        id: `${args.name}_min`,
-        label: "min",
-        selected: args.min,
-        container,
-      }),
-      max: connect(ctrl, args.name, {
-        id: `${args.name}_max`,
-        label: "max",
-        selected: args.max,
-        container,
-      }),
-      raise: connect(ctrl, args.name, {
-        id: `${args.name}_raise`,
-        label: "raise",
-        selected: args.raise,
-        container,
-      }),
-      fall: connect(ctrl, args.name, {
-        id: `${args.name}_fall`,
-        label: "fall",
-        selected: args.fall,
-        container,
-      }),
-    });
+  const w = wave({
+    min: connect(ctrl, args.name, {
+      id: `${args.name}_min`,
+      label: "min",
+      selected: args.min,
+      container,
+    }),
+    max: connect(ctrl, args.name, {
+      id: `${args.name}_max`,
+      label: "max",
+      selected: args.max,
+      container,
+    }),
+    raise: connect(ctrl, args.name, {
+      id: `${args.name}_raise`,
+      label: "raise",
+      selected: args.raise,
+      container,
+    }),
+    fall: connect(ctrl, args.name, {
+      id: `${args.name}_fall`,
+      label: "fall",
+      selected: args.fall,
+      container,
+    }),
+  });
 
-    return (now, i) => {
-      const val = w(now, i);
-      showValue(val);
-      return val;
-    };
+  ctrl.register(args.name, (now, i) => {
+    const val = w(now, i);
+    showValue(val);
+    return val;
   });
 }

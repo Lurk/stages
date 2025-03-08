@@ -1,6 +1,6 @@
 import { path, initFullScreenCanvas } from "./canvas.mjs";
 import { initOutputs } from "./outputs.mjs";
-import { createControlCreator } from "./controls/controlCreator.mjs";
+import { initControls } from "./controls/controlCreator.mjs";
 import { controls } from "./controls.mjs";
 import { height, monotonic, width, zero } from "./controls/defaults.mjs";
 import { initial } from "./configs/2.mjs";
@@ -20,14 +20,17 @@ const ctx = initFullScreenCanvas({
 const ctrl = controls();
 const { outputs, add } = initOutputs(ctrl);
 
-const creator = createControlCreator(ctrl, add, animate);
+initControls({
+  ctrl,
+  addOutput: add,
+  animate,
+  controls: initial,
+});
 
 width(ctrl, ctx);
 height(ctrl, ctx);
 zero(ctrl);
 monotonic(ctrl);
-
-initial.forEach(creator);
 
 let isRunning = true;
 

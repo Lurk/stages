@@ -3,7 +3,7 @@ import { Value } from "./value.mjs";
 export type OnRegisterCallback = (keys: string[]) => void;
 
 export type Controls = {
-  register(key: string, stage: () => Value): void;
+  register(key: string, value: Value): void;
   unregister(key: string): void;
   get(key: string): Value | undefined;
   onChange(fn: OnRegisterCallback): void;
@@ -15,11 +15,11 @@ export function controls(): Controls {
   const map: Map<string, Value> = new Map();
   const onRegisterCallbacks: OnRegisterCallback[] = [];
   return {
-    register(key, stage) {
+    register(key, value) {
       if (map.has(key)) {
         alert("duplicate id");
       } else {
-        map.set(key, stage());
+        map.set(key, value);
         const keys = this.keys();
         onRegisterCallbacks.forEach((fn) => fn(keys));
       }

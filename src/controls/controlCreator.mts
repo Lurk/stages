@@ -42,11 +42,48 @@ export function controlTypeGuard(t: unknown): t is CreatorArgs["type"] {
   );
 }
 
-export function createControlCreator(
+const creator = (
   ctrl: Controls,
-  add: (args: AddOutputArgs) => void,
-  run: () => void,
-) {
+  addOutput: (args: AddOutputArgs) => void,
+  { type, args }: CreatorArgs,
+) => {
+  if (!args.name) {
+    alert("Please enter a name");
+    return;
+  }
+
+  switch (type) {
+    case "slider":
+      sliderWithNumericInputs(ctrl, args);
+      break;
+    case "oscillator":
+      oscillatorWithConnectInput(ctrl, args);
+      break;
+    case "mixer":
+      mixer(ctrl, args);
+      break;
+    case "output":
+      addOutput(args);
+      break;
+    case "random":
+      random(ctrl, args);
+      break;
+  }
+};
+
+export type InitControlsArgs = {
+  ctrl: Controls;
+  addOutput: (args: AddOutputArgs) => void;
+  animate: () => void;
+  controls: CreatorArgs[];
+};
+
+export function initControls({
+  ctrl,
+  addOutput,
+  animate,
+  controls,
+}: InitControlsArgs) {
   const { container } = renderControl("control");
 
   const nameInput = renderTextInputTo({
@@ -63,34 +100,7 @@ export function createControlCreator(
 
   const createButton = document.createElement("button");
   createButton.textContent = "Create Control";
-
   container.appendChild(createButton);
-
-  const creator = ({ type, args }: CreatorArgs) => {
-    if (!args.name) {
-      alert("Please enter a name");
-      return;
-    }
-
-    switch (type) {
-      case "slider":
-        sliderWithNumericInputs(ctrl, args);
-        break;
-      case "oscillator":
-        oscillatorWithConnectInput(ctrl, args);
-        break;
-      case "mixer":
-        mixer(ctrl, args);
-        break;
-      case "output":
-        add(args);
-        break;
-      case "random":
-        random(ctrl, args);
-        break;
-    }
-  };
-
   createButton.addEventListener("click", () => {
     const type = controlTypeSelect.value;
     const name = nameInput.value.trim();
@@ -99,14 +109,14 @@ export function createControlCreator(
       alert("Invalid control type");
       return;
     }
-    creator({ type, args: { name } });
+    creator(ctrl, addOutput, { type, args: { name } });
     nameInput.value = "";
   });
 
   const runButton = document.createElement("button");
   runButton.textContent = "Run";
   container.appendChild(runButton);
-  runButton.addEventListener("click", run);
+  runButton.addEventListener("click", animate);
 
-  return creator;
+  controls.forEach((control) => creator(ctrl, addOutput, control));
 }
