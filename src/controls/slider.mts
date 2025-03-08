@@ -1,4 +1,4 @@
-import { controls, Controls } from "../controls.mjs";
+import { Controls } from "../controls.mjs";
 import {
   renderControl,
   renderNumberInputTo,
@@ -24,8 +24,8 @@ export function sliderWithNumericInputs(
   showValue(args.value ?? 50);
 
   const to = renderNumberInputTo({
-    id: `${args.name}_to`,
-    label: "to",
+    id: `${args.name}_max`,
+    label: "",
     container,
     value: args.max ?? 500,
   });
@@ -40,8 +40,8 @@ export function sliderWithNumericInputs(
   });
 
   const from = renderNumberInputTo({
-    id: `${args.name}_from`,
-    label: "from",
+    id: `${args.name}_min`,
+    label: "",
     container,
     value: args.min ?? 0,
   });

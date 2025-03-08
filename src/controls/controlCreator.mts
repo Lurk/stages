@@ -123,7 +123,7 @@ export function initControls({
   }));
 
   // TODO: come up with a better way to do this.
-  // Because controls can be in random order, first, we need to create them all. And only then connect.
+  // Because controls can be in random order, first, we need to create them all, and only then connect.
   setTimeout(() => {
     u.forEach(({ updater, control }) => updater(control));
   }, 10);
