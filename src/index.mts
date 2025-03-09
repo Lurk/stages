@@ -3,7 +3,7 @@ import { initOutputs } from "./outputs.mjs";
 import { initControls } from "./controls/controlCreator.mjs";
 import { controls } from "./controls.mjs";
 import { height, monotonic, width, zero } from "./controls/defaults.mjs";
-import { initial } from "./configs/2.mjs";
+import { fromString } from "./serde.mjs";
 
 document.getElementById("fullscreen")?.addEventListener("click", (e) => {
   e.preventDefault();
@@ -24,7 +24,7 @@ initControls({
   ctrl,
   addOutput: add,
   animate,
-  controls: initial,
+  controls: fromString(window.location.hash.slice(1)),
 });
 
 width(ctrl, ctx);
