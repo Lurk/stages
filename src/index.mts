@@ -1,5 +1,5 @@
 import { path, initFullScreenCanvas } from "./canvas.mjs";
-import { initControls } from "./controls/controlCreator.mjs";
+import { init } from "./controls/controlCreator.mjs";
 import { fromString } from "./serde.mjs";
 
 document.getElementById("fullscreen")?.addEventListener("click", (e) => {
@@ -14,7 +14,7 @@ const ctx = initFullScreenCanvas({
   backgroundCollor: "#403f3f",
 });
 
-const outputs = initControls({
+const outputs = init({
   ctx,
   animate,
   controls: fromString(window.location.hash.slice(1)),

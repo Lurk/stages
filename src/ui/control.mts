@@ -2,7 +2,9 @@ import {
   CONTROL_TYPES,
   controlTypeGuard,
   creator,
+  Updater,
 } from "../controls/controlCreator.mjs";
+import { AddOutputArgs } from "../outputs.mjs";
 import {
   renderControl,
   renderSelectInputTo,
@@ -11,7 +13,7 @@ import {
 
 type RenderProps = {
   vals: any;
-  add: (args: any) => any;
+  add: (args: AddOutputArgs) => Updater;
   animate: () => void;
 };
 

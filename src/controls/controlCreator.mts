@@ -1,5 +1,5 @@
 import { OscillatorArgs, oscillatorWithConnectInput } from "./oscillator.mjs";
-import { mixer, MixerArgs } from "./mixer.mjs";
+import { math, MathArgs } from "./mixer.mjs";
 import { SliderArgs, sliderWithNumericInputs } from "./slider.mjs";
 import { random, RandomArgs } from "./random.mjs";
 import { AddOutputArgs, initOutputs, Output } from "../outputs.mjs";
@@ -17,8 +17,8 @@ export type CreatorArgs =
       args: OscillatorArgs;
     }
   | {
-      type: "mixer";
-      args: MixerArgs;
+      type: "math";
+      args: MathArgs;
     }
   | {
       type: "output";
@@ -32,7 +32,7 @@ export type CreatorArgs =
 export const CONTROL_TYPES: CreatorArgs["type"][] = [
   "slider",
   "oscillator",
-  "mixer",
+  "math",
   "output",
   "random",
 ] as const;
@@ -58,8 +58,8 @@ export const creator = (
       return sliderWithNumericInputs(values, args);
     case "oscillator":
       return oscillatorWithConnectInput(values, args);
-    case "mixer":
-      return mixer(values, args);
+    case "math":
+      return math(values, args);
     case "output":
       return addOutput(args);
     case "random":
@@ -69,17 +69,17 @@ export const creator = (
   }
 };
 
-export type InitControlsArgs = {
+export type InitArgs = {
   ctx: CanvasRenderingContext2D;
   animate: () => void;
   controls: CreatorArgs[];
 };
 
-export function initControls({
+export function init({
   animate,
   controls,
   ctx,
-}: InitControlsArgs): Map<number, Output> {
+}: InitArgs): Map<number, Output> {
   const vals = values();
   const { outputs, add } = initOutputs(vals);
 

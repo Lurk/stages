@@ -2,7 +2,7 @@ import { CreatorArgs } from "./controls/controlCreator.mjs";
 import { SliderArgs } from "./controls/slider.mjs";
 import { OscillatorArgs } from "./controls/oscillator.mjs";
 import { AddOutputArgs } from "./outputs.mjs";
-import { MixerArgs } from "./controls/mixer.mjs";
+import { MathArgs } from "./controls/mixer.mjs";
 import { RandomArgs } from "./controls/random.mjs";
 
 const VERSION = 1;
@@ -15,7 +15,7 @@ function typeToString(type: CreatorArgs["type"]): string {
       return "01";
     case "output":
       return "02";
-    case "mixer":
+    case "math":
       return "03";
     case "random":
       return "04";
@@ -33,7 +33,7 @@ function stringToType(type: string): CreatorArgs["type"] {
     case "02":
       return "output";
     case "03":
-      return "mixer";
+      return "math";
     case "04":
       return "random";
     default:
@@ -137,16 +137,16 @@ function stringToOutput(
   return { val: res, end: local_start };
 }
 
-function mixerToString(args: MixerArgs): string {
+function mathToString(args: MathArgs): string {
   return `${ser(args.name)}${ser(args.mode1)}${ser(args.lhs1)}${ser(args.rhs1)}${ser(args.mode2)}${ser(args.lhs2)}${ser(args.rhs2)}`;
 }
 
-function stringToMixer(
+function stringToMath(
   val: string,
   start: number,
-): { val: MixerArgs; end: number } {
+): { val: MathArgs; end: number } {
   let local_start = start;
-  const res: MixerArgs = {
+  const res: MathArgs = {
     name: "",
     mode1: "",
     lhs1: "",
@@ -204,8 +204,8 @@ function controlToString(control: CreatorArgs): string {
       return `${type}${oscillatorToString(control.args)}`;
     case "output":
       return `${type}${outputToString(control.args)}`;
-    case "mixer":
-      return `${type}${mixerToString(control.args)}`;
+    case "math":
+      return `${type}${mathToString(control.args)}`;
     case "random":
       return `${type}${randomToString(control.args)}`;
   }
@@ -248,8 +248,8 @@ export function fromString(str: string): CreatorArgs[] {
         pos = end;
         break;
       }
-      case "mixer": {
-        const { val, end } = stringToMixer(str, pos);
+      case "math": {
+        const { val, end } = stringToMath(str, pos);
         res.push({ type, args: val });
         pos = end;
         break;

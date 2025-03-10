@@ -3,7 +3,7 @@ import { renderControl, renderSelectInputTo, spanWithText } from "../utils.mjs";
 import { Updater } from "./controlCreator.mjs";
 import { connect } from "./connect.mjs";
 
-export type MixerArgs = {
+export type MathArgs = {
   name: string;
   mode1?: string;
   lhs1?: string;
@@ -36,7 +36,7 @@ function evaluate(
   }
 }
 
-export function mixer(values: Values, args: MixerArgs): Updater {
+export function math(values: Values, args: MathArgs): Updater {
   const { container, showValue } = renderControl(args.name, () =>
     values.unregister(args.name),
   );
@@ -99,7 +99,7 @@ export function mixer(values: Values, args: MixerArgs): Updater {
   });
 
   return (container) => {
-    if (container.type !== "mixer") {
+    if (container.type !== "math") {
       throw new Error("Invalid container type");
     }
 
