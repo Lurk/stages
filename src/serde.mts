@@ -216,6 +216,9 @@ export function toString(controls: CreatorArgs[]): string {
 }
 
 export function fromString(str: string): CreatorArgs[] {
+  if (str.length === 0) {
+    return [];
+  }
   let pos = 0;
   const version = parseInt(str.slice(pos, pos + 3), 10);
   pos += 3;

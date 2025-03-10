@@ -3,7 +3,7 @@ import { renderControl } from "./utils.mjs";
 import { Updater } from "./controls/controlCreator.mjs";
 import { connect } from "./controls/connect.mjs";
 
-type Output = { y: Value; x: Value; sr: Value; vertices: Value };
+export type Output = { y: Value; x: Value; sr: Value; vertices: Value };
 export type AddOutputArgs = {
   name: string;
   x?: string;

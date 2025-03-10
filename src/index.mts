@@ -1,9 +1,6 @@
 import { path, initFullScreenCanvas } from "./canvas.mjs";
-import { initOutputs } from "./outputs.mjs";
 import { initControls } from "./controls/controlCreator.mjs";
-import { height, monotonic, width, zero } from "./controls/defaults.mjs";
 import { fromString } from "./serde.mjs";
-import { values } from "./value.mjs";
 
 document.getElementById("fullscreen")?.addEventListener("click", (e) => {
   e.preventDefault();
@@ -17,20 +14,11 @@ const ctx = initFullScreenCanvas({
   backgroundCollor: "#403f3f",
 });
 
-const vals = values();
-const { outputs, add } = initOutputs(vals);
-
-initControls({
-  values: vals,
-  addOutput: add,
+const outputs = initControls({
+  ctx,
   animate,
   controls: fromString(window.location.hash.slice(1)),
 });
-
-width(vals, ctx);
-height(vals, ctx);
-zero(vals);
-monotonic(vals);
 
 let isRunning = true;
 

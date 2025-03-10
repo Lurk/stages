@@ -1,14 +1,11 @@
 import { OscillatorArgs, oscillatorWithConnectInput } from "./oscillator.mjs";
 import { mixer, MixerArgs } from "./mixer.mjs";
 import { SliderArgs, sliderWithNumericInputs } from "./slider.mjs";
-import {
-  renderControl,
-  renderSelectInputTo,
-  renderTextInputTo,
-} from "../utils.mjs";
 import { random, RandomArgs } from "./random.mjs";
-import { AddOutputArgs } from "../outputs.mjs";
-import { Values } from "../value.mjs";
+import { AddOutputArgs, initOutputs, Output } from "../outputs.mjs";
+import { Values, values } from "../value.mjs";
+import { height, monotonic, width, zero } from "./defaults.mjs";
+import { render } from "../ui/control.mjs";
 
 export type CreatorArgs =
   | {
@@ -32,19 +29,21 @@ export type CreatorArgs =
       args: RandomArgs;
     };
 
+export const CONTROL_TYPES: CreatorArgs["type"][] = [
+  "slider",
+  "oscillator",
+  "mixer",
+  "output",
+  "random",
+] as const;
+
 export function controlTypeGuard(t: unknown): t is CreatorArgs["type"] {
-  return (
-    t === "slider" ||
-    t === "oscillator" ||
-    t === "mixer" ||
-    t === "output" ||
-    t === "random"
-  );
+  return CONTROL_TYPES.includes(t as CreatorArgs["type"]);
 }
 
 export type Updater = (control: CreatorArgs) => void;
 
-const creator = (
+export const creator = (
   values: Values,
   addOutput: (args: AddOutputArgs) => Updater,
   { type, args }: CreatorArgs,
@@ -71,60 +70,36 @@ const creator = (
 };
 
 export type InitControlsArgs = {
-  values: Values;
-  addOutput: (args: AddOutputArgs) => Updater;
+  ctx: CanvasRenderingContext2D;
   animate: () => void;
   controls: CreatorArgs[];
 };
 
 export function initControls({
-  values,
-  addOutput,
   animate,
   controls,
-}: InitControlsArgs) {
-  const { container } = renderControl("control");
+  ctx,
+}: InitControlsArgs): Map<number, Output> {
+  const vals = values();
+  const { outputs, add } = initOutputs(vals);
 
-  const nameInput = renderTextInputTo({
-    label: "name:",
-    container,
-  });
-
-  const { el: controlTypeSelect } = renderSelectInputTo({
-    container,
-    options: ["slider", "oscillator", "mixer", "output", "random"],
-    id: "control-creation-select",
-    label: "type:",
-  });
-
-  const createButton = document.createElement("button");
-  createButton.textContent = "Create Control";
-  container.appendChild(createButton);
-  createButton.addEventListener("click", () => {
-    const type = controlTypeSelect.value;
-    const name = nameInput.value.trim();
-
-    if (!controlTypeGuard(type)) {
-      alert("Invalid control type");
-      return;
-    }
-    creator(values, addOutput, { type, args: { name } });
-    nameInput.value = "";
-  });
-
-  const runButton = document.createElement("button");
-  runButton.textContent = "Run";
-  container.appendChild(runButton);
-  runButton.addEventListener("click", animate);
+  render({ vals, add, animate });
 
   const u = controls.map((control) => ({
-    updater: creator(values, addOutput, control),
+    updater: creator(vals, add, control),
     control,
   }));
+
+  width(vals, ctx);
+  height(vals, ctx);
+  zero(vals);
+  monotonic(vals);
 
   // TODO: come up with a better way to do this.
   // Because controls can be in random order, first, we need to create them all, and only then connect.
   setTimeout(() => {
     u.forEach(({ updater, control }) => updater(control));
   }, 10);
+
+  return outputs;
 }
