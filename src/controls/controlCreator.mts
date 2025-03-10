@@ -1,73 +1,8 @@
-import { OscillatorArgs, oscillatorWithConnectInput } from "./oscillator.mjs";
-import { math, MathArgs } from "./mixer.mjs";
-import { SliderArgs, sliderWithNumericInputs } from "./slider.mjs";
-import { random, RandomArgs } from "./random.mjs";
-import { AddOutputArgs, initOutputs, Output } from "../outputs.mjs";
-import { Values, values } from "../value.mjs";
+import { initOutputs, Output } from "../outputs.mjs";
+import { values } from "../value.mjs";
 import { height, monotonic, one, width, zero } from "./defaults.mjs";
 import { render } from "../ui/control.mjs";
-
-export type CreatorArgs =
-  | {
-      type: "slider";
-      args: SliderArgs;
-    }
-  | {
-      type: "oscillator";
-      args: OscillatorArgs;
-    }
-  | {
-      type: "math";
-      args: MathArgs;
-    }
-  | {
-      type: "output";
-      args: AddOutputArgs;
-    }
-  | {
-      type: "random";
-      args: RandomArgs;
-    };
-
-export const CONTROL_TYPES: CreatorArgs["type"][] = [
-  "slider",
-  "oscillator",
-  "math",
-  "output",
-  "random",
-] as const;
-
-export function controlTypeGuard(t: unknown): t is CreatorArgs["type"] {
-  return CONTROL_TYPES.includes(t as CreatorArgs["type"]);
-}
-
-export type Updater = (control: CreatorArgs) => void;
-
-export const creator = (
-  values: Values,
-  addOutput: (args: AddOutputArgs) => Updater,
-  { type, args }: CreatorArgs,
-): Updater => {
-  if (!args.name) {
-    alert("Please enter a name");
-    throw new Error("Please enter a name");
-  }
-
-  switch (type) {
-    case "slider":
-      return sliderWithNumericInputs(values, args);
-    case "oscillator":
-      return oscillatorWithConnectInput(values, args);
-    case "math":
-      return math(values, args);
-    case "output":
-      return addOutput(args);
-    case "random":
-      return random(values, args);
-    default:
-      throw new Error("Invalid control type");
-  }
-};
+import { creator, CreatorArgs } from "../controls.mjs";
 
 export type InitArgs = {
   ctx: CanvasRenderingContext2D;

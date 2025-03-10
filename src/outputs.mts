@@ -1,7 +1,7 @@
 import { Values, Value } from "./value.mjs";
 import { renderControl } from "./utils.mjs";
-import { Updater } from "./controls/controlCreator.mjs";
 import { connect } from "./controls/connect.mjs";
+import { Updater } from "./controls.mjs";
 
 export type Output = { y: Value; x: Value; sr: Value; vertices: Value };
 export type AddOutputArgs = {

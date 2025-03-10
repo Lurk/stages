@@ -1,7 +1,7 @@
+import { Updater } from "../controls.mjs";
 import { renderControl } from "../utils.mjs";
 import { Values } from "../value.mjs";
 import { connect } from "./connect.mjs";
-import { Updater } from "./controlCreator.mjs";
 
 export type RandomArgs = {
   name: string;

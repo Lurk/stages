@@ -1,7 +1,7 @@
 import { Values, Value } from "../value.mjs";
 import { renderControl, renderSelectInputTo, spanWithText } from "../utils.mjs";
-import { Updater } from "./controlCreator.mjs";
 import { connect } from "./connect.mjs";
+import { Updater } from "../controls.mjs";
 
 export type MathArgs = {
   name: string;

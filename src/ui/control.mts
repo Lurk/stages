@@ -3,7 +3,7 @@ import {
   controlTypeGuard,
   creator,
   Updater,
-} from "../controls/controlCreator.mjs";
+} from "../controls.mjs";
 import { AddOutputArgs } from "../outputs.mjs";
 import {
   renderControl,

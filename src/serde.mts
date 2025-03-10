@@ -1,9 +1,9 @@
-import { CreatorArgs } from "./controls/controlCreator.mjs";
 import { SliderArgs } from "./controls/slider.mjs";
 import { OscillatorArgs } from "./controls/oscillator.mjs";
 import { AddOutputArgs } from "./outputs.mjs";
 import { MathArgs } from "./controls/mixer.mjs";
 import { RandomArgs } from "./controls/random.mjs";
+import { CreatorArgs } from "./controls.mjs";
 
 const VERSION = 1;
 

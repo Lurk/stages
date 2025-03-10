@@ -1,7 +1,7 @@
 import { Values, wave } from "../value.mjs";
 import { renderControl } from "../utils.mjs";
-import { Updater } from "./controlCreator.mjs";
 import { connect } from "./connect.mjs";
+import { Updater } from "../controls.mjs";
 
 export type OscillatorArgs = {
   name: string;

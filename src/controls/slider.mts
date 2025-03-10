@@ -1,10 +1,10 @@
+import { Updater } from "../controls.mjs";
 import {
   renderControl,
   renderNumberInputTo,
   renderRangeTo,
 } from "../utils.mjs";
 import { Values } from "../value.mjs";
-import { Updater } from "./controlCreator.mjs";
 
 export type SliderArgs = {
   min?: number;

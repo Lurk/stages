@@ -1,4 +1,4 @@
-import { CreatorArgs } from "../controls/controlCreator.mjs";
+import { CreatorArgs } from "../controls.mjs";
 
 export const initial: CreatorArgs[] = [
   {
