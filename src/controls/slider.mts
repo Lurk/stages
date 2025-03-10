@@ -16,6 +16,7 @@ export type SliderArgs = {
 export function sliderWithNumericInputs(
   values: Values,
   args: SliderArgs,
+  onRemove: () => void,
 ): Updater {
   const { container, showValue } = renderControl(args.name, () =>
     values.unregister(args.name),

@@ -1,7 +1,7 @@
 import {
   CONTROL_TYPES,
   controlTypeGuard,
-  creator,
+  CreatorArgs,
   Updater,
 } from "../controls.mjs";
 import { AddOutputArgs } from "../outputs.mjs";
@@ -14,6 +14,7 @@ import {
 type RenderProps = {
   vals: any;
   add: (args: AddOutputArgs) => Updater;
+  addControl: (args: CreatorArgs) => Updater;
   animate: () => void;
 };
 
@@ -43,7 +44,7 @@ export function render(props: RenderProps) {
       alert("Invalid control type");
       return;
     }
-    creator(props.vals, props.add, { type, args: { name } });
+    props.addControl({ type, args: { name } });
     nameInput.value = "";
   });
 

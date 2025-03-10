@@ -52,16 +52,6 @@ export const initial: CreatorArgs[] = [
     },
   },
   {
-    type: "output",
-    args: {
-      name: "first",
-      x: "x",
-      y: "y",
-      sr: "sr",
-      vertices: "vertices",
-    },
-  },
-  {
     type: "oscillator",
     args: {
       name: "y",
@@ -82,6 +72,16 @@ export const initial: CreatorArgs[] = [
       max: 2000,
       min: 100,
       value: 645,
+    },
+  },
+  {
+    type: "output",
+    args: {
+      name: "first",
+      x: "x",
+      y: "y",
+      sr: "sr",
+      vertices: "vertices",
     },
   },
 ];
