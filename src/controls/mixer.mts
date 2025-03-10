@@ -1,7 +1,7 @@
-import { Controls } from "../controls.mjs";
-import { connect, Value } from "../value.mjs";
+import { Values, Value } from "../value.mjs";
 import { renderControl, renderSelectInputTo, spanWithText } from "../utils.mjs";
 import { Updater } from "./controlCreator.mjs";
+import { connect } from "./connect.mjs";
 
 export type MixerArgs = {
   name: string;
@@ -36,9 +36,9 @@ function evaluate(
   }
 }
 
-export function mixer(ctrl: Controls, args: MixerArgs): Updater {
+export function mixer(values: Values, args: MixerArgs): Updater {
   const { container, showValue } = renderControl(args.name, () =>
-    ctrl.unregister(args.name),
+    values.unregister(args.name),
   );
 
   const { el: mode_a } = renderSelectInputTo({
@@ -49,14 +49,14 @@ export function mixer(ctrl: Controls, args: MixerArgs): Updater {
     container,
   });
 
-  const { value: lhs1, update: lhs1_u } = connect(ctrl, args.name, {
+  const { value: lhs1, update: lhs1_u } = connect(values, args.name, {
     id: `${args.name}_lhs1`,
     label: `lhs`,
     container,
     selected: args.lhs1,
   });
 
-  const { value: rhs1, update: rhs1_u } = connect(ctrl, args.name, {
+  const { value: rhs1, update: rhs1_u } = connect(values, args.name, {
     id: `${args.name}_rhs1`,
     label: `rhs`,
     container,
@@ -72,27 +72,27 @@ export function mixer(ctrl: Controls, args: MixerArgs): Updater {
     container,
   });
 
-  const { value: lhs2, update: lhs2_u } = connect(ctrl, args.name, {
+  const { value: lhs2, update: lhs2_u } = connect(values, args.name, {
     id: `${args.name}_lhs2`,
     label: `lhs`,
     container,
     selected: args.lhs2,
   });
 
-  const { value: rhs2, update: rhs2_u } = connect(ctrl, args.name, {
+  const { value: rhs2, update: rhs2_u } = connect(values, args.name, {
     id: `${args.name}_in4`,
     label: `rhs`,
     container,
     selected: args.rhs2,
   });
 
-  ctrl.register(`${args.name}_a`, (now, i) => {
+  values.register(`${args.name}_a`, (now, i) => {
     const val = evaluate(mode_a.value, lhs1, rhs1, now, i);
     showValue(val);
     return val;
   });
 
-  ctrl.register(`${args.name}_b`, (now, i) => {
+  values.register(`${args.name}_b`, (now, i) => {
     const val = evaluate(mode_b.value, lhs2, rhs2, now, i);
     showValue2(val.toPrecision(6));
     return val;

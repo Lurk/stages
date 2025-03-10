@@ -1,6 +1,6 @@
-import { Controls } from "../controls.mjs";
 import { renderControl } from "../utils.mjs";
-import { connect } from "../value.mjs";
+import { Values } from "../value.mjs";
+import { connect } from "./connect.mjs";
 import { Updater } from "./controlCreator.mjs";
 
 export type RandomArgs = {
@@ -9,23 +9,23 @@ export type RandomArgs = {
   max?: string;
 };
 
-export function random(ctrl: Controls, args: RandomArgs): Updater {
+export function random(values: Values, args: RandomArgs): Updater {
   const { container, showValue } = renderControl(args.name, () =>
-    ctrl.unregister(args.name),
+    values.unregister(args.name),
   );
 
-  const { value: min, update: updateMin } = connect(ctrl, args.name, {
+  const { value: min, update: updateMin } = connect(values, args.name, {
     id: `${args.name}_min`,
     label: "min",
     container,
   });
-  const { value: max, update: updateMax } = connect(ctrl, args.name, {
+  const { value: max, update: updateMax } = connect(values, args.name, {
     id: `${args.name}_max`,
     label: "max",
     container,
   });
 
-  ctrl.register(args.name, (now, i) => {
+  values.register(args.name, (now, i) => {
     const val = Math.random() * (max(now, i) - min(now, i)) + min(now, i);
     showValue(val);
     return val;

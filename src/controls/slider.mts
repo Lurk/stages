@@ -1,9 +1,9 @@
-import { Controls } from "../controls.mjs";
 import {
   renderControl,
   renderNumberInputTo,
   renderRangeTo,
 } from "../utils.mjs";
+import { Values } from "../value.mjs";
 import { Updater } from "./controlCreator.mjs";
 
 export type SliderArgs = {
@@ -14,11 +14,11 @@ export type SliderArgs = {
 };
 
 export function sliderWithNumericInputs(
-  ctrl: Controls,
+  values: Values,
   args: SliderArgs,
 ): Updater {
   const { container, showValue } = renderControl(args.name, () =>
-    ctrl.unregister(args.name),
+    values.unregister(args.name),
   );
 
   showValue(args.value ?? 50);
@@ -56,7 +56,7 @@ export function sliderWithNumericInputs(
 
   s.value = String(args.value ?? 50);
 
-  ctrl.register(args.name, () => {
+  values.register(args.name, () => {
     const val = s.valueAsNumber;
     showValue(val);
     return val;

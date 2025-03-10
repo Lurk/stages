@@ -1,12 +1,3 @@
-import { Controls } from "./controls.mjs";
-import {
-  assert,
-  RenderNumberInputArgs,
-  renderNumberInputTo,
-  RenderSelectInputArgs,
-  renderSelectInputTo,
-} from "./utils.mjs";
-
 export type Value = (now: number, i: number) => number;
 
 export function constant(value: number): Value {
@@ -45,37 +36,51 @@ export function wave(opts: WaveOpts): Value {
   };
 }
 
-export function connect(
-  controls: Controls,
-  omit: string,
-  args: Omit<RenderSelectInputArgs, "options">,
-): { value: Value; update: (val?: string) => void } {
-  const element = renderSelectInputTo({ ...args, options: controls.keys() });
-  // TODO this is definitely leaks memory. When deleting the control with connected input this cb is not deleted.
-  controls.onChange((keys) => {
-    element.updateOptions(keys.filter((k) => k !== omit));
-  });
+export type OnRegisterCallback = (keys: string[]) => void;
 
-  assert(
-    element.el instanceof HTMLSelectElement,
-    `element with id='${args.id}' is not HTMLSelectElement`,
-  );
+export type Values = {
+  register(key: string, value: Value): void;
+  unregister(key: string): void;
+  get(key: string): Value | undefined;
+  onChange(fn: OnRegisterCallback): void;
+  unsubscribe(fn: OnRegisterCallback): void;
+  keys(): string[];
+};
 
+export function values(): Values {
+  const map: Map<string, Value> = new Map();
+  const onRegisterCallbacks: OnRegisterCallback[] = [];
   return {
-    value: (now, i) => {
-      return controls.get(element.el.value)?.(now, i) ?? 0;
-    },
-    update: (val) => {
-      if (val) {
-        element.el.value = val;
+    register(key, value) {
+      if (map.has(key)) {
+        alert("duplicate id");
+      } else {
+        map.set(key, value);
+        const keys = this.keys();
+        onRegisterCallbacks.forEach((fn) => fn(keys));
       }
     },
-  };
-}
-
-export function inputNumber(args: RenderNumberInputArgs): Value {
-  const element = renderNumberInputTo(args);
-  return () => {
-    return element.valueAsNumber;
+    unregister(key) {
+      if (map.has(key)) {
+        map.delete(key);
+        const keys = this.keys();
+        onRegisterCallbacks.forEach((fn) => fn(keys));
+      }
+    },
+    get(key) {
+      return map.get(key);
+    },
+    keys() {
+      return [...map.keys()];
+    },
+    onChange(fn) {
+      onRegisterCallbacks.push(fn);
+    },
+    unsubscribe(fn) {
+      const index = onRegisterCallbacks.indexOf(fn);
+      if (index > -1) {
+        onRegisterCallbacks.splice(index, 1);
+      }
+    },
   };
 }

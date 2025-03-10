@@ -1,17 +1,17 @@
-import { Controls } from "../controls.mjs";
+import { Values } from "../value.mjs";
 
-export function width(ctrl: Controls, ctx: CanvasRenderingContext2D) {
-  ctrl.register("width", () => ctx.canvas.width);
+export function width(values: Values, ctx: CanvasRenderingContext2D) {
+  values.register("width", () => ctx.canvas.width);
 }
 
-export function height(ctrl: Controls, ctx: CanvasRenderingContext2D) {
-  ctrl.register("height", () => ctx.canvas.height);
+export function height(values: Values, ctx: CanvasRenderingContext2D) {
+  values.register("height", () => ctx.canvas.height);
 }
 
-export function zero(ctrl: Controls) {
-  ctrl.register("zero", () => 0);
+export function zero(values: Values) {
+  values.register("zero", () => 0);
 }
 
-export function monotonic(ctrl: Controls) {
-  ctrl.register("i", (now, i) => i);
+export function monotonic(values: Values) {
+  values.register("i", (now, i) => i);
 }

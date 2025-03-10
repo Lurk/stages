@@ -1,7 +1,6 @@
 import { OscillatorArgs, oscillatorWithConnectInput } from "./oscillator.mjs";
 import { mixer, MixerArgs } from "./mixer.mjs";
 import { SliderArgs, sliderWithNumericInputs } from "./slider.mjs";
-import { Controls } from "../controls.mjs";
 import {
   renderControl,
   renderSelectInputTo,
@@ -9,6 +8,7 @@ import {
 } from "../utils.mjs";
 import { random, RandomArgs } from "./random.mjs";
 import { AddOutputArgs } from "../outputs.mjs";
+import { Values } from "../value.mjs";
 
 export type CreatorArgs =
   | {
@@ -45,7 +45,7 @@ export function controlTypeGuard(t: unknown): t is CreatorArgs["type"] {
 export type Updater = (control: CreatorArgs) => void;
 
 const creator = (
-  ctrl: Controls,
+  values: Values,
   addOutput: (args: AddOutputArgs) => Updater,
   { type, args }: CreatorArgs,
 ): Updater => {
@@ -56,29 +56,29 @@ const creator = (
 
   switch (type) {
     case "slider":
-      return sliderWithNumericInputs(ctrl, args);
+      return sliderWithNumericInputs(values, args);
     case "oscillator":
-      return oscillatorWithConnectInput(ctrl, args);
+      return oscillatorWithConnectInput(values, args);
     case "mixer":
-      return mixer(ctrl, args);
+      return mixer(values, args);
     case "output":
       return addOutput(args);
     case "random":
-      return random(ctrl, args);
+      return random(values, args);
     default:
       throw new Error("Invalid control type");
   }
 };
 
 export type InitControlsArgs = {
-  ctrl: Controls;
+  values: Values;
   addOutput: (args: AddOutputArgs) => Updater;
   animate: () => void;
   controls: CreatorArgs[];
 };
 
 export function initControls({
-  ctrl,
+  values,
   addOutput,
   animate,
   controls,
@@ -108,7 +108,7 @@ export function initControls({
       alert("Invalid control type");
       return;
     }
-    creator(ctrl, addOutput, { type, args: { name } });
+    creator(values, addOutput, { type, args: { name } });
     nameInput.value = "";
   });
 
@@ -118,7 +118,7 @@ export function initControls({
   runButton.addEventListener("click", animate);
 
   const u = controls.map((control) => ({
-    updater: creator(ctrl, addOutput, control),
+    updater: creator(values, addOutput, control),
     control,
   }));
 

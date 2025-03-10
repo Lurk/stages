@@ -4,7 +4,6 @@ import { OscillatorArgs } from "./controls/oscillator.mjs";
 import { AddOutputArgs } from "./outputs.mjs";
 import { MixerArgs } from "./controls/mixer.mjs";
 import { RandomArgs } from "./controls/random.mjs";
-import { debug } from "console";
 
 const VERSION = 1;
 
