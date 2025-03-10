@@ -98,6 +98,7 @@ export function initControls({
 
   // TODO: come up with a better way to do this.
   // Because controls can be in random order, first, we need to create them all, and only then connect.
+  // Somehow, without this timeout update doesn't work (at least in Safari).
   setTimeout(() => {
     u.forEach(({ updater, control }) => updater(control));
   }, 10);
