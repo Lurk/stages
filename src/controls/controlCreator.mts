@@ -4,7 +4,7 @@ import { SliderArgs, sliderWithNumericInputs } from "./slider.mjs";
 import { random, RandomArgs } from "./random.mjs";
 import { AddOutputArgs, initOutputs, Output } from "../outputs.mjs";
 import { Values, values } from "../value.mjs";
-import { height, monotonic, width, zero } from "./defaults.mjs";
+import { height, monotonic, one, width, zero } from "./defaults.mjs";
 import { render } from "../ui/control.mjs";
 
 export type CreatorArgs =
@@ -94,6 +94,7 @@ export function initControls({
   height(vals, ctx);
   zero(vals);
   monotonic(vals);
+  one(vals);
 
   // TODO: come up with a better way to do this.
   // Because controls can be in random order, first, we need to create them all, and only then connect.

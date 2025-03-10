@@ -12,6 +12,10 @@ export function zero(values: Values) {
   values.register("zero", () => 0);
 }
 
+export function one(values: Values) {
+  values.register("one", () => 1);
+}
+
 export function monotonic(values: Values) {
   values.register("i", (now, i) => i);
 }
