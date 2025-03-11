@@ -20,7 +20,7 @@ export function init({ animate, config, ctx }: InitArgs): Map<number, Output> {
   one(vals);
 
   const { add: addControl } = controls(vals, add);
-  render({ vals, add, animate, addControl });
+  render({ vals, animate, addControl });
 
   config.forEach((control) => {
     const updater = addControl(control);

@@ -18,9 +18,10 @@ export function sliderWithNumericInputs(
   args: SliderArgs,
   onRemove: () => void,
 ): Updater {
-  const { container, showValue } = renderControl(args.name, () =>
-    values.unregister(args.name),
-  );
+  const { container, showValue } = renderControl(args.name, () => {
+    values.unregister(args.name);
+    onRemove();
+  });
 
   showValue(args.value ?? 50);
 

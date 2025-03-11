@@ -14,7 +14,7 @@ export type AddOutputArgs = {
 
 type Outputs = {
   outputs: Map<number, Output>;
-  add: (args: AddOutputArgs) => Updater;
+  add: (args: AddOutputArgs, onRemove: () => void) => Updater;
 };
 
 export function initOutputs(values: Values): Outputs {
@@ -22,10 +22,11 @@ export function initOutputs(values: Values): Outputs {
 
   return {
     outputs,
-    add(args) {
+    add(args, onRemove) {
       const id = outputs.size;
       const { container } = renderControl(args.name, () => {
         outputs.delete(id);
+        onRemove();
       });
 
       const { value: x, update: updateX } = connect(values, "", {

@@ -36,10 +36,15 @@ function evaluate(
   }
 }
 
-export function math(values: Values, args: MathArgs): Updater {
-  const { container, showValue } = renderControl(args.name, () =>
-    values.unregister(args.name),
-  );
+export function math(
+  values: Values,
+  args: MathArgs,
+  onRemove: () => void,
+): Updater {
+  const { container, showValue } = renderControl(args.name, () => {
+    values.unregister(args.name);
+    onRemove();
+  });
 
   const { el: mode_a } = renderSelectInputTo({
     id: `${args.name}_mode_a`,

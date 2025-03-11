@@ -14,10 +14,12 @@ export type OscillatorArgs = {
 export function oscillatorWithConnectInput(
   values: Values,
   args: OscillatorArgs,
+  onRemove: () => void,
 ): Updater {
-  const { container, showValue } = renderControl(args.name, () =>
-    values.unregister(args.name),
-  );
+  const { container, showValue } = renderControl(args.name, () => {
+    values.unregister(args.name);
+    onRemove();
+  });
 
   const { value: min, update: updateMin } = connect(values, args.name, {
     id: `${args.name}_min`,

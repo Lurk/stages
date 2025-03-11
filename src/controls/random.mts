@@ -9,10 +9,15 @@ export type RandomArgs = {
   max?: string;
 };
 
-export function random(values: Values, args: RandomArgs): Updater {
-  const { container, showValue } = renderControl(args.name, () =>
-    values.unregister(args.name),
-  );
+export function random(
+  values: Values,
+  args: RandomArgs,
+  onRemove: () => void,
+): Updater {
+  const { container, showValue } = renderControl(args.name, () => {
+    values.unregister(args.name);
+    onRemove();
+  });
 
   const { value: min, update: updateMin } = connect(values, args.name, {
     id: `${args.name}_min`,

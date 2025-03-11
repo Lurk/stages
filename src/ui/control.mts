@@ -4,7 +4,6 @@ import {
   CreatorArgs,
   Updater,
 } from "../controls.mjs";
-import { AddOutputArgs } from "../outputs.mjs";
 import {
   renderControl,
   renderSelectInputTo,
@@ -13,7 +12,6 @@ import {
 
 type RenderProps = {
   vals: any;
-  add: (args: AddOutputArgs) => Updater;
   addControl: (args: CreatorArgs) => Updater;
   animate: () => void;
 };

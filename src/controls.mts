@@ -1,4 +1,4 @@
-import { math, MathArgs } from "./controls/mixer.mjs";
+import { math, MathArgs } from "./controls/math.mjs";
 import {
   OscillatorArgs,
   oscillatorWithConnectInput,
@@ -46,7 +46,7 @@ export type Updater = (control: CreatorArgs) => void;
 
 export function controls(
   values: Values,
-  addOutput: (args: AddOutputArgs) => Updater,
+  addOutput: (args: AddOutputArgs, onRemove: () => void) => Updater,
 ) {
   const map = new Map<string, Updater>();
 
@@ -57,23 +57,23 @@ export function controls(
     }
 
     if (map.has(args.name)) {
-      alert("Name already exists");
-      throw new Error("Name already exists");
+      alert(`Control with name ${args.name} already exists`);
+      throw new Error(`Control with name ${args.name} already exists`);
     }
+
+    const onRemove = () => map.delete(args.name);
 
     switch (type) {
       case "slider":
-        return sliderWithNumericInputs(values, args, () =>
-          map.delete(args.name),
-        );
+        return sliderWithNumericInputs(values, args, onRemove);
       case "oscillator":
-        return oscillatorWithConnectInput(values, args);
+        return oscillatorWithConnectInput(values, args, onRemove);
       case "math":
-        return math(values, args);
+        return math(values, args, onRemove);
       case "output":
-        return addOutput(args);
+        return addOutput(args, onRemove);
       case "random":
-        return random(values, args);
+        return random(values, args, onRemove);
       default:
         throw new Error("Invalid control type");
     }
