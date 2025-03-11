@@ -47,7 +47,6 @@ export type Updater = (control: CreatorArgs) => void;
 export function controls(
   values: Values,
   addOutput: (args: AddOutputArgs) => Updater,
-  config: CreatorArgs[],
 ) {
   const map = new Map<string, Updater>();
 
@@ -80,16 +79,8 @@ export function controls(
     }
   };
 
-  config.forEach((control) => {
-    map.set(control.args.name, constructor(control));
-    // TODO: come up with a better way to do this.
-    // Because controls can be in random order, first, we need to create them all, and only then connect.
-    // Somehow, without this timeout update doesn't work (at least in Safari).
-    setTimeout(() => map.get(control.args.name)?.(control), 10);
-  });
-
   return {
-    add: (args: CreatorArgs) => {
+    add(args: CreatorArgs) {
       const updater = constructor(args);
       map.set(args.args.name, updater);
       return updater;
