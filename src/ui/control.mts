@@ -1,7 +1,7 @@
 import {
   CONTROL_TYPES,
   controlTypeGuard,
-  CreatorArgs,
+  CreatorConfig,
   Updater,
 } from "../controls.mjs";
 import {
@@ -12,7 +12,7 @@ import {
 
 type RenderProps = {
   vals: any;
-  addControl: (args: CreatorArgs) => Updater;
+  addControl: (args: CreatorConfig) => Updater;
   animate: () => void;
 };
 

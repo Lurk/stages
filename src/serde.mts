@@ -3,17 +3,17 @@ import { OscillatorArgs } from "./controls/oscillator.mjs";
 import { AddOutputArgs } from "./outputs.mjs";
 import { MathArgs } from "./controls/math.mjs";
 import { RandomArgs } from "./controls/random.mjs";
-import { CreatorArgs } from "./controls.mjs";
+import { CreatorConfig } from "./controls.mjs";
 
 const VERSION = 1;
 
-function typeToString(type: CreatorArgs["type"]): string {
+function typeToString(type: CreatorConfig["type"]): string {
   switch (type) {
     case "slider":
       return "00";
     case "oscillator":
       return "01";
-    case "output":
+    case "line":
       return "02";
     case "math":
       return "03";
@@ -24,14 +24,14 @@ function typeToString(type: CreatorArgs["type"]): string {
   }
 }
 
-function stringToType(type: string): CreatorArgs["type"] {
+function stringToType(type: string): CreatorConfig["type"] {
   switch (type) {
     case "00":
       return "slider";
     case "01":
       return "oscillator";
     case "02":
-      return "output";
+      return "line";
     case "03":
       return "math";
     case "04":
@@ -138,7 +138,7 @@ function stringToOutput(
 }
 
 function mathToString(args: MathArgs): string {
-  return `${ser(args.name)}${ser(args.mode1)}${ser(args.lhs1)}${ser(args.rhs1)}${ser(args.mode2)}${ser(args.lhs2)}${ser(args.rhs2)}`;
+  return `${ser(args.name)}${ser(args.mode_a)}${ser(args.lhs1)}${ser(args.rhs1)}${ser(args.mode_b)}${ser(args.lhs2)}${ser(args.rhs2)}`;
 }
 
 function stringToMath(
@@ -148,19 +148,19 @@ function stringToMath(
   let local_start = start;
   const res: MathArgs = {
     name: "",
-    mode1: "",
+    mode_a: "",
     lhs1: "",
     rhs1: "",
-    mode2: "",
+    mode_b: "",
     lhs2: "",
     rhs2: "",
   };
   const keys = [
     "name",
-    "mode1",
+    "mode_a",
     "lhs1",
     "rhs1",
-    "mode2",
+    "mode_b",
     "lhs2",
     "rhs2",
   ] as const;
@@ -195,14 +195,14 @@ function stringToRandom(
   return { val: res, end: local_start };
 }
 
-function controlToString(control: CreatorArgs): string {
+function controlToString(control: CreatorConfig): string {
   const type = typeToString(control.type);
   switch (control.type) {
     case "slider":
       return `${type}${sliderToString(control.args)}`;
     case "oscillator":
       return `${type}${oscillatorToString(control.args)}`;
-    case "output":
+    case "line":
       return `${type}${outputToString(control.args)}`;
     case "math":
       return `${type}${mathToString(control.args)}`;
@@ -211,11 +211,11 @@ function controlToString(control: CreatorArgs): string {
   }
 }
 
-export function toString(controls: CreatorArgs[]): string {
+export function toString(controls: CreatorConfig[]): string {
   return `${VERSION.toString().padStart(3, "0")}${controls.map(controlToString).join("")}`;
 }
 
-export function fromString(str: string): CreatorArgs[] {
+export function fromString(str: string): CreatorConfig[] {
   if (str.length === 0) {
     return [];
   }
@@ -225,7 +225,7 @@ export function fromString(str: string): CreatorArgs[] {
   if (version !== VERSION) {
     throw new Error(`Version mismatch: ${version} !== ${VERSION}`);
   }
-  const res: CreatorArgs[] = [];
+  const res: CreatorConfig[] = [];
   while (pos < str.length) {
     const type = stringToType(str.slice(pos, pos + 2));
     pos += 2;
@@ -242,7 +242,7 @@ export function fromString(str: string): CreatorArgs[] {
         pos = end;
         break;
       }
-      case "output": {
+      case "line": {
         const { val, end } = stringToOutput(str, pos);
         res.push({ type, args: val });
         pos = end;

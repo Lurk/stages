@@ -1,6 +1,6 @@
-import { CreatorArgs } from "../controls.mjs";
+import { CreatorConfig } from "../controls.mjs";
 
-export const initial: CreatorArgs[] = [
+export const initial: CreatorConfig[] = [
   {
     type: "slider",
     args: {
@@ -75,7 +75,7 @@ export const initial: CreatorArgs[] = [
     },
   },
   {
-    type: "output",
+    type: "line",
     args: {
       name: "first",
       x: "x",

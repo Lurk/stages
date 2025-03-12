@@ -13,11 +13,19 @@ export type SliderArgs = {
   name: string;
 };
 
-export function sliderWithNumericInputs(
-  values: Values,
-  args: SliderArgs,
-  onRemove: () => void,
-): Updater {
+export type Args = {
+  values: Values;
+  args: SliderArgs;
+  onRemove: () => void;
+  onChange: (args: SliderArgs) => void;
+};
+
+export function sliderWithNumericInputs({
+  values,
+  args,
+  onRemove,
+  onChange,
+}: Args): Updater {
   const { container, showValue } = renderControl(args.name, () => {
     values.unregister(args.name);
     onRemove();
@@ -50,10 +58,31 @@ export function sliderWithNumericInputs(
 
   from.addEventListener("change", () => {
     s.min = from.value;
+    onChange({
+      name: args.name,
+      min: parseFloat(s.min),
+      value: s.valueAsNumber,
+      max: parseFloat(s.max),
+    });
   });
 
   to.addEventListener("change", () => {
     s.max = to.value;
+    onChange({
+      name: args.name,
+      min: parseFloat(s.min),
+      value: s.valueAsNumber,
+      max: parseFloat(s.max),
+    });
+  });
+
+  s.addEventListener("change", () => {
+    onChange({
+      name: args.name,
+      min: parseFloat(s.min),
+      value: s.valueAsNumber,
+      max: parseFloat(s.max),
+    });
   });
 
   s.value = String(args.value ?? 50);

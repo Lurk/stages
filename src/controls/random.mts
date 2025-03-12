@@ -9,25 +9,54 @@ export type RandomArgs = {
   max?: string;
 };
 
-export function random(
-  values: Values,
-  args: RandomArgs,
-  onRemove: () => void,
-): Updater {
+type Args = {
+  values: Values;
+  args: RandomArgs;
+  onRemove: () => void;
+  onChange: (args: RandomArgs) => void;
+};
+
+export function random({ values, args, onRemove, onChange }: Args): Updater {
   const { container, showValue } = renderControl(args.name, () => {
     values.unregister(args.name);
     onRemove();
+    removeMin();
+    removeMax();
   });
 
-  const { value: min, update: updateMin } = connect(values, args.name, {
-    id: `${args.name}_min`,
-    label: "min",
-    container,
+  const state = { ...args };
+
+  const {
+    value: min,
+    update: updateMin,
+    onRemove: removeMin,
+  } = connect({
+    values,
+    omit: args.name,
+    args: {
+      id: `${args.name}_min`,
+      label: "min",
+      container,
+    },
+    onChange(min) {
+      onChange({ ...Object.assign(state, { min }) });
+    },
   });
-  const { value: max, update: updateMax } = connect(values, args.name, {
-    id: `${args.name}_max`,
-    label: "max",
-    container,
+  const {
+    value: max,
+    update: updateMax,
+    onRemove: removeMax,
+  } = connect({
+    values,
+    omit: args.name,
+    args: {
+      id: `${args.name}_max`,
+      label: "max",
+      container,
+    },
+    onChange(max) {
+      onChange({ ...Object.assign(state, { max }) });
+    },
   });
 
   values.register(args.name, (now, i) => {

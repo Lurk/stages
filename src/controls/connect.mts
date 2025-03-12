@@ -5,21 +5,33 @@ import {
 } from "../utils.mjs";
 import { Values, Value } from "../value.mjs";
 
-export function connect(
-  values: Values,
-  omit: string,
-  args: Omit<RenderSelectInputArgs, "options">,
-): { value: Value; update: (val?: string) => void } {
+type Args = {
+  values: Values;
+  omit: string;
+  args: Omit<RenderSelectInputArgs, "options">;
+  onChange: (key: string) => void;
+};
+
+type Connect = {
+  value: Value;
+  update: (val?: string) => void;
+  onRemove: () => void;
+};
+
+export function connect({ values, omit, args, onChange }: Args): Connect {
   const element = renderSelectInputTo({ ...args, options: values.keys() });
-  // TODO this is definitely leaks memory. When deleting the control with connected input this cb is not deleted.
-  values.onChange((keys) => {
+  const onChangeCb = (keys: string[]) => {
     element.updateOptions(keys.filter((k) => k !== omit));
-  });
+  };
+
+  values.onChange(onChangeCb);
 
   assert(
     element.el instanceof HTMLSelectElement,
     `element with id='${args.id}' is not HTMLSelectElement`,
   );
+
+  element.el.addEventListener("change", () => onChange(element.el.value));
 
   return {
     value: (now, i) => {
@@ -29,6 +41,9 @@ export function connect(
       if (val) {
         element.el.value = val;
       }
+    },
+    onRemove() {
+      values.unsubscribe(onChangeCb);
     },
   };
 }

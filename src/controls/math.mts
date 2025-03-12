@@ -5,15 +5,15 @@ import { Updater } from "../controls.mjs";
 
 export type MathArgs = {
   name: string;
-  mode1?: string;
+  mode_a?: string;
   lhs1?: string;
   rhs1?: string;
-  mode2?: string;
+  mode_b?: string;
   lhs2?: string;
   rhs2?: string;
 };
 
-const options = ["sum", "avg", "neg", "mul"] as const;
+const options = ["sum", "sub", "mul", "div", "avg"] as const;
 
 function evaluate(
   o: string,
@@ -25,70 +25,134 @@ function evaluate(
   switch (o) {
     case "sum":
       return lhs(now, i) + rhs(now, i);
-    case "avg":
-      return (lhs(now, i) + rhs(now, i)) / 2;
-    case "neg":
+    case "sub":
       return lhs(now, i) - rhs(now, i);
     case "mul":
       return lhs(now, i) * rhs(now, i);
+    case "div":
+      return lhs(now, i) / rhs(now, i);
+    case "avg":
+      return (lhs(now, i) + rhs(now, i)) / 2;
     default:
       throw new Error(`option: ${o} is not supported`);
   }
 }
 
-export function math(
-  values: Values,
-  args: MathArgs,
-  onRemove: () => void,
-): Updater {
+type Args = {
+  values: Values;
+  args: MathArgs;
+  onRemove: () => void;
+  onChange: (args: MathArgs) => void;
+};
+
+export function math({ values, args, onRemove, onChange }: Args): Updater {
   const { container, showValue } = renderControl(args.name, () => {
     values.unregister(args.name);
     onRemove();
+    lhs1_r();
+    rhs1_r();
+    lhs2_r();
+    rhs2_r();
   });
+
+  const state = { ...args };
 
   const { el: mode_a } = renderSelectInputTo({
     id: `${args.name}_mode_a`,
     label: "mode",
-    selected: args.mode1,
+    selected: args.mode_a,
     options,
     container,
   });
 
-  const { value: lhs1, update: lhs1_u } = connect(values, args.name, {
-    id: `${args.name}_lhs1`,
-    label: `lhs`,
-    container,
-    selected: args.lhs1,
+  mode_a.addEventListener("change", () => {
+    onChange({ ...Object.assign(state, { mode_a: mode_a.value }) });
   });
 
-  const { value: rhs1, update: rhs1_u } = connect(values, args.name, {
-    id: `${args.name}_rhs1`,
-    label: `rhs`,
-    container,
-    selected: args.rhs2,
+  const {
+    value: lhs1,
+    update: lhs1_u,
+    onRemove: lhs1_r,
+  } = connect({
+    values,
+    omit: args.name,
+    args: {
+      id: `${args.name}_lhs1`,
+      label: `lhs`,
+      container,
+      selected: args.lhs1,
+    },
+    onChange(lhs1) {
+      onChange({ ...Object.assign(state, { lhs1 }) });
+    },
+  });
+
+  const {
+    value: rhs1,
+    update: rhs1_u,
+    onRemove: rhs1_r,
+  } = connect({
+    values,
+    omit: args.name,
+    args: {
+      id: `${args.name}_rhs1`,
+      label: `rhs`,
+      container,
+      selected: args.rhs2,
+    },
+    onChange(rhs1) {
+      onChange({ ...Object.assign(state, { rhs1 }) });
+    },
   });
 
   const showValue2 = spanWithText(container, "0");
+
   const { el: mode_b } = renderSelectInputTo({
     id: `${args.name}_mode_b`,
     label: "mode",
-    selected: args.mode2,
+    selected: args.mode_b,
     options,
     container,
   });
 
-  const { value: lhs2, update: lhs2_u } = connect(values, args.name, {
-    id: `${args.name}_lhs2`,
-    label: `lhs`,
-    container,
-    selected: args.lhs2,
+  mode_b.addEventListener("change", () => {
+    onChange({ ...Object.assign(state, { mode_b: mode_b.value }) });
   });
 
-  const { value: rhs2, update: rhs2_u } = connect(values, args.name, {
-    id: `${args.name}_in4`,
-    label: `rhs`,
-    container,
-    selected: args.rhs2,
+  const {
+    value: lhs2,
+    update: lhs2_u,
+    onRemove: lhs2_r,
+  } = connect({
+    values,
+    omit: args.name,
+    args: {
+      id: `${args.name}_lhs2`,
+      label: `lhs`,
+      container,
+      selected: args.lhs2,
+    },
+    onChange(lhs2) {
+      onChange({ ...Object.assign(state, { lhs2 }) });
+    },
+  });
+
+  const {
+    value: rhs2,
+    update: rhs2_u,
+    onRemove: rhs2_r,
+  } = connect({
+    values,
+    omit: args.name,
+    args: {
+      id: `${args.name}_in4`,
+      label: `rhs`,
+      container,
+      selected: args.rhs2,
+    },
+    onChange(rhs2) {
+      onChange({ ...Object.assign(state, { rhs2 }) });
+    },
   });
 
   values.register(`${args.name}_a`, (now, i) => {

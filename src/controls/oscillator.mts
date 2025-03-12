@@ -11,39 +11,101 @@ export type OscillatorArgs = {
   fall?: string;
 };
 
-export function oscillatorWithConnectInput(
-  values: Values,
-  args: OscillatorArgs,
-  onRemove: () => void,
-): Updater {
+type Args = {
+  values: Values;
+  args: OscillatorArgs;
+  onRemove: () => void;
+  onChange: (args: OscillatorArgs) => void;
+};
+
+export function oscillatorWithConnectInput({
+  values,
+  args,
+  onRemove,
+  onChange,
+}: Args): Updater {
   const { container, showValue } = renderControl(args.name, () => {
     values.unregister(args.name);
     onRemove();
+    removeMin();
+    removeMax();
+    removeRaise();
+    removeFall();
   });
 
-  const { value: min, update: updateMin } = connect(values, args.name, {
-    id: `${args.name}_min`,
-    label: "min",
-    selected: args.min,
-    container,
+  const state = { ...args };
+
+  const {
+    value: min,
+    update: updateMin,
+    onRemove: removeMin,
+  } = connect({
+    values,
+    omit: args.name,
+    args: {
+      id: `${args.name}_min`,
+      label: "min",
+      selected: args.min,
+      container,
+    },
+    onChange(min) {
+      Object.assign(state, { min });
+      onChange({ ...state });
+    },
   });
-  const { value: max, update: updateMax } = connect(values, args.name, {
-    id: `${args.name}_max`,
-    label: "max",
-    selected: args.max,
-    container,
+  const {
+    value: max,
+    update: updateMax,
+    onRemove: removeMax,
+  } = connect({
+    values,
+    omit: args.name,
+    args: {
+      id: `${args.name}_max`,
+      label: "max",
+      selected: args.max,
+      container,
+    },
+    onChange(max) {
+      Object.assign(state, { max });
+      onChange({ ...state });
+    },
   });
-  const { value: raise, update: updateRaise } = connect(values, args.name, {
-    id: `${args.name}_raise`,
-    label: "raise",
-    selected: args.raise,
-    container,
+  const {
+    value: raise,
+    update: updateRaise,
+    onRemove: removeRaise,
+  } = connect({
+    values,
+    omit: args.name,
+    args: {
+      id: `${args.name}_raise`,
+      label: "raise",
+      selected: args.raise,
+      container,
+    },
+    onChange(max) {
+      Object.assign(state, { max });
+      onChange({ ...state });
+    },
   });
-  const { value: fall, update: updateFall } = connect(values, args.name, {
-    id: `${args.name}_fall`,
-    label: "fall",
-    selected: args.fall,
-    container,
+  const {
+    value: fall,
+    update: updateFall,
+    onRemove: removeFall,
+  } = connect({
+    values,
+    omit: args.name,
+    args: {
+      id: `${args.name}_fall`,
+      label: "fall",
+      selected: args.fall,
+      container,
+    },
+    onChange(fall) {
+      Object.assign(state, { fall });
+      onChange({ ...state });
+    },
   });
 
   const w = wave({
@@ -68,6 +130,7 @@ export function oscillatorWithConnectInput(
       throw new Error("Invalid container name");
     }
 
+    Object.assign(state, container.args);
     updateMin(container.args.min);
     updateMax(container.args.max);
     updateRaise(container.args.raise);
