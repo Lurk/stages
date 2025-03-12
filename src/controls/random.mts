@@ -60,7 +60,7 @@ export function random({ values, args, onRemove, onChange }: Args) {
 
   values.register(args.name, (now, i) => {
     const val = Math.random() * (max(now, i) - min(now, i)) + min(now, i);
-    showValue(val);
+    showValue(val.toPrecision(6));
     return val;
   });
 

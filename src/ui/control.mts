@@ -16,7 +16,7 @@ type RenderProps = {
 };
 
 export function render(args: RenderProps) {
-  const { container } = renderControl("control");
+  const { container } = renderControl("factory");
 
   const nameInput = renderTextInputTo({
     label: "name:",

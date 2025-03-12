@@ -116,7 +116,7 @@ export function oscillatorWithConnectInput({
 
   values.register(args.name, (now, i) => {
     const val = w(now, i);
-    showValue(val);
+    showValue(val.toPrecision(6));
     return val;
   });
 

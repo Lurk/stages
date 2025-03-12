@@ -160,14 +160,14 @@ export function renderControl(
   onremove?: () => void,
 ): {
   container: HTMLDivElement;
-  showValue(val: number): void;
+  showValue(val: string): void;
 } {
   const root = document.getElementById("controls");
   assert(root, 'root element id="controls" not found');
   const container = document.createElement("div");
   const control = document.createElement("div");
   const header = document.createElement("h3");
-  const value = spanWithText(container, "0");
+  const value = spanWithText(container, "");
 
   if (onremove) {
     const remove = document.createElement("button");
@@ -190,9 +190,7 @@ export function renderControl(
 
   return {
     container,
-    showValue: limiter(100, (val) => {
-      value(val.toPrecision(6));
-    }),
+    showValue: limiter(100, value),
   };
 }
 
@@ -211,11 +209,11 @@ export function spanWithText(
 
 export function limiter(
   limit: number,
-  cb: (val: number) => void,
-): (val: number) => void {
-  let lastVal = 0;
+  cb: (val: string) => void,
+): (val: string) => void {
+  let lastVal = "";
   let lastTime = Date.now();
-  return (val: number) => {
+  return (val) => {
     if (lastVal !== val && Date.now() - lastTime > limit) {
       cb(val);
       lastVal = val;

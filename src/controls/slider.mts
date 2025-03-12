@@ -30,7 +30,7 @@ export function sliderWithNumericInputs({
     onRemove();
   });
 
-  showValue(args.value ?? 50);
+  showValue((args.value ?? 50).toPrecision(6));
 
   const to = renderNumberInputTo({
     id: `${args.name}_max`,
@@ -88,7 +88,7 @@ export function sliderWithNumericInputs({
 
   values.register(args.name, () => {
     const val = s.valueAsNumber;
-    showValue(val);
+    showValue(val.toPrecision(6));
     return val;
   });
 

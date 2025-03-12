@@ -156,7 +156,7 @@ export function math({ values, args, onRemove, onChange }: Args) {
 
   values.register(`${args.name}_a`, (now, i) => {
     const val = evaluate(mode_a.value, lhs1, rhs1, now, i);
-    showValue(val);
+    showValue(val.toPrecision(6));
     return val;
   });
 
