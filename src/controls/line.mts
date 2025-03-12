@@ -1,7 +1,6 @@
-import { Values, Value } from "./value.mjs";
-import { renderControl } from "./utils.mjs";
-import { connect } from "./controls/connect.mjs";
-import { Updater } from "./controls.mjs";
+import { Values, Value } from "../value.mjs";
+import { renderControl } from "../utils.mjs";
+import { connect } from "./connect.mjs";
 
 export type Output = { y: Value; x: Value; sr: Value; vertices: Value };
 
@@ -21,13 +20,7 @@ type Args = {
   onChange: (args: AddOutputArgs) => void;
 };
 
-export function line({
-  values,
-  outputs,
-  args,
-  onRemove,
-  onChange,
-}: Args): Updater {
+export function line({ values, outputs, args, onRemove, onChange }: Args) {
   const { container } = renderControl(args.name, () => {
     outputs.delete(args.name);
     onRemove();
@@ -115,18 +108,13 @@ export function line({
     vertices,
   });
 
-  return (container) => {
-    if (container.type !== "line") {
-      throw new Error("Invalid container type");
-    }
-
-    if (container.args.name !== args.name) {
-      throw new Error("Invalid container name");
-    }
-
-    updateX(container.args.x);
-    updateY(container.args.y);
-    updateSr(container.args.sr);
-    updateVertices(container.args.vertices);
-  };
+  // TODO: come up with a better way to do this.
+  // Because controls can be in random order, first, we need to create them all, and only then connect.
+  // Somehow, without this timeout update doesn't work (at least in Safari).
+  setTimeout(() => {
+    updateX(args.x);
+    updateY(args.y);
+    updateSr(args.sr);
+    updateVertices(args.vertices);
+  }, 1);
 }

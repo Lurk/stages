@@ -1,4 +1,3 @@
-import { Updater } from "../controls.mjs";
 import {
   renderControl,
   renderNumberInputTo,
@@ -25,7 +24,7 @@ export function sliderWithNumericInputs({
   args,
   onRemove,
   onChange,
-}: Args): Updater {
+}: Args) {
   const { container, showValue } = renderControl(args.name, () => {
     values.unregister(args.name);
     onRemove();
@@ -93,17 +92,12 @@ export function sliderWithNumericInputs({
     return val;
   });
 
-  return (control) => {
-    if (control.type !== "slider") {
-      throw new Error("Invalid control type");
-    }
-
-    if (control.args.name !== args.name) {
-      throw new Error("Invalid control name");
-    }
-
-    s.min = String(control.args.min) ?? s.min;
-    s.max = String(control.args.max) ?? s.max;
-    s.value = String(control.args.value ?? s.value);
-  };
+  // TODO: come up with a better way to do this.
+  // Because controls can be in random order, first, we need to create them all, and only then connect.
+  // Somehow, without this timeout update doesn't work (at least in Safari).
+  setTimeout(() => {
+    s.min = String(args.min) ?? s.min;
+    s.max = String(args.max) ?? s.max;
+    s.value = String(args.value ?? s.value);
+  }, 1);
 }

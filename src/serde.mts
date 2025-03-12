@@ -1,6 +1,6 @@
 import { SliderArgs } from "./controls/slider.mjs";
 import { OscillatorArgs } from "./controls/oscillator.mjs";
-import { AddOutputArgs } from "./outputs.mjs";
+import { AddOutputArgs } from "./controls/line.mjs";
 import { MathArgs } from "./controls/math.mjs";
 import { RandomArgs } from "./controls/random.mjs";
 import { CreatorConfig } from "./controls.mjs";

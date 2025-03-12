@@ -5,7 +5,7 @@ import {
 } from "./controls/oscillator.mjs";
 import { random, RandomArgs } from "./controls/random.mjs";
 import { SliderArgs, sliderWithNumericInputs } from "./controls/slider.mjs";
-import { AddOutputArgs, line, Output } from "./outputs.mjs";
+import { AddOutputArgs, line, Output } from "./controls/line.mjs";
 import { assert } from "./utils.mjs";
 import { Values } from "./value.mjs";
 import { toString } from "./serde.mjs";
@@ -44,12 +44,10 @@ export function controlTypeGuard(t: unknown): t is CreatorConfig["type"] {
   return CONTROL_TYPES.includes(t as CreatorConfig["type"]);
 }
 
-export type Updater = (control: CreatorConfig) => void;
-
 export function controls(values: Values, outputs: Map<string, Output>) {
   const map = new Map<string, CreatorConfig>();
 
-  const constructor = ({ type, args }: CreatorConfig): Updater => {
+  const constructor = ({ type, args }: CreatorConfig): void => {
     const onRemove = () => map.delete(args.name);
     const onChange = (newConfig: CreatorConfig) => {
       const config = map.get(newConfig.args.name);

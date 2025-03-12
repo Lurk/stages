@@ -1,4 +1,4 @@
-import { Output } from "../outputs.mjs";
+import { Output } from "./line.mjs";
 import { values } from "../value.mjs";
 import { height, monotonic, one, width, zero } from "./defaults.mjs";
 import { render } from "../ui/control.mjs";
@@ -19,16 +19,10 @@ export function init({ animate, config, ctx }: InitArgs): Map<string, Output> {
   monotonic(vals);
   one(vals);
 
-  const { add: addControl } = controls(vals, outputs);
-  render({ vals, animate, addControl });
+  const { add } = controls(vals, outputs);
+  render({ vals, animate, add });
 
-  config.forEach((control) => {
-    const updater = addControl(control);
-    // TODO: come up with a better way to do this.
-    // Because controls can be in random order, first, we need to create them all, and only then connect.
-    // Somehow, without this timeout update doesn't work (at least in Safari).
-    setTimeout(() => updater(control), 1);
-  });
+  config.forEach(add);
 
   return outputs;
 }

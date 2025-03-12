@@ -1,7 +1,6 @@
 import { Values, Value } from "../value.mjs";
 import { renderControl, renderSelectInputTo, spanWithText } from "../utils.mjs";
 import { connect } from "./connect.mjs";
-import { Updater } from "../controls.mjs";
 
 export type MathArgs = {
   name: string;
@@ -45,7 +44,7 @@ type Args = {
   onChange: (args: MathArgs) => void;
 };
 
-export function math({ values, args, onRemove, onChange }: Args): Updater {
+export function math({ values, args, onRemove, onChange }: Args) {
   const { container, showValue } = renderControl(args.name, () => {
     values.unregister(args.name);
     onRemove();
@@ -167,18 +166,13 @@ export function math({ values, args, onRemove, onChange }: Args): Updater {
     return val;
   });
 
-  return (container) => {
-    if (container.type !== "math") {
-      throw new Error("Invalid container type");
-    }
-
-    if (container.args.name !== args.name) {
-      throw new Error("Invalid container name");
-    }
-
-    lhs1_u(container.args.lhs1);
-    rhs1_u(container.args.rhs2);
-    lhs2_u(container.args.lhs2);
-    rhs2_u(container.args.rhs2);
-  };
+  // TODO: come up with a better way to do this.
+  // Because controls can be in random order, first, we need to create them all, and only then connect.
+  // Somehow, without this timeout update doesn't work (at least in Safari).
+  setTimeout(() => {
+    lhs1_u(args.lhs1);
+    rhs1_u(args.rhs2);
+    lhs2_u(args.lhs2);
+    rhs2_u(args.rhs2);
+  }, 1);
 }

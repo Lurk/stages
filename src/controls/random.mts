@@ -1,4 +1,3 @@
-import { Updater } from "../controls.mjs";
 import { renderControl } from "../utils.mjs";
 import { Values } from "../value.mjs";
 import { connect } from "./connect.mjs";
@@ -16,7 +15,7 @@ type Args = {
   onChange: (args: RandomArgs) => void;
 };
 
-export function random({ values, args, onRemove, onChange }: Args): Updater {
+export function random({ values, args, onRemove, onChange }: Args) {
   const { container, showValue } = renderControl(args.name, () => {
     values.unregister(args.name);
     onRemove();
@@ -65,16 +64,11 @@ export function random({ values, args, onRemove, onChange }: Args): Updater {
     return val;
   });
 
-  return (container) => {
-    if (container.type !== "random") {
-      throw new Error("Invalid container type");
-    }
-
-    if (container.args.name !== args.name) {
-      throw new Error("Invalid container name");
-    }
-
-    updateMin(container.args.min);
-    updateMax(container.args.max);
-  };
+  // TODO: come up with a better way to do this.
+  // Because controls can be in random order, first, we need to create them all, and only then connect.
+  // Somehow, without this timeout update doesn't work (at least in Safari).
+  setTimeout(() => {
+    updateMin(args.min);
+    updateMax(args.max);
+  }, 1);
 }

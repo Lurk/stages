@@ -2,7 +2,6 @@ import {
   CONTROL_TYPES,
   controlTypeGuard,
   CreatorConfig,
-  Updater,
 } from "../controls.mjs";
 import {
   renderControl,
@@ -12,11 +11,11 @@ import {
 
 type RenderProps = {
   vals: any;
-  addControl: (args: CreatorConfig) => Updater;
+  add: (args: CreatorConfig) => void;
   animate: () => void;
 };
 
-export function render(props: RenderProps) {
+export function render(args: RenderProps) {
   const { container } = renderControl("control");
 
   const nameInput = renderTextInputTo({
@@ -42,12 +41,12 @@ export function render(props: RenderProps) {
       alert("Invalid control type");
       return;
     }
-    props.addControl({ type, args: { name } });
+    args.add({ type, args: { name } });
     nameInput.value = "";
   });
 
   const runButton = document.createElement("button");
   runButton.textContent = "Run";
   container.appendChild(runButton);
-  runButton.addEventListener("click", props.animate);
+  runButton.addEventListener("click", args.animate);
 }

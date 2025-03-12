@@ -1,5 +1,5 @@
 import { path, initFullScreenCanvas } from "./canvas.mjs";
-import { init } from "./controls/controlCreator.mjs";
+import { init } from "./controls/factory.mjs";
 import { fromString } from "./serde.mjs";
 
 document.getElementById("fullscreen")?.addEventListener("click", (e) => {
