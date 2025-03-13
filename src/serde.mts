@@ -3,7 +3,7 @@ import { OscillatorArgs } from "./controls/oscillator.mjs";
 import { AddOutputArgs } from "./controls/line.mjs";
 import { MathArgs } from "./controls/math.mjs";
 import { RandomArgs } from "./controls/random.mjs";
-import { CreatorConfig } from "./controls.mjs";
+import { CreatorConfig } from "./controls/factory.mjs";
 
 const VERSION = 1;
 

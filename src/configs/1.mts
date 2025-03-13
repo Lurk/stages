@@ -1,4 +1,4 @@
-import { CreatorConfig } from "../controls.mjs";
+import { CreatorConfig } from "../controls/factory.mjs";
 
 export const initial: CreatorConfig[] = [
   {
