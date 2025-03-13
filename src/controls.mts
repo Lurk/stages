@@ -8,7 +8,7 @@ import { SliderArgs, sliderWithNumericInputs } from "./controls/slider.mjs";
 import { AddOutputArgs, line, Output } from "./controls/line.mjs";
 import { assert } from "./utils.mjs";
 import { Values } from "./value.mjs";
-import { toString } from "./serde.mjs";
+import { serde } from "./serde.mjs";
 
 export type CreatorConfig =
   | {
@@ -46,71 +46,74 @@ export function controlTypeGuard(t: unknown): t is CreatorConfig["type"] {
 
 export function controls(values: Values, outputs: Map<string, Output>) {
   const map = new Map<string, CreatorConfig>();
+  const sd = serde();
+  const add = (config: CreatorConfig) => {
+    if (!config.args.name) {
+      alert("Please enter a name");
+      throw new Error("Please enter a name");
+    }
 
-  const constructor = ({ type, args }: CreatorConfig): void => {
-    const onRemove = () => map.delete(args.name);
+    if (map.has(config.args.name)) {
+      alert(`Control with name ${config.args.name} already exists`);
+      throw new Error(`Control with name ${config.args.name} already exists`);
+    }
+
+    map.set(config.args.name, config);
+    const onRemove = () => map.delete(config.args.name);
     const onChange = (newConfig: CreatorConfig) => {
-      const config = map.get(newConfig.args.name);
-      assert(config, `Control with name ${args.name} does not exist`);
-      map.set(config.args.name, newConfig);
-      window.location.hash = toString([...map.values()]);
+      assert(
+        map.has(newConfig.args.name),
+        `Control with name ${newConfig.args.name} does not exist`,
+      );
+      map.set(newConfig.args.name, newConfig);
+      window.location.hash = sd.toString([...map.values()]);
     };
 
-    switch (type) {
+    switch (config.type) {
       case "slider":
         return sliderWithNumericInputs({
           values,
-          args,
+          args: config.args,
           onRemove,
-          onChange: (args: SliderArgs) => onChange({ type, args }),
+          onChange: (args: SliderArgs) => onChange({ type: config.type, args }),
         });
       case "oscillator":
         return oscillatorWithConnectInput({
           values,
-          args,
+          args: config.args,
           onRemove,
-          onChange: (args) => onChange({ type, args }),
+          onChange: (args) => onChange({ type: config.type, args }),
         });
       case "math":
         return math({
           values,
-          args,
+          args: config.args,
           onRemove,
-          onChange: (args) => onChange({ type, args }),
+          onChange: (args) => onChange({ type: config.type, args }),
         });
       case "line":
         return line({
-          args,
-          onRemove,
           values,
           outputs,
-          onChange: (args) => onChange({ type, args }),
+          args: config.args,
+          onRemove,
+          onChange: (args) => onChange({ type: config.type, args }),
         });
       case "random":
         return random({
           values,
-          args,
+          args: config.args,
           onRemove,
-          onChange: (args) => onChange({ type, args }),
+          onChange: (args) => onChange({ type: config.type, args }),
         });
       default:
         throw new Error("Invalid control type");
     }
   };
 
-  return {
-    add(config: CreatorConfig) {
-      if (!config.args.name) {
-        alert("Please enter a name");
-        throw new Error("Please enter a name");
-      }
+  sd.fromString(window.location.hash.slice(1)).forEach(add);
 
-      if (map.has(config.args.name)) {
-        alert(`Control with name ${config.args.name} already exists`);
-        throw new Error(`Control with name ${config.args.name} already exists`);
-      }
-      map.set(config.args.name, config);
-      return constructor(config);
-    },
+  return {
+    add,
   };
 }

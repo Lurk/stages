@@ -74,7 +74,7 @@ export function math({ values, args, onRemove, onChange }: Args) {
     onRemove: lhs1_r,
   } = connect({
     values,
-    omit: args.name,
+    omit: `${args.name}_a`,
     args: {
       id: `${args.name}_lhs1`,
       label: `lhs`,
@@ -92,7 +92,7 @@ export function math({ values, args, onRemove, onChange }: Args) {
     onRemove: rhs1_r,
   } = connect({
     values,
-    omit: args.name,
+    omit: `${args.name}_a`,
     args: {
       id: `${args.name}_rhs1`,
       label: `rhs`,
@@ -124,7 +124,7 @@ export function math({ values, args, onRemove, onChange }: Args) {
     onRemove: lhs2_r,
   } = connect({
     values,
-    omit: args.name,
+    omit: `${args.name}_b`,
     args: {
       id: `${args.name}_lhs2`,
       label: `lhs`,
@@ -142,7 +142,7 @@ export function math({ values, args, onRemove, onChange }: Args) {
     onRemove: rhs2_r,
   } = connect({
     values,
-    omit: args.name,
+    omit: `${args.name}_b`,
     args: {
       id: `${args.name}_in4`,
       label: `rhs`,
@@ -171,7 +171,7 @@ export function math({ values, args, onRemove, onChange }: Args) {
   // Somehow, without this timeout update doesn't work (at least in Safari).
   setTimeout(() => {
     lhs1_u(args.lhs1);
-    rhs1_u(args.rhs2);
+    rhs1_u(args.rhs1);
     lhs2_u(args.lhs2);
     rhs2_u(args.rhs2);
   }, 1);

@@ -1,6 +1,5 @@
 import { path, initFullScreenCanvas } from "./canvas.mjs";
 import { init } from "./controls/factory.mjs";
-import { fromString } from "./serde.mjs";
 
 document.getElementById("fullscreen")?.addEventListener("click", (e) => {
   e.preventDefault();
@@ -17,7 +16,6 @@ const ctx = initFullScreenCanvas({
 const outputs = init({
   ctx,
   animate,
-  config: fromString(window.location.hash.slice(1)),
 });
 
 let isRunning = true;

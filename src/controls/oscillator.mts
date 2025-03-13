@@ -48,8 +48,7 @@ export function oscillatorWithConnectInput({
       container,
     },
     onChange(min) {
-      Object.assign(state, { min });
-      onChange({ ...state });
+      onChange({ ...Object.assign(state, { min }) });
     },
   });
   const {
@@ -66,8 +65,7 @@ export function oscillatorWithConnectInput({
       container,
     },
     onChange(max) {
-      Object.assign(state, { max });
-      onChange({ ...state });
+      onChange({ ...Object.assign(state, { max }) });
     },
   });
   const {
@@ -83,9 +81,8 @@ export function oscillatorWithConnectInput({
       selected: args.raise,
       container,
     },
-    onChange(max) {
-      Object.assign(state, { max });
-      onChange({ ...state });
+    onChange(raise) {
+      onChange({ ...Object.assign(state, { raise }) });
     },
   });
   const {
@@ -102,8 +99,7 @@ export function oscillatorWithConnectInput({
       container,
     },
     onChange(fall) {
-      Object.assign(state, { fall });
-      onChange({ ...state });
+      onChange({ ...Object.assign(state, { fall }) });
     },
   });
 
@@ -128,5 +124,5 @@ export function oscillatorWithConnectInput({
     updateMax(args.max);
     updateRaise(args.raise);
     updateFall(args.fall);
-  }, 1);
+  }, 10);
 }
