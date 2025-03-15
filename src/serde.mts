@@ -5,6 +5,7 @@ import { MathArgs } from "./controls/math.mjs";
 import { RandomArgs } from "./controls/random.mjs";
 import { CreatorConfig } from "./controls/factory.mjs";
 import { assert } from "./utils.mjs";
+import { LogicArgs } from "./controls/logic.mjs";
 
 const VERSION = "001";
 
@@ -47,11 +48,11 @@ function stringToType(type: string): CreatorConfig["type"] {
 }
 
 function serialize(val?: string): string {
-  return `${val?.length ?? 1}|${val ?? 0}`;
+  return `${val?.length ?? 1}.${val ?? 0}`;
 }
 
 function deserialize(val: string, start: number): { val: string; end: number } {
-  const separator = val.indexOf("|", start);
+  const separator = val.indexOf(".", start);
   const len = parseInt(val.slice(start, separator), 10);
 
   if (Number.isNaN(len)) {
@@ -193,6 +194,32 @@ function math() {
     },
   };
 }
+function logic() {
+  const keys = ["name", "mode", "lhs", "rhs", "is_true", "is_false"] as const;
+  return {
+    toString(args: LogicArgs): string {
+      return keys.map((key) => serialize(args[key])).join("");
+    },
+
+    fromString(val: string, start: number): { val: LogicArgs; end: number } {
+      let local_start = start;
+      const res: LogicArgs = {
+        name: "",
+        mode: "",
+        lhs: "",
+        rhs: "",
+        is_true: "",
+        is_false: "",
+      };
+      keys.forEach((key) => {
+        const { val: v, end } = deserialize(val, local_start);
+        local_start = end;
+        res[key] = v;
+      });
+      return { val: res, end: local_start };
+    },
+  };
+}
 
 function random() {
   const keys = ["name", "min", "max"] as const;
@@ -234,6 +261,7 @@ export function serde(): Serde {
   const l = line();
   const m = math();
   const r = random();
+  const lgc = logic();
 
   const controlToString = (control: CreatorConfig): string => {
     const type = typeToString(control.type);
@@ -248,6 +276,8 @@ export function serde(): Serde {
         return `${type}${m.toString(control.args)}`;
       case "random":
         return `${type}${r.toString(control.args)}`;
+      case "logic":
+        return `${type}${lgc.toString(control.args)}`;
     }
   };
 
@@ -307,6 +337,11 @@ export function serde(): Serde {
             controls.set(val.name, { type, args: val });
             pos = end;
             break;
+          }
+          case "logic": {
+            const { val, end } = lgc.fromString(str, pos);
+            controls.set(val.name, { type, args: val });
+            pos = end;
           }
         }
       }

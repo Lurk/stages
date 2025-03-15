@@ -106,6 +106,10 @@ input[type=text] {
 	display: block;
 }
 
+.control.output {
+	filter: sepia(100%);
+}
+
 .input {
 	display: grid;
 	grid-template-columns: auto auto;
