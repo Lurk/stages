@@ -11,17 +11,25 @@ export type State = {
   eachControl: (cb: (args: CreatorConfig) => void) => void;
 };
 
+const sync = (s: string) =>
+  window.history.pushState({}, "", `./index.html?s=${s}`);
+
 export function state(): State {
+  window.addEventListener("popstate", () => {
+    window.location.reload();
+  });
+
   const sd = serde();
+  const queryParams = new URLSearchParams(window.location.search);
 
   let { areControlsVisible, controls } = sd.fromString(
-    window.location.hash.slice(1),
+    queryParams.get("s") || "",
   );
 
   return {
     toggleVisibility() {
       areControlsVisible = !areControlsVisible;
-      window.location.hash = sd.toString({ areControlsVisible, controls });
+      sync(sd.toString({ areControlsVisible, controls }));
     },
     areControlsVisible() {
       return areControlsVisible;
@@ -34,7 +42,7 @@ export function state(): State {
       );
 
       controls.set(config.args.name, config);
-      window.location.hash = sd.toString({ areControlsVisible, controls });
+      sync(sd.toString({ areControlsVisible, controls }));
     },
     updateControl(newConfig) {
       assert(
@@ -42,11 +50,11 @@ export function state(): State {
         `Control with name ${newConfig.args.name} does not exist`,
       );
       controls.set(newConfig.args.name, newConfig);
-      window.location.hash = sd.toString({ areControlsVisible, controls });
+      sync(sd.toString({ areControlsVisible, controls }));
     },
     removeControl(name) {
       controls.delete(name);
-      window.location.hash = sd.toString({ areControlsVisible, controls });
+      sync(sd.toString({ areControlsVisible, controls }));
     },
     eachControl(cb) {
       [...controls.values()].forEach(cb);
