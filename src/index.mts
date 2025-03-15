@@ -3,7 +3,7 @@ import { factory } from "./controls/factory.mjs";
 
 const ctx = initFullScreenCanvas({
   id: "canvas",
-  backgroundCollor: "#403f3f",
+  backgroundCollor: "#2b2a2a",
 });
 
 const outputs = factory({
