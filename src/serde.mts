@@ -43,11 +43,11 @@ function stringToType(type: string): CreatorConfig["type"] {
 }
 
 function serialize(val?: string): string {
-  return `${val?.length ?? 1}:${val ?? 0}`;
+  return `${val?.length ?? 1}|${val ?? 0}`;
 }
 
 function deserialize(val: string, start: number): { val: string; end: number } {
-  const separator = val.indexOf(":", start);
+  const separator = val.indexOf("|", start);
   const len = parseInt(val.slice(start, separator), 10);
 
   if (Number.isNaN(len)) {
