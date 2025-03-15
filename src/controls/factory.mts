@@ -1,13 +1,13 @@
 import { AddOutputArgs, line, Output } from "./line.mjs";
-import { values } from "../value.mjs";
+import { Values, values } from "../value.mjs";
 import { height, monotonic, one, width, zero } from "./defaults.mjs";
 import { render } from "../ui/control.mjs";
 import { SliderArgs, sliderWithNumericInputs } from "./slider.mjs";
 import { OscillatorArgs, oscillatorWithConnectInput } from "./oscillator.mjs";
 import { math, MathArgs } from "./math.mjs";
 import { random, RandomArgs } from "./random.mjs";
-import { serde } from "../serde.mjs";
 import { assert } from "../utils.mjs";
+import { State, state } from "../state.mjs";
 export type CreatorConfig =
   | {
       type: "slider";
@@ -42,89 +42,115 @@ export function controlTypeGuard(t: unknown): t is CreatorConfig["type"] {
   return CONTROL_TYPES.includes(t as CreatorConfig["type"]);
 }
 
-export type InitArgs = {
+export type FactoryArgs = {
   ctx: CanvasRenderingContext2D;
   animate: () => void;
 };
 
-export function init({ animate, ctx }: InitArgs): Map<string, Output> {
+function initEvents(state: State) {
+  const canvas = document.getElementById("canvas");
+  const controls = document.getElementById("controls");
+  assert(canvas, "#canvas element was not found");
+  assert(controls, "#controls element was not wound");
+
+  canvas.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (e.target instanceof HTMLElement) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        e.target.requestFullscreen();
+      }
+    }
+  });
+
+  if (!state.areControlsVisible()) {
+    controls.classList.add("hidden");
+    canvas.classList.add("fill");
+  }
+
+  document.onkeyup = function (e) {
+    // space
+    if (e.key == " " || e.code == "Space" || e.keyCode == 32) {
+      controls.classList.toggle("hidden");
+      canvas.classList.toggle("fill");
+      state.toggleVisibility();
+    }
+  };
+}
+
+function init(
+  state: State,
+  values: Values,
+  outputs: Map<string, Output>,
+): (config: CreatorConfig, init?: boolean) => void {
+  return (config, init) => {
+    if (!init) {
+      state.addControl(config);
+    }
+
+    const onRemove = () => state.removeControl(config.args.name);
+
+    switch (config.type) {
+      case "slider":
+        return sliderWithNumericInputs({
+          values,
+          onRemove,
+          args: config.args,
+          onChange: (args: SliderArgs) =>
+            state.updateControl({ type: config.type, args }),
+        });
+      case "oscillator":
+        return oscillatorWithConnectInput({
+          values,
+          onRemove,
+          args: config.args,
+          onChange: (args) => state.updateControl({ type: config.type, args }),
+        });
+      case "math":
+        return math({
+          values,
+          onRemove,
+          args: config.args,
+          onChange: (args) => state.updateControl({ type: config.type, args }),
+        });
+      case "line":
+        return line({
+          values,
+          outputs,
+          onRemove,
+          args: config.args,
+          onChange: (args) => state.updateControl({ type: config.type, args }),
+        });
+      case "random":
+        return random({
+          values,
+          onRemove,
+          args: config.args,
+          onChange: (args) => state.updateControl({ type: config.type, args }),
+        });
+      default:
+        throw new Error("Invalid control type");
+    }
+  };
+}
+
+export function factory({ animate, ctx }: FactoryArgs): Map<string, Output> {
   const vals = values();
   const outputs: Map<string, Output> = new Map();
+  const s = state();
+  const add = init(s, vals, outputs);
+
+  initEvents(s);
   width(vals, ctx);
   height(vals, ctx);
   zero(vals);
   monotonic(vals);
   one(vals);
 
-  const map = new Map<string, CreatorConfig>();
-  const sd = serde();
-  const add = (config: CreatorConfig) => {
-    if (!config.args.name) {
-      alert("Please enter a name");
-      throw new Error("Please enter a name");
-    }
-
-    if (map.has(config.args.name)) {
-      alert(`Control with name ${config.args.name} already exists`);
-      throw new Error(`Control with name ${config.args.name} already exists`);
-    }
-
-    map.set(config.args.name, config);
-    const onRemove = () => map.delete(config.args.name);
-    const onChange = (newConfig: CreatorConfig) => {
-      assert(
-        map.has(newConfig.args.name),
-        `Control with name ${newConfig.args.name} does not exist`,
-      );
-      map.set(newConfig.args.name, newConfig);
-      window.location.hash = sd.toString([...map.values()]);
-    };
-
-    switch (config.type) {
-      case "slider":
-        return sliderWithNumericInputs({
-          values: vals,
-          args: config.args,
-          onRemove,
-          onChange: (args: SliderArgs) => onChange({ type: config.type, args }),
-        });
-      case "oscillator":
-        return oscillatorWithConnectInput({
-          values: vals,
-          args: config.args,
-          onRemove,
-          onChange: (args) => onChange({ type: config.type, args }),
-        });
-      case "math":
-        return math({
-          values: vals,
-          args: config.args,
-          onRemove,
-          onChange: (args) => onChange({ type: config.type, args }),
-        });
-      case "line":
-        return line({
-          values: vals,
-          outputs,
-          args: config.args,
-          onRemove,
-          onChange: (args) => onChange({ type: config.type, args }),
-        });
-      case "random":
-        return random({
-          values: vals,
-          args: config.args,
-          onRemove,
-          onChange: (args) => onChange({ type: config.type, args }),
-        });
-      default:
-        throw new Error("Invalid control type");
-    }
-  };
-
   render({ vals, animate, add });
 
-  sd.fromString(window.location.hash.slice(1)).forEach(add);
+  s.eachControl((c) => add(c, true));
 
   return outputs;
 }

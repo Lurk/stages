@@ -54,19 +54,16 @@ input[type=text] {
 
 
 #canvas {
-	height: 100%;
+	height: calc(100vh - 245px);
 	width: 100%;
 }
 
-#fullscreen {
-	justify-content: center;
-	display: flex;
-	align-items: center;
-	height: 70vh;
+#canvas.fill {
+	height: 100vh;
 }
 
 @media (display-mode: fullscreen) {
-	#fullscreen {
+	#canvas {
 		height: 100vh;
 	}
 }
@@ -74,6 +71,10 @@ input[type=text] {
 #controls {
 	display: flex;
 	gap: 10px;
+}
+
+#controls.hidden {
+	display: none;
 }
 
 .slider {

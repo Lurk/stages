@@ -4,8 +4,9 @@ import { AddOutputArgs } from "./controls/line.mjs";
 import { MathArgs } from "./controls/math.mjs";
 import { RandomArgs } from "./controls/random.mjs";
 import { CreatorConfig } from "./controls/factory.mjs";
+import { assert } from "./utils.mjs";
 
-const VERSION = 1;
+const VERSION = "001";
 
 function typeToString(type: CreatorConfig["type"]): string {
   switch (type) {
@@ -213,9 +214,14 @@ function random() {
   };
 }
 
+type State = {
+  controls: Map<string, CreatorConfig>;
+  areControlsVisible: boolean;
+};
+
 export type Serde = {
-  fromString: (str: string) => CreatorConfig[];
-  toString: (controls: CreatorConfig[]) => string;
+  fromString: (str: string) => State;
+  toString: (controls: State) => string;
 };
 
 export function serde(): Serde {
@@ -242,58 +248,68 @@ export function serde(): Serde {
   };
 
   return {
-    toString(controls) {
-      return `${VERSION.toString().padStart(3, "0")}${controls.map(controlToString).join("")}`;
+    toString(state: State) {
+      return `${VERSION}${state.areControlsVisible ? "Y" : "N"}${[...state.controls.values()].map(controlToString).join("")}`;
     },
 
     fromString(str) {
       if (str.length === 0) {
-        return [];
+        return { controls: new Map(), areControlsVisible: true };
       }
       let pos = 0;
-      const version = parseInt(str.slice(pos, pos + 3), 10);
+      const version = str.slice(pos, pos + 3);
       pos += 3;
-      if (version !== VERSION) {
-        throw new Error(`Version mismatch: ${version} !== ${VERSION}`);
-      }
-      const res: CreatorConfig[] = [];
+      assert(
+        version === VERSION,
+        `Version mismatch: ${version} !== ${VERSION}`,
+      );
+      const visible = str[pos];
+      assert(
+        str[pos] === "Y" || str[pos] === "N",
+        `Invalid visibility: ${visible}`,
+      );
+      pos += 1;
+      const controls: State["controls"] = new Map();
       while (pos < str.length) {
         const type = stringToType(str.slice(pos, pos + 2));
         pos += 2;
         switch (type) {
           case "slider": {
             const { val, end } = s.fromString(str, pos);
-            res.push({ type, args: val });
+            controls.set(val.name, { type, args: val });
             pos = end;
             break;
           }
           case "oscillator": {
             const { val, end } = o.fromString(str, pos);
-            res.push({ type, args: val });
+            controls.set(val.name, { type, args: val });
             pos = end;
             break;
           }
           case "line": {
             const { val, end } = l.fromString(str, pos);
-            res.push({ type, args: val });
+            controls.set(val.name, { type, args: val });
             pos = end;
             break;
           }
           case "math": {
             const { val, end } = m.fromString(str, pos);
-            res.push({ type, args: val });
+            controls.set(val.name, { type, args: val });
             pos = end;
             break;
           }
           case "random": {
             const { val, end } = r.fromString(str, pos);
-            res.push({ type, args: val });
+            controls.set(val.name, { type, args: val });
             pos = end;
             break;
           }
         }
       }
-      return res;
+      return {
+        controls,
+        areControlsVisible: visible === "Y",
+      };
     },
   };
 }

@@ -1,19 +1,12 @@
 import { path, initFullScreenCanvas } from "./canvas.mjs";
-import { init } from "./controls/factory.mjs";
-
-document.getElementById("fullscreen")?.addEventListener("click", (e) => {
-  e.preventDefault();
-  if (e.target instanceof HTMLElement) {
-    e.target.requestFullscreen();
-  }
-});
+import { factory } from "./controls/factory.mjs";
 
 const ctx = initFullScreenCanvas({
   id: "canvas",
   backgroundCollor: "#403f3f",
 });
 
-const outputs = init({
+const outputs = factory({
   ctx,
   animate,
 });

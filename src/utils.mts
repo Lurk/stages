@@ -1,5 +1,6 @@
 export function assert(lhs: any, message: string): asserts lhs {
   if (!lhs) {
+    alert(message);
     throw new Error(message);
   }
 }
