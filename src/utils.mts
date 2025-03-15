@@ -147,7 +147,7 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
           const option = document.createElement("option");
           option.value = key;
           option.innerText = key;
-          option.id = `${el.id}_${key}`;
+          option.id = `${args.id}_${key}`;
           el.options.add(option);
         }
       });
