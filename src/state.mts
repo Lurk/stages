@@ -11,8 +11,7 @@ export type State = {
   eachControl: (cb: (args: CreatorConfig) => void) => void;
 };
 
-const sync = (s: string) =>
-  window.history.pushState({}, "", `./index.html?s=${s}`);
+const sync = (s: string) => window.history.pushState({}, "", `./?s=${s}`);
 
 export function state(): State {
   window.addEventListener("popstate", () => {

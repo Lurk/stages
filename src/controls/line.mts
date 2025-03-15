@@ -21,7 +21,7 @@ type Args = {
 };
 
 export function line({ values, outputs, args, onRemove, onChange }: Args) {
-  const { container } = renderControl(args.name, () => {
+  const { container } = renderControl(args.name, true, () => {
     outputs.delete(args.name);
     onRemove();
     removeX();

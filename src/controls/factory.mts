@@ -46,7 +46,7 @@ function initEvents(state: State) {
     if (e.target instanceof HTMLElement) {
       if (document.fullscreenElement) {
         document.exitFullscreen();
-      } else {
+      } else if (e.target.requestFullscreen) {
         e.target.requestFullscreen();
       }
     }

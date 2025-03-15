@@ -1,3 +1,5 @@
+import { isAbsolute } from "path";
+
 export function assert(lhs: any, message: string): asserts lhs {
   if (!lhs) {
     alert(message);
@@ -158,6 +160,7 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
 
 export function renderControl(
   id: string,
+  isOutput?: boolean,
   onremove?: () => void,
 ): {
   container: HTMLDivElement;
@@ -182,6 +185,9 @@ export function renderControl(
   }
 
   control.classList.add("control");
+  if (isOutput) {
+    control.classList.add("output");
+  }
   container.classList.add("inputs");
   header.innerText = `${id}:`;
 

@@ -23,7 +23,7 @@ export function oscillatorWithConnectInput({
   onRemove,
   onChange,
 }: Args) {
-  const { container, showValue } = renderControl(args.name, () => {
+  const { container, showValue } = renderControl(args.name, false, () => {
     values.unregister(args.name);
     onRemove();
     removeMin();
