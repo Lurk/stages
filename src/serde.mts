@@ -20,6 +20,8 @@ function typeToString(type: CreatorConfig["type"]): string {
       return "03";
     case "random":
       return "04";
+    case "logic":
+      return "05";
     default:
       throw new Error(`Unknown type: ${type}`);
   }
@@ -37,6 +39,8 @@ function stringToType(type: string): CreatorConfig["type"] {
       return "math";
     case "04":
       return "random";
+    case "05":
+      return "logic";
     default:
       throw new Error(`Unknown type: ${type}`);
   }

@@ -8,27 +8,14 @@ import { math, MathArgs } from "./math.mjs";
 import { random, RandomArgs } from "./random.mjs";
 import { assert } from "../utils.mjs";
 import { State, state } from "../state.mjs";
+import { logic, LogicArgs } from "./logic.mjs";
 export type CreatorConfig =
-  | {
-      type: "slider";
-      args: SliderArgs;
-    }
-  | {
-      type: "oscillator";
-      args: OscillatorArgs;
-    }
-  | {
-      type: "math";
-      args: MathArgs;
-    }
-  | {
-      type: "line";
-      args: AddOutputArgs;
-    }
-  | {
-      type: "random";
-      args: RandomArgs;
-    };
+  | { type: "slider"; args: SliderArgs }
+  | { type: "oscillator"; args: OscillatorArgs }
+  | { type: "math"; args: MathArgs }
+  | { type: "line"; args: AddOutputArgs }
+  | { type: "random"; args: RandomArgs }
+  | { type: "logic"; args: LogicArgs };
 
 export const CONTROL_TYPES: CreatorConfig["type"][] = [
   "slider",
@@ -36,6 +23,7 @@ export const CONTROL_TYPES: CreatorConfig["type"][] = [
   "math",
   "line",
   "random",
+  "logic",
 ] as const;
 
 export function controlTypeGuard(t: unknown): t is CreatorConfig["type"] {
@@ -124,6 +112,13 @@ function init(
         });
       case "random":
         return random({
+          values,
+          onRemove,
+          args: config.args,
+          onChange: (args) => state.updateControl({ type: config.type, args }),
+        });
+      case "logic":
+        return logic({
           values,
           onRemove,
           args: config.args,
