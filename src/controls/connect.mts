@@ -16,6 +16,7 @@ type Connect = {
   value: Value;
   update: (val?: string) => void;
   onRemove: () => void;
+  selected: () => string;
 };
 
 export function connect({ values, omit, args, onChange }: Args): Connect {
@@ -44,6 +45,9 @@ export function connect({ values, omit, args, onChange }: Args): Connect {
     },
     onRemove() {
       values.unsubscribe(onChangeCb);
+    },
+    selected() {
+      return element.el.value;
     },
   };
 }

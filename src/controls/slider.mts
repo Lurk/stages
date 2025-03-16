@@ -55,34 +55,25 @@ export function sliderWithNumericInputs({
     value: args.min ?? 0,
   });
 
-  from.addEventListener("change", () => {
-    s.min = from.value;
+  const change = () =>
     onChange({
       name: args.name,
-      min: parseFloat(s.min),
+      min: s.min ? parseFloat(s.min) : 0,
       value: s.valueAsNumber,
-      max: parseFloat(s.max),
+      max: s.max ? parseFloat(s.max) : 500,
     });
+
+  from.addEventListener("change", () => {
+    s.min = from.value;
+    change();
   });
 
   to.addEventListener("change", () => {
     s.max = to.value;
-    onChange({
-      name: args.name,
-      min: parseFloat(s.min),
-      value: s.valueAsNumber,
-      max: parseFloat(s.max),
-    });
+    change();
   });
 
-  s.addEventListener("change", () => {
-    onChange({
-      name: args.name,
-      min: parseFloat(s.min),
-      value: s.valueAsNumber,
-      max: parseFloat(s.max),
-    });
-  });
+  s.addEventListener("change", change);
 
   s.value = String(args.value ?? 50);
 
@@ -92,12 +83,5 @@ export function sliderWithNumericInputs({
     return val;
   });
 
-  // TODO: come up with a better way to do this.
-  // Because controls can be in random order, first, we need to create them all, and only then connect.
-  // Somehow, without this timeout update doesn't work (at least in Safari).
-  setTimeout(() => {
-    s.min = String(args.min) ?? s.min;
-    s.max = String(args.max) ?? s.max;
-    s.value = String(args.value ?? s.value);
-  }, 1);
+  change();
 }

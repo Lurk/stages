@@ -1,3 +1,4 @@
+import { on, setMaxListeners } from "events";
 import { renderControl } from "../utils.mjs";
 import { Values } from "../value.mjs";
 import { connect } from "./connect.mjs";
@@ -29,6 +30,7 @@ export function random({ values, args, onRemove, onChange }: Args) {
     value: min,
     update: updateMin,
     onRemove: removeMin,
+    selected: selectedMin,
   } = connect({
     values,
     omit: args.name,
@@ -45,6 +47,7 @@ export function random({ values, args, onRemove, onChange }: Args) {
     value: max,
     update: updateMax,
     onRemove: removeMax,
+    selected: selectedMax,
   } = connect({
     values,
     omit: args.name,
@@ -70,5 +73,8 @@ export function random({ values, args, onRemove, onChange }: Args) {
   setTimeout(() => {
     updateMin(args.min);
     updateMax(args.max);
+
+    Object.assign(state, { min: selectedMin(), max: selectedMax() });
+    onChange(state);
   }, 1);
 }

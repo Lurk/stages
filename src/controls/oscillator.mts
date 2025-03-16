@@ -1,6 +1,7 @@
 import { Values, wave } from "../value.mjs";
 import { renderControl } from "../utils.mjs";
 import { connect } from "./connect.mjs";
+import { on } from "events";
 
 export type OscillatorArgs = {
   name: string;
@@ -38,6 +39,7 @@ export function oscillatorWithConnectInput({
     value: min,
     update: updateMin,
     onRemove: removeMin,
+    selected: selectedMin,
   } = connect({
     values,
     omit: args.name,
@@ -55,6 +57,7 @@ export function oscillatorWithConnectInput({
     value: max,
     update: updateMax,
     onRemove: removeMax,
+    selected: selectedMax,
   } = connect({
     values,
     omit: args.name,
@@ -72,6 +75,7 @@ export function oscillatorWithConnectInput({
     value: raise,
     update: updateRaise,
     onRemove: removeRaise,
+    selected: selectedRaise,
   } = connect({
     values,
     omit: args.name,
@@ -89,6 +93,7 @@ export function oscillatorWithConnectInput({
     value: fall,
     update: updateFall,
     onRemove: removeFall,
+    selected: selectedFall,
   } = connect({
     values,
     omit: args.name,
@@ -124,5 +129,14 @@ export function oscillatorWithConnectInput({
     updateMax(args.max);
     updateRaise(args.raise);
     updateFall(args.fall);
-  }, 10);
+
+    Object.assign(state, {
+      min: selectedMin(),
+      max: selectedMax(),
+      raise: selectedRaise(),
+      fall: selectedFall(),
+    });
+
+    onChange(state);
+  }, 1);
 }

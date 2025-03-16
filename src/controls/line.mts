@@ -36,6 +36,7 @@ export function line({ values, outputs, args, onRemove, onChange }: Args) {
     value: x,
     update: updateX,
     onRemove: removeX,
+    selected: selectedX,
   } = connect({
     values,
     omit: "",
@@ -53,6 +54,7 @@ export function line({ values, outputs, args, onRemove, onChange }: Args) {
     value: y,
     update: updateY,
     onRemove: removeY,
+    selected: selectedY,
   } = connect({
     values,
     omit: "",
@@ -70,6 +72,7 @@ export function line({ values, outputs, args, onRemove, onChange }: Args) {
     value: sr,
     update: updateSr,
     onRemove: removeSr,
+    selected: selectedSr,
   } = connect({
     values,
     omit: "",
@@ -87,6 +90,7 @@ export function line({ values, outputs, args, onRemove, onChange }: Args) {
     value: vertices,
     update: updateVertices,
     onRemove: removeVertices,
+    selected: selectedVertices,
   } = connect({
     values,
     omit: "",
@@ -116,5 +120,13 @@ export function line({ values, outputs, args, onRemove, onChange }: Args) {
     updateY(args.y);
     updateSr(args.sr);
     updateVertices(args.vertices);
+
+    Object.assign(state, {
+      x: selectedX(),
+      y: selectedY(),
+      sr: selectedSr(),
+      vertices: selectedVertices(),
+    });
+    onChange(state);
   }, 1);
 }

@@ -11,7 +11,7 @@ export type LogicArgs = {
   is_false?: string;
 };
 
-const options = ["gt", "gte", "lt", "lte", "e"] as const;
+const options = ["gt", "gte", "lt", "lte", "eq", "neq"] as const;
 
 function evaluate(
   o: string,
@@ -31,8 +31,10 @@ function evaluate(
       return lhs(now, i) < rhs(now, i) ? is_tue(now, i) : is_false(now, i);
     case "lte":
       return lhs(now, i) <= rhs(now, i) ? is_tue(now, i) : is_false(now, i);
-    case "e":
+    case "eq":
       return lhs(now, i) == rhs(now, i) ? is_tue(now, i) : is_false(now, i);
+    case "neq":
+      return lhs(now, i) != rhs(now, i) ? is_tue(now, i) : is_false(now, i);
     default:
       throw new Error(`option: ${o} is not supported`);
   }
@@ -61,6 +63,7 @@ export function logic({ values, args, onRemove, onChange }: Args) {
     value: lhs,
     update: lhs_u,
     onRemove: lhs_r,
+    selected: selectedLhs,
   } = connect({
     values,
     omit: `${args.name}_a`,
@@ -91,6 +94,7 @@ export function logic({ values, args, onRemove, onChange }: Args) {
     value: rhs,
     update: rhs_u,
     onRemove: rhs_r,
+    selected: selectedRhs,
   } = connect({
     values,
     omit: `${args.name}`,
@@ -109,6 +113,7 @@ export function logic({ values, args, onRemove, onChange }: Args) {
     value: is_true,
     update: is_true_u,
     onRemove: is_true_r,
+    selected: selectedIsTrue,
   } = connect({
     values,
     omit: `${args.name}`,
@@ -127,6 +132,7 @@ export function logic({ values, args, onRemove, onChange }: Args) {
     value: is_false,
     update: is_false_u,
     onRemove: is_false_r,
+    selected: selectedIsFalse,
   } = connect({
     values,
     omit: `${args.name}`,
@@ -155,5 +161,13 @@ export function logic({ values, args, onRemove, onChange }: Args) {
     rhs_u(args.rhs);
     is_true_u(args.is_true);
     is_false_u(args.is_false);
+
+    Object.assign(state, {
+      lhs: selectedLhs(),
+      rhs: selectedRhs(),
+      is_true: selectedIsTrue(),
+      is_false: selectedIsFalse(),
+    });
+    onChange(state);
   }, 1);
 }
