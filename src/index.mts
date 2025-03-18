@@ -6,12 +6,7 @@ const ctx = initFullScreenCanvas({
   backgroundCollor: "#2b2a2a",
 });
 
-const outputs = factory({
-  ctx,
-  animate,
-});
-
-let isRunning = true;
+const outputs = factory({ ctx });
 
 function animate() {
   requestAnimationFrame((now) => {
@@ -30,7 +25,6 @@ function animate() {
       });
     }
 
-    isRunning = true;
     animate();
   });
 }
@@ -38,6 +32,5 @@ function animate() {
 animate();
 
 window.onerror = (e) => {
-  alert(e);
-  isRunning = false;
+  alert(`press browser back (works as undo) to fix the error: ${e}`);
 };

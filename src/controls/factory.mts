@@ -32,7 +32,6 @@ export function controlTypeGuard(t: unknown): t is CreatorConfig["type"] {
 
 export type FactoryArgs = {
   ctx: CanvasRenderingContext2D;
-  animate: () => void;
 };
 
 function initEvents(state: State) {
@@ -130,7 +129,7 @@ function init(
   };
 }
 
-export function factory({ animate, ctx }: FactoryArgs): Map<string, Output> {
+export function factory({ ctx }: FactoryArgs): Map<string, Output> {
   const vals = values();
   const outputs: Map<string, Output> = new Map();
   const s = state();
@@ -145,7 +144,7 @@ export function factory({ animate, ctx }: FactoryArgs): Map<string, Output> {
   monotonic(vals);
   now(vals);
 
-  render({ vals, animate, add });
+  render({ vals, add });
 
   s.eachControl((c) => add(c, true));
 

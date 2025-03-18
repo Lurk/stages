@@ -12,7 +12,6 @@ import {
 type RenderProps = {
   vals: any;
   add: (args: CreatorConfig) => void;
-  animate: () => void;
 };
 
 export function render(args: RenderProps) {
@@ -44,9 +43,4 @@ export function render(args: RenderProps) {
     args.add({ type, args: { name } });
     nameInput.value = "";
   });
-
-  const runButton = document.createElement("button");
-  runButton.textContent = "Run";
-  container.appendChild(runButton);
-  runButton.addEventListener("click", args.animate);
 }
