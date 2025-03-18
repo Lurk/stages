@@ -47,7 +47,8 @@ type Args = {
 
 export function math({ values, args, onRemove, onChange }: Args) {
   const { container, showValue } = renderControl(args.name, false, () => {
-    values.unregister(args.name);
+    values.unregister(`${args.name}_a`);
+    values.unregister(`${args.name}_b`);
     onRemove();
     lhs1_r();
     rhs1_r();
