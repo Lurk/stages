@@ -1,6 +1,6 @@
 import { AddOutputArgs, line, Output } from "./line.mjs";
 import { Values, values } from "../value.mjs";
-import { height, monotonic, one, width, zero } from "./defaults.mjs";
+import { height, monotonic, now, one, two, width, zero } from "./defaults.mjs";
 import { render } from "../ui/control.mjs";
 import { SliderArgs, sliderWithNumericInputs } from "./slider.mjs";
 import { OscillatorArgs, oscillatorWithConnectInput } from "./oscillator.mjs";
@@ -140,8 +140,10 @@ export function factory({ animate, ctx }: FactoryArgs): Map<string, Output> {
   width(vals, ctx);
   height(vals, ctx);
   zero(vals);
-  monotonic(vals);
   one(vals);
+  two(vals);
+  monotonic(vals);
+  now(vals);
 
   render({ vals, animate, add });
 

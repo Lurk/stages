@@ -16,6 +16,14 @@ export function one(values: Values) {
   values.register("one", () => 1);
 }
 
+export function two(values: Values) {
+  values.register("two", () => 2);
+}
+
 export function monotonic(values: Values) {
   values.register("i", (now, i) => i);
+}
+
+export function now(values: Values) {
+  values.register("now", (now, i) => now);
 }
