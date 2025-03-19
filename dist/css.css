@@ -20,6 +20,7 @@ body {
 	padding: 0;
 	color: #cccccc;
 	overflow-y: hidden;
+	height: 100%;
 }
 
 select,

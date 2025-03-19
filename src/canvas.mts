@@ -23,11 +23,22 @@ export function initFullScreenCanvas({
   );
   const ctx = canvasElement.getContext("2d");
   assert(ctx, "could not get 2d context");
-  ctx.canvas.width = window.innerWidth;
-  ctx.canvas.height = window.innerHeight;
+
+  const dpr = window.devicePixelRatio;
+  const rect = canvasElement.getBoundingClientRect();
+
+  canvasElement.width = rect.width * dpr;
+  canvasElement.height = rect.height * dpr;
+
+  ctx.scale(dpr, dpr);
+
   const observer = new ResizeObserver(() => {
-    ctx.canvas.width = window.innerWidth;
-    ctx.canvas.height = window.innerHeight;
+    requestAnimationFrame(() => {
+      const rect = canvasElement.getBoundingClientRect();
+
+      canvasElement.width = rect.width * dpr;
+      canvasElement.height = rect.height * dpr;
+    });
   });
   observer.observe(canvasElement);
   return ctx;
