@@ -1,3 +1,4 @@
+import { isDoStatement } from "../../node_modules/typescript/lib/typescript";
 import {
   CONTROL_TYPES,
   controlTypeGuard,
@@ -43,4 +44,12 @@ export function render(args: RenderProps) {
     args.add({ type, args: { name } });
     nameInput.value = "";
   });
+
+  const docs = document.createElement("div");
+  docs.classList.add("docs");
+  const link = document.createElement("a");
+  link.href = "/post/stages.html";
+  link.textContent = "documentation";
+  docs.appendChild(link);
+  container.parentNode?.appendChild(docs);
 }
