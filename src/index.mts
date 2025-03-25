@@ -10,7 +10,8 @@ const outputs = factory({ ctx });
 
 function animate() {
   requestAnimationFrame((now) => {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.fillStyle = "#2b2a2a";
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.beginPath();
     ctx.strokeStyle = "#cccccc";
     ctx.lineWidth = 1;

@@ -1,9 +1,9 @@
-import { isDoStatement } from "../../node_modules/typescript/lib/typescript";
 import {
   CONTROL_TYPES,
   controlTypeGuard,
   CreatorConfig,
 } from "../controls/factory.mjs";
+import { Recorder } from "../recorder.mjs";
 import {
   renderControl,
   renderSelectInputTo,
@@ -12,7 +12,9 @@ import {
 
 type RenderProps = {
   vals: any;
+  ctx: CanvasRenderingContext2D;
   add: (args: CreatorConfig) => void;
+  recorder: Recorder;
 };
 
 export function render(args: RenderProps) {
@@ -43,6 +45,20 @@ export function render(args: RenderProps) {
     }
     args.add({ type, args: { name } });
     nameInput.value = "";
+  });
+
+  const rec = document.createElement("button");
+  rec.textContent = args.recorder.state() === "inactive" ? "record" : "stop";
+  args.recorder.subscribe((state) => {
+    rec.textContent = state === "inactive" ? "record" : "stop";
+  });
+  container.appendChild(rec);
+  rec.addEventListener("click", () => {
+    if (args.recorder.state() === "inactive") {
+      args.recorder.start();
+    } else {
+      args.recorder.stop();
+    }
   });
 
   const docs = document.createElement("div");

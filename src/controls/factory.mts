@@ -9,6 +9,7 @@ import { random, RandomArgs } from "./random.mjs";
 import { assert } from "../utils.mjs";
 import { State, state } from "../state.mjs";
 import { logic, LogicArgs } from "./logic.mjs";
+import { recorder } from "../recorder.mjs";
 export type CreatorConfig =
   | { type: "slider"; args: SliderArgs }
   | { type: "oscillator"; args: OscillatorArgs }
@@ -34,13 +35,18 @@ export type FactoryArgs = {
   ctx: CanvasRenderingContext2D;
 };
 
-function initEvents(state: State) {
-  const canvas = document.getElementById("canvas");
-  const controls = document.getElementById("controls");
-  assert(canvas, "#canvas element was not found");
-  assert(controls, "#controls element was not wound");
+type InitEventsArgs = {
+  fullScreenTarget: HTMLElement;
+  toggleVisibility: () => void;
+  stopRecording: () => void;
+};
 
-  canvas.addEventListener("click", (e) => {
+function initEvents({
+  fullScreenTarget,
+  toggleVisibility,
+  stopRecording,
+}: InitEventsArgs) {
+  fullScreenTarget.addEventListener("click", (e) => {
     e.preventDefault();
     if (e.target instanceof HTMLElement) {
       if (document.fullscreenElement) {
@@ -51,17 +57,11 @@ function initEvents(state: State) {
     }
   });
 
-  if (!state.areControlsVisible()) {
-    controls.classList.add("hidden");
-    canvas.classList.add("fill");
-  }
-
   document.onkeyup = function (e) {
     // space
     if (e.key == " " || e.code == "Space" || e.keyCode == 32) {
-      controls.classList.toggle("hidden");
-      canvas.classList.toggle("fill");
-      state.toggleVisibility();
+      stopRecording();
+      toggleVisibility();
     }
   };
 }
@@ -134,8 +134,40 @@ export function factory({ ctx }: FactoryArgs): Map<string, Output> {
   const outputs: Map<string, Output> = new Map();
   const s = state();
   const add = init(s, vals, outputs);
+  const record = recorder(ctx);
+  const controls = document.getElementById("controls");
+  assert(controls, "#controls element was not wound");
 
-  initEvents(s);
+  if (!s.areControlsVisible()) {
+    controls.classList.add("hidden");
+    ctx.canvas.classList.add("fill");
+  }
+
+  const toggleVisibility = () => {
+    controls.classList.toggle("hidden");
+    ctx.canvas.classList.toggle("fill");
+    s.toggleVisibility();
+  };
+
+  record.subscribe((state) => {
+    if (state === "recording" && s.areControlsVisible()) {
+      toggleVisibility();
+    }
+  });
+
+  render({
+    vals,
+    add,
+    ctx,
+    recorder: record,
+  });
+
+  initEvents({
+    fullScreenTarget: ctx.canvas,
+    toggleVisibility,
+    stopRecording: () => record.stop(),
+  });
+
   width(vals, ctx);
   height(vals, ctx);
   zero(vals);
@@ -143,8 +175,6 @@ export function factory({ ctx }: FactoryArgs): Map<string, Output> {
   two(vals);
   monotonic(vals);
   now(vals);
-
-  render({ vals, add });
 
   s.eachControl((c) => add(c, true));
 
