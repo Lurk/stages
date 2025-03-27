@@ -1,7 +1,6 @@
 import { Values, Value } from "../value.mjs";
 import { renderControl, renderSelectInputTo, spanWithText } from "../utils.mjs";
 import { connect } from "./connect.mjs";
-import { on } from "events";
 
 export type MathArgs = {
   name: string;
@@ -13,7 +12,7 @@ export type MathArgs = {
   rhs2?: string;
 };
 
-const options = ["sum", "sub", "mul", "div", "avg"] as const;
+const options = ["sum", "sub", "mul", "pow", "div", "avg"] as const;
 
 function evaluate(
   o: string,
@@ -29,6 +28,8 @@ function evaluate(
       return lhs(now, i) - rhs(now, i);
     case "mul":
       return lhs(now, i) * rhs(now, i);
+    case "pow":
+      return Math.pow(lhs(now, i), rhs(now, i));
     case "div":
       return lhs(now, i) / rhs(now, i);
     case "avg":

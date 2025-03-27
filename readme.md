@@ -55,11 +55,12 @@ close enough to each other.
 
 Produces a value that is a result of math operations.
 
-- `sum` - adds two values
-- `sub` - subtracts two values
-- `mul` - multiplies two values
-- `div` - divides two values
-- `avg` - averages two values
+- `sum` - adds `lhs` and `rhs`
+- `sub` - subtracts `rhs` from `lhs`
+- `mul` - multiplies `lhs` and `rhs`
+- `pow` - raises `lhs` to the power of `rhs`
+- `div` - divides `lhs` by `rhs`
+- `avg` - averages `lhs` and `rhs`
 
 In order to use screen real estate efficiently, [math](#Math) has two blocks `a` (top) and `b` (bottom). Each block has
 `lhs` and `rhs` values and `mode` that specifies operation. Those two blocks produce two values with `_a` and `_b`
