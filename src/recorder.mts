@@ -8,7 +8,10 @@ export type Recorder = {
   stop: () => void;
 };
 
-export function recorder(ctx: CanvasRenderingContext2D): Recorder {
+export function recorder(
+  ctx: CanvasRenderingContext2D,
+  toggleVisibility: () => void,
+): Recorder {
   const cbs: RecorderCallback[] = [];
   const recordedChunks: Blob[] = [];
   const stream = ctx.canvas.captureStream(60);
@@ -31,6 +34,7 @@ export function recorder(ctx: CanvasRenderingContext2D): Recorder {
     document.body.removeChild(anchor);
     URL.revokeObjectURL(anchor.href);
     cbs.forEach((cb) => cb("inactive"));
+    toggleVisibility();
   };
 
   return {
@@ -38,6 +42,7 @@ export function recorder(ctx: CanvasRenderingContext2D): Recorder {
     subscribe: (cb) => cbs.push(cb),
     unsubscribe: (cb) => cbs.splice(cbs.indexOf(cb), 1),
     start: () => {
+      toggleVisibility();
       mediaRecorder.start();
       cbs.forEach((cb) => cb("recording"));
     },

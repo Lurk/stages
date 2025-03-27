@@ -1,6 +1,6 @@
 import { AddOutputArgs, line, Output } from "./line.mjs";
 import { Values, values } from "../value.mjs";
-import { height, monotonic, now, one, two, width, zero } from "./defaults.mjs";
+import { defaults } from "./defaults.mjs";
 import { render } from "../ui/control.mjs";
 import { SliderArgs, sliderWithNumericInputs } from "./slider.mjs";
 import { OscillatorArgs, oscillatorWithConnectInput } from "./oscillator.mjs";
@@ -134,26 +134,19 @@ export function factory({ ctx }: FactoryArgs): Map<string, Output> {
   const outputs: Map<string, Output> = new Map();
   const s = state();
   const add = init(s, vals, outputs);
-  const record = recorder(ctx);
   const controls = document.getElementById("controls");
   assert(controls, "#controls element was not wound");
-
-  if (!s.areControlsVisible()) {
-    controls.classList.add("hidden");
-    ctx.canvas.classList.add("fill");
-  }
-
   const toggleVisibility = () => {
     controls.classList.toggle("hidden");
     ctx.canvas.classList.toggle("fill");
     s.toggleVisibility();
   };
+  const record = recorder(ctx, toggleVisibility);
 
-  record.subscribe((state) => {
-    if (state === "recording" && s.areControlsVisible()) {
-      toggleVisibility();
-    }
-  });
+  if (!s.areControlsVisible()) {
+    controls.classList.add("hidden");
+    ctx.canvas.classList.add("fill");
+  }
 
   render({
     vals,
@@ -168,13 +161,7 @@ export function factory({ ctx }: FactoryArgs): Map<string, Output> {
     stopRecording: () => record.stop(),
   });
 
-  width(vals, ctx);
-  height(vals, ctx);
-  zero(vals);
-  one(vals);
-  two(vals);
-  monotonic(vals);
-  now(vals);
+  defaults(vals, ctx);
 
   s.eachControl((c) => add(c, true));
 

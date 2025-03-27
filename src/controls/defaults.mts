@@ -1,29 +1,19 @@
 import { Values } from "../value.mjs";
 
-export function width(values: Values, ctx: CanvasRenderingContext2D) {
+export function defaults(values: Values, ctx: CanvasRenderingContext2D) {
+  let mouse_x = 0;
+  let mouse_y = 0;
+  document.onmousemove = (e) => {
+    mouse_x = e.clientX;
+    mouse_y = e.clientY;
+  };
   values.register("width", () => ctx.canvas.width);
-}
-
-export function height(values: Values, ctx: CanvasRenderingContext2D) {
   values.register("height", () => ctx.canvas.height);
-}
-
-export function zero(values: Values) {
   values.register("zero", () => 0);
-}
-
-export function one(values: Values) {
   values.register("one", () => 1);
-}
-
-export function two(values: Values) {
   values.register("two", () => 2);
-}
-
-export function monotonic(values: Values) {
   values.register("i", (now, i) => i);
-}
-
-export function now(values: Values) {
-  values.register("now", (now, i) => now);
+  values.register("now", (now) => now);
+  values.register("mouseX", () => mouse_x);
+  values.register("mouseY", () => mouse_y);
 }

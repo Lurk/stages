@@ -39,6 +39,8 @@ time.
 - `height`: height of the browser window
 - `i` - In each frame, some amount of shapes will be drawn, this will be the serial number of the shape drawn.
 - `now` - Time since animation start in milliseconds.
+- `mouseX` - Mouse X position
+- `mouseY` - Mouse Y position
 
 ### Factory
 
