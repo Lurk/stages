@@ -1,3 +1,4 @@
 node_modules
 dist/mjs
+dist/assets/*/mjs
 .DS_Store
