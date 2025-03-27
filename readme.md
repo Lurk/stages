@@ -100,7 +100,7 @@ If logic operation evaluates to true, value from `is_true` connector will be ret
 
 ### Examples
 
-- [Walkthrhough A](https://barhamon.com/post/stages.html#Walkthrough%20A) - Step by step guide to oscillators and
+- [Walkthrough A](https://barhamon.com/post/stages.html#Walkthrough%20A) - Step by step guide to oscillators and
 drawing.
-- [Walktrhrough B](https://barhamon.com/post/stages.html#Walkthrough%20B) - How to recreate Stages logo.
-- [Walktrhrough C](https://barhamon.com/post/stages.html#Walkthrough%20C) - Example of logic control.
+- [Walkthrough B](https://barhamon.com/post/stages.html#Walkthrough%20B) - How to recreate Stages logo.
+- [Walkthrough C](https://barhamon.com/post/stages.html#Walkthrough%20C) - Example of logic control.
