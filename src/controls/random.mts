@@ -2,6 +2,8 @@ import { on, setMaxListeners } from "events";
 import { renderControl } from "../utils.mjs";
 import { Values } from "../value.mjs";
 import { connect } from "./connect.mjs";
+import { ComponentSerde } from "../serde.mjs";
+import { RadioArgs } from "../ui/common/radio.mjs";
 
 export type RandomArgs = {
   name: string;
@@ -78,3 +80,30 @@ export function random({ values, args, onRemove, onChange }: Args) {
     onChange(state);
   }, 1);
 }
+
+export const randomSerde: ComponentSerde<RandomArgs> = (
+  serialize,
+  deserialize,
+) => {
+  const keys = ["name", "min", "max"] as const;
+  return {
+    toString(args) {
+      return keys.map((key) => serialize(args[key])).join("");
+    },
+
+    fromString(val, start) {
+      let local_start = start;
+      const res: RandomArgs = {
+        name: "",
+        min: "",
+        max: "",
+      };
+      keys.forEach((key) => {
+        const { val: v, end } = deserialize(val, local_start);
+        local_start = end;
+        res[key] = v;
+      });
+      return { val: res, end: local_start };
+    },
+  };
+};

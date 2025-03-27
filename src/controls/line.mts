@@ -1,6 +1,7 @@
 import { Values, Value } from "../value.mjs";
 import { renderControl } from "../utils.mjs";
 import { connect } from "./connect.mjs";
+import { ComponentSerde } from "../serde.mjs";
 
 export type Output = { y: Value; x: Value; sr: Value; vertices: Value };
 
@@ -130,3 +131,32 @@ export function line({ values, outputs, args, onRemove, onChange }: Args) {
     onChange(state);
   }, 1);
 }
+
+export const lineSerde: ComponentSerde<AddOutputArgs> = (
+  serialize,
+  deserialize,
+) => {
+  const keys = ["name", "x", "y", "sr", "vertices"] as const;
+  return {
+    toString(args) {
+      return keys.map((key) => serialize(args[key])).join("");
+    },
+
+    fromString(val, start) {
+      let local_start = start;
+      const res: AddOutputArgs = {
+        name: "",
+        x: "",
+        y: "",
+        sr: "",
+        vertices: "",
+      };
+      keys.forEach((key) => {
+        const { val: v, end } = deserialize(val, local_start);
+        local_start = end;
+        res[key] = v;
+      });
+      return { val: res, end: local_start };
+    },
+  };
+};

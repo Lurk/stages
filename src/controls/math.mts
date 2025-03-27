@@ -1,6 +1,7 @@
 import { Values, Value } from "../value.mjs";
 import { renderControl, renderSelectInputTo, spanWithText } from "../utils.mjs";
 import { connect } from "./connect.mjs";
+import { ComponentSerde } from "../serde.mjs";
 
 export type MathArgs = {
   name: string;
@@ -194,3 +195,39 @@ export function math({ values, args, onRemove, onChange }: Args) {
     onChange(state);
   }, 1);
 }
+
+export const mathSerde: ComponentSerde<MathArgs> = (serialize, deserialize) => {
+  const keys = [
+    "name",
+    "mode_a",
+    "lhs1",
+    "rhs1",
+    "mode_b",
+    "lhs2",
+    "rhs2",
+  ] as const;
+  return {
+    toString(args) {
+      return keys.map((key) => serialize(args[key])).join("");
+    },
+
+    fromString(val, start) {
+      let local_start = start;
+      const res: MathArgs = {
+        name: "",
+        mode_a: "",
+        lhs1: "",
+        rhs1: "",
+        mode_b: "",
+        lhs2: "",
+        rhs2: "",
+      };
+      keys.forEach((key) => {
+        const { val: v, end } = deserialize(val, local_start);
+        local_start = end;
+        res[key] = v;
+      });
+      return { val: res, end: local_start };
+    },
+  };
+};

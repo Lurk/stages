@@ -1,3 +1,4 @@
+import { Serializer, Deserializer, ComponentSerde } from "../serde.mjs";
 import {
   renderControl,
   renderNumberInputTo,
@@ -85,3 +86,42 @@ export function sliderWithNumericInputs({
 
   change();
 }
+
+export const sliderSerde: ComponentSerde<SliderArgs> = (
+  serialize,
+  deserialize,
+) => {
+  const keys = ["name", "min", "value", "max"] as const;
+  return {
+    toString(args) {
+      return keys
+        .map((key) =>
+          typeof args[key] === "string"
+            ? serialize(args[key])
+            : serialize(args[key]?.toString()),
+        )
+
+        .join("");
+    },
+
+    fromString(val, start) {
+      let local_start = start;
+      const res: SliderArgs = {
+        name: "",
+        min: 0,
+        value: 0,
+        max: 0,
+      };
+      keys.forEach((key) => {
+        const { val: v, end } = deserialize(val, local_start);
+        local_start = end;
+        if (key === "name") {
+          res[key] = v;
+        } else {
+          res[key] = parseFloat(v);
+        }
+      });
+      return { val: res, end: local_start };
+    },
+  };
+};

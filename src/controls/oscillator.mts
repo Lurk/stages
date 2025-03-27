@@ -1,7 +1,7 @@
 import { Values, wave } from "../value.mjs";
 import { renderControl } from "../utils.mjs";
 import { connect } from "./connect.mjs";
-import { on } from "events";
+import { ComponentSerde } from "../serde.mjs";
 
 export type OscillatorArgs = {
   name: string;
@@ -140,3 +140,32 @@ export function oscillatorWithConnectInput({
     onChange(state);
   }, 1);
 }
+
+export const oscillatorSerde: ComponentSerde<OscillatorArgs> = (
+  serialize,
+  deserialize,
+) => {
+  const keys = ["name", "min", "max", "raise", "fall"] as const;
+  return {
+    toString(args) {
+      return keys.map((key) => serialize(args[key])).join("");
+    },
+
+    fromString(val, start) {
+      let local_start = start;
+      const res: OscillatorArgs = {
+        name: "",
+        min: "",
+        max: "",
+        raise: "",
+        fall: "",
+      };
+      keys.forEach((key) => {
+        const { val: v, end } = deserialize(val, local_start);
+        local_start = end;
+        res[key] = v;
+      });
+      return { val: res, end: local_start };
+    },
+  };
+};

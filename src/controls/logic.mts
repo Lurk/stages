@@ -1,6 +1,7 @@
 import { Values, Value } from "../value.mjs";
 import { renderControl, renderSelectInputTo } from "../utils.mjs";
 import { connect } from "./connect.mjs";
+import { ComponentSerde } from "../serde.mjs";
 
 export type LogicArgs = {
   name: string;
@@ -171,3 +172,33 @@ export function logic({ values, args, onRemove, onChange }: Args) {
     onChange(state);
   }, 1);
 }
+
+export const logicSerde: ComponentSerde<LogicArgs> = (
+  serialize,
+  deserialize,
+) => {
+  const keys = ["name", "mode", "lhs", "rhs", "is_true", "is_false"] as const;
+  return {
+    toString(args) {
+      return keys.map((key) => serialize(args[key])).join("");
+    },
+
+    fromString(val, start) {
+      let local_start = start;
+      const res: LogicArgs = {
+        name: "",
+        mode: "",
+        lhs: "",
+        rhs: "",
+        is_true: "",
+        is_false: "",
+      };
+      keys.forEach((key) => {
+        const { val: v, end } = deserialize(val, local_start);
+        local_start = end;
+        res[key] = v;
+      });
+      return { val: res, end: local_start };
+    },
+  };
+};
