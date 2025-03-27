@@ -9,6 +9,7 @@ import {
   renderSelectInputTo,
   renderTextInputTo,
 } from "../utils.mjs";
+import { button } from "./common/button.mjs";
 
 type RenderProps = {
   vals: any;
@@ -32,34 +33,36 @@ export function render(args: RenderProps) {
     label: "type:",
   });
 
-  const createButton = document.createElement("button");
-  createButton.textContent = "Create Control";
-  container.appendChild(createButton);
-  createButton.addEventListener("click", () => {
-    const type = controlTypeSelect.value;
-    const name = nameInput.value.trim();
+  button({
+    text: "Create Control",
+    container,
+    onClick: () => {
+      const type = controlTypeSelect.value;
+      const name = nameInput.value.trim();
 
-    if (!controlTypeGuard(type)) {
-      alert("Invalid control type");
-      return;
-    }
-    args.add({ type, args: { name } });
-    nameInput.value = "";
+      if (!controlTypeGuard(type)) {
+        alert("Invalid control type");
+        return;
+      }
+      args.add({ type, args: { name } });
+      nameInput.value = "";
+    },
   });
 
-  const rec = document.createElement("button");
-  rec.textContent = args.recorder.state() === "inactive" ? "record" : "stop";
-  args.recorder.subscribe((state) => {
-    rec.textContent = state === "inactive" ? "record" : "stop";
+  const rec = button({
+    text: args.recorder.state() === "inactive" ? "record" : "stop",
+    container,
+    onClick: () => {
+      if (args.recorder.state() === "inactive") {
+        args.recorder.start();
+      } else {
+        args.recorder.stop();
+      }
+    },
   });
-  container.appendChild(rec);
-  rec.addEventListener("click", () => {
-    if (args.recorder.state() === "inactive") {
-      args.recorder.start();
-    } else {
-      args.recorder.stop();
-    }
-  });
+  args.recorder.subscribe((state) =>
+    rec(state === "inactive" ? "record" : "stop"),
+  );
 
   const docs = document.createElement("div");
   docs.classList.add("docs");
