@@ -1,7 +1,8 @@
 import { Values, Value } from "../value.mjs";
-import { renderControl, renderSelectInputTo } from "../utils.mjs";
 import { connect } from "./connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
+import { renderSelectInputTo } from "../ui/common/select.mjs";
+import { renderContainer } from "../ui/common/container.mjs";
 
 export type LogicArgs = {
   name: string;
@@ -49,7 +50,7 @@ type Args = {
 };
 
 export function logic({ values, args, onRemove, onChange }: Args) {
-  const { container, showValue } = renderControl(args.name, false, () => {
+  const { container, showValue } = renderContainer(args.name, false, () => {
     values.unregister(args.name);
     onRemove();
     lhs_r();

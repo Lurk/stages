@@ -1,7 +1,7 @@
-import { renderControl } from "../utils.mjs";
 import { Values } from "../value.mjs";
 import { connect } from "./connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
+import { renderContainer } from "../ui/common/container.mjs";
 
 export type RandomArgs = {
   name: string;
@@ -17,7 +17,7 @@ type Args = {
 };
 
 export function random({ values, args, onRemove, onChange }: Args) {
-  const { container, showValue } = renderControl(args.name, false, () => {
+  const { container, showValue } = renderContainer(args.name, false, () => {
     values.unregister(args.name);
     onRemove();
     removeMin();

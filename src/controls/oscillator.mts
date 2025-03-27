@@ -1,7 +1,7 @@
 import { Values, wave } from "../value.mjs";
-import { renderControl } from "../utils.mjs";
 import { connect } from "./connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
+import { renderContainer } from "../ui/common/container.mjs";
 
 export type OscillatorArgs = {
   name: string;
@@ -24,7 +24,7 @@ export function oscillatorWithConnectInput({
   onRemove,
   onChange,
 }: Args) {
-  const { container, showValue } = renderControl(args.name, false, () => {
+  const { container, showValue } = renderContainer(args.name, false, () => {
     values.unregister(args.name);
     onRemove();
     removeMin();

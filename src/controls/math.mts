@@ -1,7 +1,9 @@
 import { Values, Value } from "../value.mjs";
-import { renderControl, renderSelectInputTo, spanWithText } from "../utils.mjs";
 import { connect } from "./connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
+import { renderSelectInputTo } from "../ui/common/select.mjs";
+import { renderContainer } from "../ui/common/container.mjs";
+import { spanWithText } from "../ui/common/span.mjs";
 
 export type MathArgs = {
   name: string;
@@ -48,7 +50,7 @@ type Args = {
 };
 
 export function math({ values, args, onRemove, onChange }: Args) {
-  const { container, showValue } = renderControl(args.name, false, () => {
+  const { container, showValue } = renderContainer(args.name, false, () => {
     values.unregister(`${args.name}_a`);
     values.unregister(`${args.name}_b`);
     onRemove();

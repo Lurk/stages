@@ -4,12 +4,10 @@ import {
   CreatorConfig,
 } from "../controls/factory.mjs";
 import { Recorder } from "../recorder.mjs";
-import {
-  renderControl,
-  renderSelectInputTo,
-  renderTextInputTo,
-} from "../utils.mjs";
 import { button } from "./common/button.mjs";
+import { renderContainer } from "./common/container.mjs";
+import { renderSelectInputTo } from "./common/select.mjs";
+import { renderTextInputTo } from "./common/text_input.mjs";
 
 type RenderProps = {
   vals: any;
@@ -19,7 +17,7 @@ type RenderProps = {
 };
 
 export function render(args: RenderProps) {
-  const { container } = renderControl("factory");
+  const { container } = renderContainer("factory");
 
   const nameInput = renderTextInputTo({
     label: "name:",

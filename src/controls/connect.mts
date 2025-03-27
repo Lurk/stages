@@ -1,8 +1,8 @@
 import {
-  assert,
   RenderSelectInputArgs,
   renderSelectInputTo,
-} from "../utils.mjs";
+} from "../ui/common/select.mjs";
+import { assert } from "../utils.mjs";
 import { Values, Value } from "../value.mjs";
 
 type Args = {

@@ -1,7 +1,7 @@
 import { Values, Value } from "../value.mjs";
-import { renderControl } from "../utils.mjs";
 import { connect } from "./connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
+import { renderContainer } from "../ui/common/container.mjs";
 
 export type Output = { y: Value; x: Value; sr: Value; vertices: Value };
 
@@ -22,7 +22,7 @@ type Args = {
 };
 
 export function line({ values, outputs, args, onRemove, onChange }: Args) {
-  const { container } = renderControl(args.name, true, () => {
+  const { container } = renderContainer(args.name, true, () => {
     outputs.delete(args.name);
     onRemove();
     removeX();
