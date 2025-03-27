@@ -1,5 +1,3 @@
-import { isAbsolute } from "path";
-
 export function assert(lhs: any, message: string): asserts lhs {
   if (!lhs) {
     alert(message);

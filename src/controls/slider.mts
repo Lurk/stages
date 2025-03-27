@@ -1,4 +1,4 @@
-import { Serializer, Deserializer, ComponentSerde } from "../serde.mjs";
+import { ComponentSerde } from "../serde.mjs";
 import {
   renderControl,
   renderNumberInputTo,

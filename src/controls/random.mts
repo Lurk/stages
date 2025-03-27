@@ -1,9 +1,7 @@
-import { on, setMaxListeners } from "events";
 import { renderControl } from "../utils.mjs";
 import { Values } from "../value.mjs";
 import { connect } from "./connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
-import { RadioArgs } from "../ui/common/radio.mjs";
 
 export type RandomArgs = {
   name: string;
