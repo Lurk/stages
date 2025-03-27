@@ -97,3 +97,10 @@ Produces a value that is a result of logic operation.
 - `lte`: left hand less than or equals right hand
 
 If logic operation evaluates to true, value from `is_true` connector will be returned, otherwise value from `is_false`.
+
+### Examples
+
+- [Walkthrhough A](https://barhamon.com/post/stages.html#Walkthrough%20A) - Step by step guide to oscillators and
+drawing.
+- [Walktrhrough B](https://barhamon.com/post/stages.html#Walkthrough%20B) - How to recreate Stages logo.
+- [Walktrhrough C](https://barhamon.com/post/stages.html#Walkthrough%20C) - Example of logic control.

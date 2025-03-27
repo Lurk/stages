@@ -64,7 +64,7 @@ export function render(args: RenderProps) {
   const docs = document.createElement("div");
   docs.classList.add("docs");
   const link = document.createElement("a");
-  link.href = "/post/stages.html#Documentation.";
+  link.href = "https://github.com/Lurk/stages/blob/main/readme.md";
   link.textContent = "documentation";
   docs.appendChild(link);
   container.parentNode?.appendChild(docs);
