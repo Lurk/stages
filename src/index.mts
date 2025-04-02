@@ -1,23 +1,28 @@
 import { path, initFullScreenCanvas } from "./canvas.mjs";
 import { factory } from "./controls/factory.mjs";
 
-const ctx = initFullScreenCanvas({
+const canvas = initFullScreenCanvas({
   id: "canvas",
   backgroundCollor: "#2b2a2a",
 });
 
-const outputs = factory({ ctx });
+const outputs = factory({ canvas });
 
 function animate() {
   requestAnimationFrame((now) => {
-    ctx.fillStyle = "#2b2a2a";
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.beginPath();
-    ctx.strokeStyle = "#cccccc";
-    ctx.lineWidth = 1;
+    canvas.ctx.fillStyle = "#2b2a2a";
+    canvas.ctx.fillRect(
+      0,
+      0,
+      canvas.ctx.canvas.width,
+      canvas.ctx.canvas.height,
+    );
+    canvas.ctx.beginPath();
+    canvas.ctx.strokeStyle = "#cccccc";
+    canvas.ctx.lineWidth = 1;
     for (const { y, x, sr: resolution, vertices } of outputs.values()) {
       path({
-        ctx,
+        ctx: canvas.ctx,
         now,
         len: vertices(now, 0),
         resolution: resolution(now, 0),

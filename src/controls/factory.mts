@@ -10,6 +10,7 @@ import { assert } from "../utils.mjs";
 import { State, state } from "../state.mjs";
 import { logic, LogicArgs } from "./logic.mjs";
 import { recorder } from "../recorder.mjs";
+import { Canvas } from "../canvas.mjs";
 export type CreatorConfig =
   | { type: "slider"; args: SliderArgs }
   | { type: "oscillator"; args: OscillatorArgs }
@@ -32,20 +33,15 @@ export function controlTypeGuard(t: unknown): t is CreatorConfig["type"] {
 }
 
 export type FactoryArgs = {
-  ctx: CanvasRenderingContext2D;
+  canvas: Canvas;
 };
 
 type InitEventsArgs = {
   fullScreenTarget: HTMLElement;
   toggleVisibility: () => void;
-  stopRecording: () => void;
 };
 
-function initEvents({
-  fullScreenTarget,
-  toggleVisibility,
-  stopRecording,
-}: InitEventsArgs) {
+function initEvents({ fullScreenTarget, toggleVisibility }: InitEventsArgs) {
   fullScreenTarget.addEventListener("click", (e) => {
     e.preventDefault();
     if (e.target instanceof HTMLElement) {
@@ -60,7 +56,6 @@ function initEvents({
   document.onkeyup = function (e) {
     // space
     if (e.key == " " || e.code == "Space" || e.keyCode == 32) {
-      stopRecording();
       toggleVisibility();
     }
   };
@@ -129,39 +124,37 @@ function init(
   };
 }
 
-export function factory({ ctx }: FactoryArgs): Map<string, Output> {
+export function factory({ canvas }: FactoryArgs): Map<string, Output> {
   const vals = values();
   const outputs: Map<string, Output> = new Map();
   const s = state();
   const add = init(s, vals, outputs);
   const controls = document.getElementById("controls");
   assert(controls, "#controls element was not wound");
-  const toggleVisibility = () => {
-    controls.classList.toggle("hidden");
-    ctx.canvas.classList.toggle("fill");
-    s.toggleVisibility();
-  };
-  const record = recorder(ctx, toggleVisibility);
+  const record = recorder(canvas.ctx);
 
   if (!s.areControlsVisible()) {
     controls.classList.add("hidden");
-    ctx.canvas.classList.add("fill");
+    canvas.ctx.canvas.classList.add("fill");
   }
 
   render({
     vals,
     add,
-    ctx,
+    canvas,
     recorder: record,
   });
 
   initEvents({
-    fullScreenTarget: ctx.canvas,
-    toggleVisibility,
-    stopRecording: () => record.stop(),
+    fullScreenTarget: canvas.ctx.canvas,
+    toggleVisibility: () => {
+      controls.classList.toggle("hidden");
+      canvas.ctx.canvas.classList.toggle("fill");
+      s.toggleVisibility();
+    },
   });
 
-  defaults(vals, ctx);
+  defaults(vals, canvas.ctx);
 
   s.eachControl((c) => add(c, true));
 

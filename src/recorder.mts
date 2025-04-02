@@ -1,3 +1,5 @@
+import { toISOTime } from "./utils.mjs";
+
 type RecorderCallback = (state: RecordingState) => void;
 
 export type Recorder = {
@@ -8,15 +10,12 @@ export type Recorder = {
   stop: () => void;
 };
 
-export function recorder(
-  ctx: CanvasRenderingContext2D,
-  toggleVisibility: () => void,
-): Recorder {
+export function recorder(ctx: CanvasRenderingContext2D): Recorder {
   const cbs: RecorderCallback[] = [];
   const recordedChunks: Blob[] = [];
   const stream = ctx.canvas.captureStream(60);
   const mediaRecorder = new MediaRecorder(stream, {
-    mimeType: "video/mp4",
+    mimeType: 'video/mp4; codecs="avc1.4d002a"',
   });
 
   mediaRecorder.ondataavailable = (event) => {
@@ -29,12 +28,12 @@ export function recorder(
     anchor.href = URL.createObjectURL(
       new Blob(recordedChunks, { type: "video/mp4" }),
     );
-    anchor.download = "recording.mp4";
+    anchor.download = `stages ${toISOTime(new Date())}.mp4`;
     anchor.click();
     document.body.removeChild(anchor);
     URL.revokeObjectURL(anchor.href);
+    recordedChunks.splice(0, recordedChunks.length);
     cbs.forEach((cb) => cb("inactive"));
-    toggleVisibility();
   };
 
   return {
@@ -42,7 +41,6 @@ export function recorder(
     subscribe: (cb) => cbs.push(cb),
     unsubscribe: (cb) => cbs.splice(cbs.indexOf(cb), 1),
     start: () => {
-      toggleVisibility();
       mediaRecorder.start();
       cbs.forEach((cb) => cb("recording"));
     },

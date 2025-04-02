@@ -6,10 +6,16 @@ type InitFullScreenCanvasArgs = {
   id: string;
 };
 
+export type Canvas = {
+  ctx: CanvasRenderingContext2D;
+  resize: (width: number, height: number) => void;
+  resizeToFit: () => void;
+};
+
 export function initFullScreenCanvas({
   backgroundCollor,
   id,
-}: InitFullScreenCanvasArgs): CanvasRenderingContext2D {
+}: InitFullScreenCanvasArgs): Canvas {
   const body = document.querySelector("body");
   assert(body, "body must be present");
   body.style.backgroundColor = backgroundCollor;
@@ -32,7 +38,7 @@ export function initFullScreenCanvas({
 
   ctx.scale(dpr, dpr);
 
-  const observer = new ResizeObserver(() => {
+  let observer = new ResizeObserver(() => {
     requestAnimationFrame(() => {
       const rect = canvasElement.getBoundingClientRect();
 
@@ -41,7 +47,34 @@ export function initFullScreenCanvas({
     });
   });
   observer.observe(canvasElement);
-  return ctx;
+  return {
+    ctx,
+    resize(width, height) {
+      canvasElement.classList.remove("fit");
+      canvasElement.width = width;
+      canvasElement.height = height;
+      canvasElement.style.width = `${width / dpr}px`;
+      canvasElement.style.height = `${height / dpr}px`;
+      observer.disconnect();
+    },
+    resizeToFit() {
+      canvasElement.classList.add("fit");
+      const rect = canvasElement.getBoundingClientRect();
+      canvasElement.width = rect.width * dpr;
+      canvasElement.height = rect.height * dpr;
+      canvasElement.style.width = "";
+      canvasElement.style.height = "";
+      observer = new ResizeObserver(() => {
+        requestAnimationFrame(() => {
+          const rect = canvasElement.getBoundingClientRect();
+
+          canvasElement.width = rect.width * dpr;
+          canvasElement.height = rect.height * dpr;
+        });
+      });
+      observer.observe(canvasElement);
+    },
+  };
 }
 
 export type CreateMeterOpts = {

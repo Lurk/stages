@@ -8,10 +8,11 @@ import { button } from "./common/button.mjs";
 import { renderContainer } from "./common/container.mjs";
 import { renderSelectInputTo } from "./common/select.mjs";
 import { renderTextInputTo } from "./common/text_input.mjs";
+import { Canvas } from "../canvas.mjs";
 
 type RenderProps = {
   vals: any;
-  ctx: CanvasRenderingContext2D;
+  canvas: Canvas;
   add: (args: CreatorConfig) => void;
   recorder: Recorder;
 };
@@ -46,6 +47,59 @@ export function render(args: RenderProps) {
       nameInput.value = "";
     },
   });
+
+  const { el: aspectRatio } = renderSelectInputTo({
+    container,
+    options: ["free", "1:1", "16:9", "5:4", "4:3", "2:1"],
+    id: "aspect-ratio",
+    label: "aspect ratio:",
+  });
+
+  const { el: longSide } = renderSelectInputTo({
+    container,
+    options: ["4096", "2048", "1024", "512", "256", "128"],
+    id: "long-side",
+    label: "long side (px):",
+    disabled: true,
+  });
+
+  const { el: orientation } = renderSelectInputTo({
+    container,
+    options: ["horizontal", "vertical"],
+    id: "orientation",
+    label: "orientation:",
+    disabled: true,
+  });
+
+  const changeCanvasSize = () => {
+    const ar = aspectRatio.value;
+    const ls = parseInt(longSide.value);
+    const o = orientation.value;
+    const shortSide = Math.round(
+      (ls / parseInt(ar.split(":")[0])) * parseInt(ar.split(":")[1]),
+    );
+
+    if (o === "horizontal") {
+      args.canvas.resize(ls, shortSide);
+    } else {
+      args.canvas.resize(shortSide, ls);
+    }
+  };
+
+  aspectRatio.addEventListener("change", () => {
+    if (aspectRatio.value === "free") {
+      longSide.disabled = true;
+      orientation.disabled = true;
+      args.canvas.resizeToFit();
+    } else {
+      longSide.disabled = false;
+      orientation.disabled = false;
+      changeCanvasSize();
+    }
+  });
+
+  longSide.addEventListener("change", changeCanvasSize);
+  orientation.addEventListener("change", changeCanvasSize);
 
   const rec = button({
     text: args.recorder.state() === "inactive" ? "record" : "stop",

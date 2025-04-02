@@ -19,8 +19,11 @@ body {
 	margin: 0;
 	padding: 0;
 	color: #cccccc;
+}
+
+body:has(#canvas.fit) {
+	height: 100vh;
 	overflow-y: hidden;
-	height: 100%;
 }
 
 select,
@@ -28,7 +31,7 @@ input,
 button,
 option {
 	appearance: none;
-	padding: 1px 5px;
+	padding: 0px 5px;
 	margin: 0;
 	cursor: inherit;
 	line-height: inherit;
