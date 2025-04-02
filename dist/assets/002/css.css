@@ -25,9 +25,10 @@ body {
 
 select,
 input,
-button {
+button,
+option {
 	appearance: none;
-	padding: 0px 5px;
+	padding: 1px 5px;
 	margin: 0;
 	cursor: inherit;
 	line-height: inherit;
@@ -35,6 +36,11 @@ button {
 	color: var(--extra-dark);
 	border-radius: var(--border-radius);
 	border: 1px solid var(--dark);
+}
+
+select:disabled {
+	color: var(--extra-dark);
+	background-color: var(--dark);
 }
 
 input[type=range] {

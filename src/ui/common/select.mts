@@ -3,6 +3,7 @@ export type RenderSelectInputArgs = {
   selected?: string;
   id: string;
   label?: string;
+  disabled?: boolean;
   container: HTMLDivElement;
 };
 
@@ -14,7 +15,9 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
   container.classList.add("input");
 
   const el = document.createElement("select");
-  el.id = args.id + "___aaa___";
+  el.id = args.id + "_#_select_#_";
+
+  el.disabled = args.disabled ?? false;
 
   args.options.forEach((key) => {
     const option = document.createElement("option");
@@ -26,7 +29,7 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
   });
 
   const label = document.createElement("label");
-  label.htmlFor = args.id;
+  label.htmlFor = el.id;
   label.innerHTML = args.label ?? args.id;
 
   container.appendChild(label);
