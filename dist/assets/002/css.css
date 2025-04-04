@@ -145,3 +145,24 @@ a {
 	flex-direction: column;
 	justify-content: end;
 }
+
+.divider {
+	display: flex;
+	align-items: center;
+	text-align: center;
+}
+
+.divider::before,
+.divider::after {
+	content: '';
+	flex: 1;
+	border-bottom: 1px solid var(--medium);
+}
+
+.divider:not(:empty)::before {
+	margin-right: .25em;
+}
+
+.divider:not(:empty)::after {
+	margin-left: .25em;
+}
