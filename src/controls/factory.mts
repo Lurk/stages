@@ -9,7 +9,6 @@ import { random, RandomArgs } from "./random.mjs";
 import { assert } from "../utils.mjs";
 import { State, state } from "../state.mjs";
 import { logic, LogicArgs } from "./logic.mjs";
-import { recorder } from "../recorder.mjs";
 import { Canvas } from "../canvas.mjs";
 export type CreatorConfig =
   | { type: "slider"; args: SliderArgs }
@@ -131,7 +130,6 @@ export function factory({ canvas }: FactoryArgs): Map<string, Output> {
   const add = init(s, vals, outputs);
   const controls = document.getElementById("controls");
   assert(controls, "#controls element was not wound");
-  const record = recorder(canvas.ctx);
 
   if (!s.areControlsVisible()) {
     controls.classList.add("hidden");
@@ -142,7 +140,6 @@ export function factory({ canvas }: FactoryArgs): Map<string, Output> {
     vals,
     add,
     canvas,
-    recorder: record,
   });
 
   initEvents({

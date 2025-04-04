@@ -1,5 +1,4 @@
 import { CreatorConfig } from "../../controls/factory.mjs";
-import { Recorder } from "../../recorder.mjs";
 import { renderContainer } from "../common/container.mjs";
 import { Canvas } from "../../canvas.mjs";
 import { controls } from "./controls.mjs";
@@ -9,7 +8,6 @@ type RenderProps = {
   vals: any;
   canvas: Canvas;
   add: (args: CreatorConfig) => void;
-  recorder: Recorder;
 };
 
 export function render(args: RenderProps) {
@@ -23,7 +21,6 @@ export function render(args: RenderProps) {
   canvas({
     container,
     canvas: args.canvas,
-    recorder: args.recorder,
   });
 
   const docs = document.createElement("div");

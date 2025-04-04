@@ -1,16 +1,15 @@
 import { renderSelectInputTo } from "../common/select.mjs";
 import { Canvas } from "../../canvas.mjs";
-import { Recorder } from "../../recorder.mjs";
+import { recorder } from "../../recorder.mjs";
 import { button } from "../common/button.mjs";
 import { divider } from "../common/divider.mjs";
 
 export type CanvasArgs = {
   canvas: Canvas;
   container: HTMLDivElement;
-  recorder: Recorder;
 };
 
-export function canvas({ canvas, container, recorder }: CanvasArgs) {
+export function canvas({ canvas, container }: CanvasArgs) {
   divider({
     container,
     label: "canvas",
@@ -69,16 +68,18 @@ export function canvas({ canvas, container, recorder }: CanvasArgs) {
   longSide.addEventListener("change", changeCanvasSize);
   orientation.addEventListener("change", changeCanvasSize);
 
-  const rec = button({
-    text: recorder.state() === "inactive" ? "record" : "stop",
+  const rec = recorder(canvas.ctx);
+
+  const recButton = button({
+    text: rec.state() === "inactive" ? "record" : "stop",
     container,
     onClick: () => {
-      if (recorder.state() === "inactive") {
-        recorder.start();
+      if (rec.state() === "inactive") {
+        rec.start();
       } else {
-        recorder.stop();
+        rec.stop();
       }
     },
   });
-  recorder.subscribe((state) => rec(state === "inactive" ? "record" : "stop"));
+  rec.subscribe((state) => recButton(state === "inactive" ? "record" : "stop"));
 }
