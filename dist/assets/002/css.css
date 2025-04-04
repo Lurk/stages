@@ -18,7 +18,8 @@ html,
 body {
 	margin: 0;
 	padding: 0;
-	color: #cccccc;
+	color: var(--light);
+	background-color: var(--darker);
 }
 
 body:has(#canvas.fit) {
