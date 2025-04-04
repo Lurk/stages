@@ -9,6 +9,7 @@ import { renderContainer } from "./common/container.mjs";
 import { renderSelectInputTo } from "./common/select.mjs";
 import { renderTextInputTo } from "./common/text_input.mjs";
 import { Canvas } from "../canvas.mjs";
+import { divider } from "./common/divider.mjs";
 
 type RenderProps = {
   vals: any;
@@ -46,6 +47,11 @@ export function render(args: RenderProps) {
       args.add({ type, args: { name } });
       nameInput.value = "";
     },
+  });
+
+  divider({
+    container,
+    label: "canvas",
   });
 
   const { el: aspectRatio } = renderSelectInputTo({
