@@ -44,7 +44,22 @@ time.
 
 ### Factory
 
-The factory spawns any available control.
+Has two sections: `controls` and `canvas`.
+
+The `controls` section allows to spawn any available control with unique name.
+
+The `canvas` section allows to control canvas size with `aspect`, `long side` and `orientation` parameters.
+- `aspect` - Aspect ratio of the canvas.
+  - `free` - will take all available screen.
+  - `1:1` - square
+  - `16:9` - widescreen. Common for televisions and computer monitors.
+  - `5:4` - Common in large and medium format photography.
+  - `4:3` - Common ration in photography and computer monitors.
+  - `2:1` -  Used in some modern mobile devices.
+- `orientation` - Orientation of the canvas. If `aspect` is `free`, this parameter will be ignored.
+  - `landscape` - landscape mode. Width is greater than height.
+  - `portrait` - portrait mode. Height is greater than width.
+- `long side` - Longest side of the canvas. If `aspect` is `free`, this parameter will be ignored.
 
 ### Slider
 
@@ -61,6 +76,8 @@ Produces a value that is a result of math operations.
 - `pow` - raises `lhs` to the power of `rhs`
 - `div` - divides `lhs` by `rhs`
 - `avg` - averages `lhs` and `rhs`
+- `min` - minimum of `lhs` and `rhs`
+- `max` - maximum of `lhs` and `rhs`
 
 In order to use screen real estate efficiently, [math](#Math) has two blocks `a` (top) and `b` (bottom). Each block has
 `lhs` and `rhs` values and `mode` that specifies operation. Those two blocks produce two values with `_a` and `_b`

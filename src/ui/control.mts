@@ -61,19 +61,19 @@ export function render(args: RenderProps) {
     label: "aspect ratio:",
   });
 
-  const { el: longSide } = renderSelectInputTo({
-    container,
-    options: ["4096", "2048", "1024", "512", "256", "128"],
-    id: "long-side",
-    label: "long side (px):",
-    disabled: true,
-  });
-
   const { el: orientation } = renderSelectInputTo({
     container,
     options: ["horizontal", "vertical"],
     id: "orientation",
     label: "orientation:",
+    disabled: true,
+  });
+
+  const { el: longSide } = renderSelectInputTo({
+    container,
+    options: ["4096", "2048", "1024", "512", "256", "128"],
+    id: "long-side",
+    label: "long side (px):",
     disabled: true,
   });
 
