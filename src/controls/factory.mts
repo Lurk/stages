@@ -1,7 +1,7 @@
 import { AddOutputArgs, line, Output } from "./line.mjs";
 import { Values, values } from "../value.mjs";
 import { defaults } from "./defaults.mjs";
-import { render } from "../ui/control.mjs";
+import { render } from "../ui/factory/index.mjs";
 import { SliderArgs, sliderWithNumericInputs } from "./slider.mjs";
 import { OscillatorArgs, oscillatorWithConnectInput } from "./oscillator.mjs";
 import { math, MathArgs } from "./math.mjs";
