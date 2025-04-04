@@ -15,7 +15,16 @@ export type MathArgs = {
   rhs2?: string;
 };
 
-const options = ["sum", "sub", "mul", "pow", "div", "avg"] as const;
+const options = [
+  "sum",
+  "sub",
+  "mul",
+  "pow",
+  "div",
+  "avg",
+  "min",
+  "max",
+] as const;
 
 function evaluate(
   o: string,
@@ -37,6 +46,10 @@ function evaluate(
       return lhs(now, i) / rhs(now, i);
     case "avg":
       return (lhs(now, i) + rhs(now, i)) / 2;
+    case "min":
+      return Math.min(lhs(now, i), rhs(now, i));
+    case "max":
+      return Math.max(lhs(now, i), rhs(now, i));
     default:
       throw new Error(`option: ${o} is not supported`);
   }
