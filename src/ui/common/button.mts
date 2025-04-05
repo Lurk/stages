@@ -5,12 +5,12 @@ type ButtonArgs = {
 };
 
 export function button({ text, container, onClick }: ButtonArgs) {
-  const rec = document.createElement("button");
-  rec.textContent = text;
-  rec.addEventListener("click", onClick);
-  container.appendChild(rec);
+  const el = document.createElement("button");
+  el.textContent = text;
+  el.addEventListener("click", onClick);
+  container.appendChild(el);
 
   return (text: string) => {
-    rec.textContent = text;
+    el.textContent = text;
   };
 }

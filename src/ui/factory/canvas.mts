@@ -15,26 +15,34 @@ export function canvas({ canvas, container }: CanvasArgs) {
     label: "canvas",
   });
 
-  const { el: aspectRatio } = renderSelectInputTo({
+  const {
+    select: { el: aspectRatio },
+  } = renderSelectInputTo({
     container,
-    options: ["free", "1:1", "16:9", "5:4", "4:3", "2:1"],
-    id: "aspect-ratio",
+    options: ["free", "16:9", "5:4", "4:3", "2:1", "1:1"],
+    id: "aspect",
     label: "aspect ratio:",
   });
 
-  const { el: orientation } = renderSelectInputTo({
+  const {
+    select: { el: orientation },
+  } = renderSelectInputTo({
     container,
     options: ["horizontal", "vertical"],
-    id: "orientation",
+    id: "orient",
     label: "orientation:",
     disabled: true,
   });
 
-  const { el: longSide } = renderSelectInputTo({
+  const {
+    select: { el: longSide },
+    label,
+  } = renderSelectInputTo({
     container,
     options: ["4096", "2048", "1024", "512", "256", "128"],
+    selected: "2048",
     id: "long-side",
-    label: "long side (px):",
+    label: "width",
     disabled: true,
   });
 
@@ -47,8 +55,10 @@ export function canvas({ canvas, container }: CanvasArgs) {
     );
 
     if (o === "horizontal") {
+      label("width");
       canvas.resize(ls, shortSide);
     } else {
+      label("height");
       canvas.resize(shortSide, ls);
     }
   };

@@ -1,6 +1,9 @@
 import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
-import { renderNumberInputTo } from "../ui/common/number_input.mjs";
+import {
+  numberInput,
+  renderNumberInputTo,
+} from "../ui/common/number_input.mjs";
 import { renderRangeTo } from "../ui/common/range.mjs";
 import { Values } from "../value.mjs";
 
@@ -31,9 +34,8 @@ export function sliderWithNumericInputs({
 
   showValue((args.value ?? 50).toPrecision(6));
 
-  const to = renderNumberInputTo({
+  const to = numberInput({
     id: `${args.name}_max`,
-    label: "",
     container,
     value: args.max ?? 500,
   });
@@ -47,9 +49,8 @@ export function sliderWithNumericInputs({
     label: "",
   });
 
-  const from = renderNumberInputTo({
+  const from = numberInput({
     id: `${args.name}_min`,
-    label: "",
     container,
     value: args.min ?? 0,
   });

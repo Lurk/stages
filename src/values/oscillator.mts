@@ -43,11 +43,11 @@ export function oscillatorWithConnectInput({
   } = connect({
     values,
     omit: args.name,
+    container,
     args: {
       id: `${args.name}_min`,
       label: "min",
       selected: args.min,
-      container,
     },
     onChange(min) {
       onChange({ ...Object.assign(state, { min }) });
@@ -61,11 +61,11 @@ export function oscillatorWithConnectInput({
   } = connect({
     values,
     omit: args.name,
+    container,
     args: {
       id: `${args.name}_max`,
       label: "max",
       selected: args.max,
-      container,
     },
     onChange(max) {
       onChange({ ...Object.assign(state, { max }) });
@@ -79,11 +79,11 @@ export function oscillatorWithConnectInput({
   } = connect({
     values,
     omit: args.name,
+    container,
     args: {
       id: `${args.name}_raise`,
       label: "raise",
       selected: args.raise,
-      container,
     },
     onChange(raise) {
       onChange({ ...Object.assign(state, { raise }) });
@@ -97,11 +97,11 @@ export function oscillatorWithConnectInput({
   } = connect({
     values,
     omit: args.name,
+    container,
     args: {
       id: `${args.name}_fall`,
       label: "fall",
       selected: args.fall,
-      container,
     },
     onChange(fall) {
       onChange({ ...Object.assign(state, { fall }) });

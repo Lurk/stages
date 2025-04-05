@@ -62,25 +62,8 @@ export function logic({ values, args, onRemove, onChange }: Args) {
   const state = { ...args };
 
   const {
-    value: lhs,
-    update: lhs_u,
-    onRemove: lhs_r,
-    selected: selectedLhs,
-  } = connect({
-    values,
-    omit: `${args.name}_a`,
-    args: {
-      id: `${args.name}_lhs`,
-      label: `lhs`,
-      container,
-      selected: args.lhs,
-    },
-    onChange(lhs) {
-      onChange({ ...Object.assign(state, { lhs }) });
-    },
-  });
-
-  const { el: mode } = renderSelectInputTo({
+    select: { el: mode },
+  } = renderSelectInputTo({
     id: `${args.name}_mode`,
     label: "mode",
     selected: args.mode,
@@ -93,6 +76,25 @@ export function logic({ values, args, onRemove, onChange }: Args) {
   });
 
   const {
+    value: lhs,
+    update: lhs_u,
+    onRemove: lhs_r,
+    selected: selectedLhs,
+  } = connect({
+    values,
+    omit: `${args.name}_a`,
+    container,
+    args: {
+      id: `${args.name}_lhs`,
+      label: `lhs`,
+      selected: args.lhs,
+    },
+    onChange(lhs) {
+      onChange({ ...Object.assign(state, { lhs }) });
+    },
+  });
+
+  const {
     value: rhs,
     update: rhs_u,
     onRemove: rhs_r,
@@ -100,10 +102,10 @@ export function logic({ values, args, onRemove, onChange }: Args) {
   } = connect({
     values,
     omit: `${args.name}`,
+    container,
     args: {
       id: `${args.name}_rhs`,
       label: `rhs`,
-      container,
       selected: args.rhs,
     },
     onChange(rhs) {
@@ -119,10 +121,10 @@ export function logic({ values, args, onRemove, onChange }: Args) {
   } = connect({
     values,
     omit: `${args.name}`,
+    container,
     args: {
       id: `${args.name}_is_true`,
       label: `is_true`,
-      container,
       selected: args.is_true,
     },
     onChange(is_true) {
@@ -138,10 +140,10 @@ export function logic({ values, args, onRemove, onChange }: Args) {
   } = connect({
     values,
     omit: `${args.name}`,
+    container,
     args: {
       id: `${args.name}_is_false`,
       label: `is_false`,
-      container,
       selected: args.is_false,
     },
     onChange(is_false) {

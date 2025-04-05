@@ -1,3 +1,6 @@
+import { argv0 } from "process";
+import { label } from "./label.mjs";
+
 export type RenderNumberInputArgs = {
   value?: number;
   id: string;
@@ -11,18 +14,37 @@ export function renderNumberInputTo(
   const root = args.container;
   const container = document.createElement("div");
   container.classList.add("input");
-  const label = document.createElement("label");
-  label.htmlFor = args.id;
-  label.innerText = args.label ?? args.id;
 
+  label({
+    container,
+    id: args.id,
+    label: args.label,
+  });
+
+  const el = numberInput({
+    id: args.id,
+    container,
+    value: args.value,
+  });
+  root.appendChild(container);
+
+  return el;
+}
+
+export type NumberInputArgs = {
+  value?: number;
+  id: string;
+  container: HTMLDivElement;
+};
+
+export function numberInput(args: NumberInputArgs): HTMLInputElement {
   const el = document.createElement("input");
   el.value = String(args.value ?? "0");
   el.type = "number";
   el.id = args.id;
+  el.step = "0.00001";
 
-  container.appendChild(label);
-  container.appendChild(el);
-  root.appendChild(container);
+  args.container.appendChild(el);
 
   return el;
 }

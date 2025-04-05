@@ -18,7 +18,9 @@ export function controls({ container, add }: ControlsArgs) {
     container,
   });
 
-  const { el: controlTypeSelect } = renderSelectInputTo({
+  const {
+    select: { el: controlTypeSelect },
+  } = renderSelectInputTo({
     container,
     options: CONTROL_TYPES,
     id: "control-creation-select",

@@ -18,10 +18,6 @@ export function renderRangeTo(args: RenderRangeArgs): HTMLInputElement {
   const container = document.createElement("div");
   container.classList.add("slider");
 
-  const label = document.createElement("label");
-  label.htmlFor = args.id;
-  label.innerText = args.label ?? args.id;
-
   el.type = "range";
   el.min = String(min);
   el.max = String(max);
@@ -29,7 +25,6 @@ export function renderRangeTo(args: RenderRangeArgs): HTMLInputElement {
   el.step = String(step);
   el.id = args.id;
 
-  container.appendChild(label);
   container.appendChild(el);
   args.container.appendChild(container);
 

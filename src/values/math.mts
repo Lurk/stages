@@ -76,7 +76,9 @@ export function math({ values, args, onRemove, onChange }: Args) {
 
   const state = { ...args };
 
-  const { el: mode_a } = renderSelectInputTo({
+  const {
+    select: { el: mode_a },
+  } = renderSelectInputTo({
     id: `${args.name}_mode_a`,
     label: "mode",
     selected: args.mode_a,
@@ -96,10 +98,10 @@ export function math({ values, args, onRemove, onChange }: Args) {
   } = connect({
     values,
     omit: `${args.name}_a`,
+    container,
     args: {
       id: `${args.name}_lhs1`,
       label: `lhs`,
-      container,
       selected: args.lhs1,
     },
     onChange(lhs1) {
@@ -115,10 +117,10 @@ export function math({ values, args, onRemove, onChange }: Args) {
   } = connect({
     values,
     omit: `${args.name}_a`,
+    container,
     args: {
       id: `${args.name}_rhs1`,
       label: `rhs`,
-      container,
       selected: args.rhs2,
     },
     onChange(rhs1) {
@@ -128,7 +130,9 @@ export function math({ values, args, onRemove, onChange }: Args) {
 
   const showValue2 = spanWithText(container, "0");
 
-  const { el: mode_b } = renderSelectInputTo({
+  const {
+    select: { el: mode_b },
+  } = renderSelectInputTo({
     id: `${args.name}_mode_b`,
     label: "mode",
     selected: args.mode_b,
@@ -148,10 +152,10 @@ export function math({ values, args, onRemove, onChange }: Args) {
   } = connect({
     values,
     omit: `${args.name}_b`,
+    container,
     args: {
       id: `${args.name}_lhs2`,
       label: `lhs`,
-      container,
       selected: args.lhs2,
     },
     onChange(lhs2) {
@@ -167,10 +171,10 @@ export function math({ values, args, onRemove, onChange }: Args) {
   } = connect({
     values,
     omit: `${args.name}_b`,
+    container,
     args: {
       id: `${args.name}_in4`,
       label: `rhs`,
-      container,
       selected: args.rhs2,
     },
     onChange(rhs2) {

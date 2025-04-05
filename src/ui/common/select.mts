@@ -1,3 +1,5 @@
+import { label } from "./label.mjs";
+
 export type RenderSelectInputArgs = {
   options: readonly string[];
   selected?: string;
@@ -7,13 +9,45 @@ export type RenderSelectInputArgs = {
   container: HTMLDivElement;
 };
 
-export function renderSelectInputTo(args: RenderSelectInputArgs): {
+export type Select = {
   el: HTMLSelectElement;
   updateOptions: (options: string[]) => void;
+};
+
+export function renderSelectInputTo(args: RenderSelectInputArgs): {
+  label: (text: string) => void;
+  select: Select;
 } {
   const container = document.createElement("div");
   container.classList.add("input");
 
+  args.container.appendChild(container);
+
+  return {
+    label: label({
+      container,
+      id: args.id,
+      label: args.label,
+    }),
+    select: select({
+      id: args.id,
+      container,
+      options: args.options,
+      selected: args.selected,
+      disabled: args.disabled,
+    }),
+  };
+}
+
+export type SelectArgs = {
+  id: string;
+  container: HTMLDivElement;
+  options: readonly string[];
+  selected?: string;
+  disabled?: boolean;
+};
+
+export function select(args: SelectArgs): Select {
   const el = document.createElement("select");
   el.id = args.id + "_#_select_#_";
 
@@ -28,14 +62,7 @@ export function renderSelectInputTo(args: RenderSelectInputArgs): {
     el.options.add(option);
   });
 
-  const label = document.createElement("label");
-  label.htmlFor = el.id;
-  label.innerHTML = args.label ?? args.id;
-
-  container.appendChild(label);
-  container.appendChild(el);
-
-  args.container.appendChild(container);
+  args.container.appendChild(el);
 
   let keys = new Set(args.options);
 

@@ -34,10 +34,10 @@ export function random({ values, args, onRemove, onChange }: Args) {
   } = connect({
     values,
     omit: args.name,
+    container,
     args: {
       id: `${args.name}_min`,
       label: "min",
-      container,
     },
     onChange(min) {
       onChange({ ...Object.assign(state, { min }) });
@@ -51,10 +51,10 @@ export function random({ values, args, onRemove, onChange }: Args) {
   } = connect({
     values,
     omit: args.name,
+    container,
     args: {
       id: `${args.name}_max`,
       label: "max",
-      container,
     },
     onChange(max) {
       onChange({ ...Object.assign(state, { max }) });
