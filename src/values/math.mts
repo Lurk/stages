@@ -1,10 +1,10 @@
-import { Values, Value } from "../value.mjs";
+import { Value } from "../value.mjs";
 import { connect } from "./connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
 import { renderSelectInputTo } from "../ui/common/select.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
 import { spanWithText } from "../ui/common/span.mjs";
-import { deserialize, limiter, serialize } from "../utils.mjs";
+import { ComponentArgs, deserialize, limiter, serialize } from "../utils.mjs";
 
 export type MathArgs = {
   name: string;
@@ -56,15 +56,12 @@ function evaluate(
   }
 }
 
-type Args = {
-  values: Values;
-  args: MathArgs;
-  onRemove: () => void;
-  onChange: (args: MathArgs) => void;
-};
-
-// http://localhost:3000/stages/?s=002Y00S3.x_tS6.0.0001S7.0.54541S1.101S1.xS4.zeroS5.widthS3.x_tS3.x_t00S7.lfo_minS6.0.7494S7.0.74968S6.0.749900S7.lfo_maxS6.0.7499S4.0.75S4.0.7500S5.lfo_tS1.2S11.40558.98454S6.10000001S3.lfoS7.lfo_minS7.lfo_maxS5.lfo_tS4.zero01S1.yS4.zeroS6.heightS3.lfoS3.lfo02S5.firstS1.xS1.yS3.oneS6.math_b03S4.mathS3.minS5.widthN1.2S3.divS6.math_aN1.2
-export function math({ values, args, onRemove, onChange }: Args) {
+export function math({
+  values,
+  args,
+  onRemove,
+  onChange,
+}: ComponentArgs<MathArgs>) {
   const { container, showValue } = renderContainer(args.name, false, () => {
     values.unregister(`${args.name}_a`);
     values.unregister(`${args.name}_b`);
@@ -74,6 +71,8 @@ export function math({ values, args, onRemove, onChange }: Args) {
     lhs2Remove();
     rhs2Remove();
   });
+
+  showValue("0");
 
   let state = { ...args };
 

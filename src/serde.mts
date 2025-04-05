@@ -6,6 +6,7 @@ import { CreatorConfig } from "./factory.mjs";
 import { assert } from "./utils.mjs";
 import { logicSerde } from "./values/logic.mjs";
 import { sliderSerde } from "./values/slider.mjs";
+import { map, mapSerde } from "./values/map.mjs";
 
 const VERSION = 2;
 
@@ -23,6 +24,8 @@ function typeToString(type: CreatorConfig["type"]): string {
       return "04";
     case "logic":
       return "05";
+    case "map":
+      return "06";
     default:
       throw new Error(`Unknown type: ${type}`);
   }
@@ -42,6 +45,8 @@ function stringToType(type: string): CreatorConfig["type"] {
       return "random";
     case "05":
       return "logic";
+    case "06":
+      return "map";
     default:
       throw new Error(`Unknown type: ${type}`);
   }
@@ -69,6 +74,7 @@ export function serde(): Serde {
   const m = mathSerde();
   const r = randomSerde();
   const lgc = logicSerde();
+  const map = mapSerde();
 
   const controlToString = (control: CreatorConfig): string => {
     const type = typeToString(control.type);
@@ -85,6 +91,8 @@ export function serde(): Serde {
         return `${type}${r.toString(control.args)}`;
       case "logic":
         return `${type}${lgc.toString(control.args)}`;
+      case "map":
+        return `${type}${map.toString(control.args)}`;
     }
   };
 
@@ -152,6 +160,12 @@ export function serde(): Serde {
             const { val, end } = lgc.fromString(str, pos);
             controls.set(val.name, { type, args: val });
             pos = end;
+          }
+          case "map": {
+            const { val, end } = map.fromString(str, pos);
+            controls.set(val.name, { type, args: val });
+            pos = end;
+            break;
           }
         }
       }

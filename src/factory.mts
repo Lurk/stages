@@ -15,13 +15,15 @@ import { logic, LogicArgs } from "./values/logic.mjs";
 import { Canvas, initFullScreenCanvas } from "./canvas.mjs";
 import { animate } from "./animation.mjs";
 import { Outputs, outputs } from "./output.mjs";
+import { map, MapArgs } from "./values/map.mjs";
 export type CreatorConfig =
   | { type: "slider"; args: SliderArgs }
   | { type: "oscillator"; args: OscillatorArgs }
   | { type: "math"; args: MathArgs }
   | { type: "line"; args: AddLineArgs }
   | { type: "random"; args: RandomArgs }
-  | { type: "logic"; args: LogicArgs };
+  | { type: "logic"; args: LogicArgs }
+  | { type: "map"; args: MapArgs };
 
 export const CONTROL_TYPES: CreatorConfig["type"][] = [
   "slider",
@@ -30,6 +32,7 @@ export const CONTROL_TYPES: CreatorConfig["type"][] = [
   "line",
   "random",
   "logic",
+  "map",
 ] as const;
 
 export function controlTypeGuard(t: unknown): t is CreatorConfig["type"] {
@@ -117,6 +120,13 @@ function init(
         });
       case "logic":
         return logic({
+          values,
+          onRemove,
+          args: config.args,
+          onChange: (args) => state.updateControl({ type: config.type, args }),
+        });
+      case "map":
+        return map({
           values,
           onRemove,
           args: config.args,

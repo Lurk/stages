@@ -1,8 +1,7 @@
-import { Values } from "../value.mjs";
 import { connect } from "./connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
-import { deserialize, serialize } from "../utils.mjs";
+import { ComponentArgs, deserialize, serialize } from "../utils.mjs";
 
 export type RandomArgs = {
   name: string;
@@ -10,14 +9,12 @@ export type RandomArgs = {
   max?: string | number;
 };
 
-type Args = {
-  values: Values;
-  args: RandomArgs;
-  onRemove: () => void;
-  onChange: (args: RandomArgs) => void;
-};
-
-export function random({ values, args, onRemove, onChange }: Args) {
+export function random({
+  values,
+  args,
+  onRemove,
+  onChange,
+}: ComponentArgs<RandomArgs>) {
   const { container, showValue } = renderContainer(args.name, false, () => {
     values.unregister(args.name);
     onRemove();

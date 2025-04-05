@@ -1,9 +1,9 @@
-import { Values, Value } from "../value.mjs";
+import { Value } from "../value.mjs";
 import { connect } from "./connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
 import { renderSelectInputTo } from "../ui/common/select.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
-import { deserialize, serialize } from "../utils.mjs";
+import { ComponentArgs, deserialize, serialize } from "../utils.mjs";
 
 export type LogicArgs = {
   name: string;
@@ -43,14 +43,12 @@ function evaluate(
   }
 }
 
-type Args = {
-  values: Values;
-  args: LogicArgs;
-  onRemove: () => void;
-  onChange: (args: LogicArgs) => void;
-};
-
-export function logic({ values, args, onRemove, onChange }: Args) {
+export function logic({
+  values,
+  args,
+  onRemove,
+  onChange,
+}: ComponentArgs<LogicArgs>) {
   const { container, showValue } = renderContainer(args.name, false, () => {
     values.unregister(args.name);
     onRemove();

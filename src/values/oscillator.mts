@@ -1,8 +1,8 @@
-import { Values, wave } from "../value.mjs";
+import { wave } from "../value.mjs";
 import { connect } from "./connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
-import { deserialize, serialize } from "../utils.mjs";
+import { ComponentArgs, deserialize, serialize } from "../utils.mjs";
 
 export type OscillatorArgs = {
   name: string;
@@ -12,19 +12,12 @@ export type OscillatorArgs = {
   fall?: string | number;
 };
 
-type Args = {
-  values: Values;
-  args: OscillatorArgs;
-  onRemove: () => void;
-  onChange: (args: OscillatorArgs) => void;
-};
-
 export function oscillatorWithConnectInput({
   values,
   args,
   onRemove,
   onChange,
-}: Args) {
+}: ComponentArgs<OscillatorArgs>) {
   const { container, showValue } = renderContainer(args.name, false, () => {
     values.unregister(args.name);
     onRemove();

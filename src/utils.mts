@@ -1,3 +1,5 @@
+import { Values } from "./value.mjs";
+
 export function assert(lhs: any, message: string): asserts lhs {
   if (!lhs) {
     alert(message);
@@ -48,6 +50,10 @@ export const deserialize: Deserializer = (val, start) => {
   if (val[start] === "N") {
     const separator = val.indexOf(".", start + 1);
     const len = parseInt(val.slice(start + 1, separator), 10);
+    assert(
+      !Number.isNaN(len),
+      `Unable to parse the len from: "${val.slice(start, separator)}"\nstart: ${start}\nseparator: ${separator}\nval: ${val}`,
+    );
     const num = parseFloat(val.slice(separator + 1, separator + len + 1));
 
     if (Number.isNaN(num)) {
@@ -61,6 +67,11 @@ export const deserialize: Deserializer = (val, start) => {
   } else if (val[start] === "S") {
     const separator = val.indexOf(".", start + 1);
     const len = parseInt(val.slice(start + 1, separator), 10);
+    assert(
+      !Number.isNaN(len),
+      `Unable to parse the len from: "${val.slice(start, separator)}"\nstart: ${start}\nseparator: ${separator}\nval: ${val}`,
+    );
+
     const str = val.slice(separator + 1, separator + len + 1);
 
     if (str.length !== len) {
@@ -77,12 +88,20 @@ export const deserialize: Deserializer = (val, start) => {
   const separator = val.indexOf(".", start);
   const len = parseInt(val.slice(start, separator), 10);
 
-  if (Number.isNaN(len)) {
-    throw new Error(`Unable to parse the len from: "${val}"`);
-  }
+  assert(
+    !Number.isNaN(len),
+    `Unable to parse the len from: "${val.slice(start, separator)}"\nstart: ${start}\nseparator: ${separator}\nval: ${val}`,
+  );
 
   return {
     val: val.slice(separator + 1, separator + len + 1),
     end: separator + len + 1,
   };
+};
+
+export type ComponentArgs<T> = {
+  values: Values;
+  args: T;
+  onRemove: () => void;
+  onChange: (args: T) => void;
 };

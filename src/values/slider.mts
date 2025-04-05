@@ -2,8 +2,7 @@ import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
 import { numberInput } from "../ui/common/number_input.mjs";
 import { renderRangeTo } from "../ui/common/range.mjs";
-import { deserialize, serialize } from "../utils.mjs";
-import { Values } from "../value.mjs";
+import { ComponentArgs, deserialize, serialize } from "../utils.mjs";
 
 export type SliderArgs = {
   min?: number;
@@ -12,19 +11,12 @@ export type SliderArgs = {
   name: string;
 };
 
-export type Args = {
-  values: Values;
-  args: SliderArgs;
-  onRemove: () => void;
-  onChange: (args: SliderArgs) => void;
-};
-
 export function sliderWithNumericInputs({
   values,
   args,
   onRemove,
   onChange,
-}: Args) {
+}: ComponentArgs<SliderArgs>) {
   const { container, showValue } = renderContainer(args.name, false, () => {
     values.unregister(args.name);
     onRemove();

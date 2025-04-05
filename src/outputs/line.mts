@@ -1,9 +1,9 @@
-import { Values, Value } from "../value.mjs";
+import { Value } from "../value.mjs";
 import { connect } from "../values/connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
 import { Outputs } from "../output.mjs";
-import { deserialize, serialize } from "../utils.mjs";
+import { ComponentArgs, deserialize, serialize } from "../utils.mjs";
 
 export type Line = { y: Value; x: Value; sr: Value; vertices: Value };
 
@@ -15,12 +15,8 @@ export type AddLineArgs = {
   vertices?: string | number;
 };
 
-type Args = {
-  values: Values;
+type Args = ComponentArgs<AddLineArgs> & {
   outputs: Outputs;
-  onRemove: () => void;
-  args: AddLineArgs;
-  onChange: (args: AddLineArgs) => void;
 };
 
 export function line({ values, outputs, args, onRemove, onChange }: Args) {

@@ -39,6 +39,7 @@ export function controls({ container, add }: ControlsArgs) {
         return;
       }
       add({ type, args: { name } });
+
       nameInput.value = "";
     },
   });

@@ -1,4 +1,3 @@
-import { argv0 } from "process";
 import { label } from "./label.mjs";
 
 export type RenderNumberInputArgs = {
