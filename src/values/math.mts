@@ -4,16 +4,16 @@ import { ComponentSerde } from "../serde.mjs";
 import { renderSelectInputTo } from "../ui/common/select.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
 import { spanWithText } from "../ui/common/span.mjs";
-import { limiter } from "../utils.mjs";
+import { deserialize, limiter, serialize } from "../utils.mjs";
 
 export type MathArgs = {
   name: string;
   mode_a?: string;
-  lhs1?: string;
-  rhs1?: string;
+  lhs1?: string | number;
+  rhs1?: string | number;
   mode_b?: string;
-  lhs2?: string;
-  rhs2?: string;
+  lhs2?: string | number;
+  rhs2?: string | number;
 };
 
 const options = [
@@ -63,18 +63,19 @@ type Args = {
   onChange: (args: MathArgs) => void;
 };
 
+// http://localhost:3000/stages/?s=002Y00S3.x_tS6.0.0001S7.0.54541S1.101S1.xS4.zeroS5.widthS3.x_tS3.x_t00S7.lfo_minS6.0.7494S7.0.74968S6.0.749900S7.lfo_maxS6.0.7499S4.0.75S4.0.7500S5.lfo_tS1.2S11.40558.98454S6.10000001S3.lfoS7.lfo_minS7.lfo_maxS5.lfo_tS4.zero01S1.yS4.zeroS6.heightS3.lfoS3.lfo02S5.firstS1.xS1.yS3.oneS6.math_b03S4.mathS3.minS5.widthN1.2S3.divS6.math_aN1.2
 export function math({ values, args, onRemove, onChange }: Args) {
   const { container, showValue } = renderContainer(args.name, false, () => {
     values.unregister(`${args.name}_a`);
     values.unregister(`${args.name}_b`);
     onRemove();
-    lhs1_r();
-    rhs1_r();
-    lhs2_r();
-    rhs2_r();
+    lhs1Remove();
+    rhs1Remove();
+    lhs2Remove();
+    rhs2Remove();
   });
 
-  const state = { ...args };
+  let state = { ...args };
 
   const {
     select: { el: mode_a },
@@ -87,44 +88,43 @@ export function math({ values, args, onRemove, onChange }: Args) {
   });
 
   mode_a.addEventListener("change", () => {
-    onChange({ ...Object.assign(state, { mode_a: mode_a.value }) });
+    state = { ...state, mode_a: mode_a.value };
+    onChange({ ...state });
   });
 
   const {
     value: lhs1,
-    update: lhs1_u,
-    onRemove: lhs1_r,
-    selected: selectedLhs1,
+    update: lhs1Update,
+    onRemove: lhs1Remove,
+    state: stateLhs1,
   } = connect({
     values,
     omit: `${args.name}_a`,
     container,
-    args: {
-      id: `${args.name}_lhs1`,
-      label: `lhs`,
-      selected: args.lhs1,
-    },
+    id: `${args.name}_lhs1`,
+    label: `lhs`,
+    value: args.lhs1,
     onChange(lhs1) {
-      onChange({ ...Object.assign(state, { lhs1 }) });
+      state = { ...state, lhs1 };
+      onChange({ ...state });
     },
   });
 
   const {
     value: rhs1,
-    update: rhs1_u,
-    onRemove: rhs1_r,
-    selected: selectedRhs1,
+    update: rhs1Update,
+    onRemove: rhs1Remove,
+    state: stateRhs1,
   } = connect({
     values,
     omit: `${args.name}_a`,
     container,
-    args: {
-      id: `${args.name}_rhs1`,
-      label: `rhs`,
-      selected: args.rhs2,
-    },
+    id: `${args.name}_rhs1`,
+    label: `rhs`,
+    value: args.rhs1,
     onChange(rhs1) {
-      onChange({ ...Object.assign(state, { rhs1 }) });
+      state = { ...state, rhs1 };
+      onChange({ ...state });
     },
   });
 
@@ -141,44 +141,43 @@ export function math({ values, args, onRemove, onChange }: Args) {
   });
 
   mode_b.addEventListener("change", () => {
-    onChange({ ...Object.assign(state, { mode_b: mode_b.value }) });
+    state = { ...state, mode_b: mode_b.value };
+    onChange({ ...state });
   });
 
   const {
     value: lhs2,
-    update: lhs2_u,
-    onRemove: lhs2_r,
-    selected: selectedLhs2,
+    update: lhs2Update,
+    onRemove: lhs2Remove,
+    state: stateLhs2,
   } = connect({
     values,
     omit: `${args.name}_b`,
     container,
-    args: {
-      id: `${args.name}_lhs2`,
-      label: `lhs`,
-      selected: args.lhs2,
-    },
+    id: `${args.name}_lhs2`,
+    label: `lhs`,
+    value: args.lhs2,
     onChange(lhs2) {
-      onChange({ ...Object.assign(state, { lhs2 }) });
+      state = { ...state, lhs2 };
+      onChange({ ...state });
     },
   });
 
   const {
     value: rhs2,
-    update: rhs2_u,
-    onRemove: rhs2_r,
-    selected: selectedRhs2,
+    update: rhs2Update,
+    onRemove: rhs2Remove,
+    state: stateRhs2,
   } = connect({
     values,
     omit: `${args.name}_b`,
     container,
-    args: {
-      id: `${args.name}_in4`,
-      label: `rhs`,
-      selected: args.rhs2,
-    },
+    id: `${args.name}_in4`,
+    label: `rhs`,
+    value: args.rhs2,
     onChange(rhs2) {
-      onChange({ ...Object.assign(state, { rhs2 }) });
+      state = { ...state, rhs2 };
+      onChange({ ...state });
     },
   });
 
@@ -200,25 +199,26 @@ export function math({ values, args, onRemove, onChange }: Args) {
   // Because controls can be in random order, first, we need to create them all, and only then connect.
   // Somehow, without this timeout update doesn't work (at least in Safari).
   setTimeout(() => {
-    lhs1_u(args.lhs1);
-    rhs1_u(args.rhs1);
-    lhs2_u(args.lhs2);
-    rhs2_u(args.rhs2);
+    lhs1Update(args.lhs1);
+    rhs1Update(args.rhs1);
+    lhs2Update(args.lhs2);
+    rhs2Update(args.rhs2);
 
-    Object.assign(state, {
+    state = {
+      name: state.name,
       mode_a: mode_a.value,
-      lhs1: selectedLhs1(),
-      rhs1: selectedRhs1(),
+      lhs1: stateLhs1(),
+      rhs1: stateRhs1(),
       mode_b: mode_b.value,
-      lhs2: selectedLhs2(),
-      rhs2: selectedRhs2(),
-    });
+      lhs2: stateLhs2(),
+      rhs2: stateRhs2(),
+    };
 
     onChange(state);
   }, 1);
 }
 
-export const mathSerde: ComponentSerde<MathArgs> = (serialize, deserialize) => {
+export const mathSerde: ComponentSerde<MathArgs> = () => {
   const keys = [
     "name",
     "mode_a",
@@ -238,16 +238,30 @@ export const mathSerde: ComponentSerde<MathArgs> = (serialize, deserialize) => {
       const res: MathArgs = {
         name: "",
         mode_a: "",
-        lhs1: "",
-        rhs1: "",
+        lhs1: 0,
+        rhs1: 0,
         mode_b: "",
-        lhs2: "",
-        rhs2: "",
+        lhs2: 0,
+        rhs2: 0,
       };
       keys.forEach((key) => {
         const { val: v, end } = deserialize(val, local_start);
+        if (
+          typeof v === "string" &&
+          (key === "name" || key === "mode_a" || key === "mode_b")
+        ) {
+          res[key] = v;
+        } else if (
+          key === "lhs1" ||
+          key === "rhs1" ||
+          key === "lhs2" ||
+          key === "rhs2"
+        ) {
+          res[key] = v;
+        } else {
+          throw new Error(`Invalid value for ${key}: ${v}`);
+        }
         local_start = end;
-        res[key] = v;
       });
       return { val: res, end: local_start };
     },

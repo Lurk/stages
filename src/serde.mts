@@ -47,35 +47,7 @@ function stringToType(type: string): CreatorConfig["type"] {
   }
 }
 
-export type Serializer = (val?: string) => string;
-
-const serialize: Serializer = (val) => {
-  return `${val?.length ?? 1}.${val ?? 0}`;
-};
-
-export type Deserializer = (
-  val: string,
-  start: number,
-) => { val: string; end: number };
-
-const deserialize: Deserializer = (val, start) => {
-  const separator = val.indexOf(".", start);
-  const len = parseInt(val.slice(start, separator), 10);
-
-  if (Number.isNaN(len)) {
-    throw new Error(`Unable to parse the len from: "${val}"`);
-  }
-
-  return {
-    val: val.slice(separator + 1, separator + len + 1),
-    end: separator + len + 1,
-  };
-};
-
-export type ComponentSerde<T> = (
-  serialze: Serializer,
-  deserialize: Deserializer,
-) => {
+export type ComponentSerde<T> = () => {
   toString: (args: T) => string;
   fromString: (val: string, start: number) => { val: T; end: number };
 };
@@ -91,12 +63,12 @@ export type Serde = {
 };
 
 export function serde(): Serde {
-  const s = sliderSerde(serialize, deserialize);
-  const o = oscillatorSerde(serialize, deserialize);
-  const l = lineSerde(serialize, deserialize);
-  const m = mathSerde(serialize, deserialize);
-  const r = randomSerde(serialize, deserialize);
-  const lgc = logicSerde(serialize, deserialize);
+  const s = sliderSerde();
+  const o = oscillatorSerde();
+  const l = lineSerde();
+  const m = mathSerde();
+  const r = randomSerde();
+  const lgc = logicSerde();
 
   const controlToString = (control: CreatorConfig): string => {
     const type = typeToString(control.type);

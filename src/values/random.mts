@@ -2,11 +2,12 @@ import { Values } from "../value.mjs";
 import { connect } from "./connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
+import { deserialize, serialize } from "../utils.mjs";
 
 export type RandomArgs = {
   name: string;
-  min?: string;
-  max?: string;
+  min?: string | number;
+  max?: string | number;
 };
 
 type Args = {
@@ -30,15 +31,13 @@ export function random({ values, args, onRemove, onChange }: Args) {
     value: min,
     update: updateMin,
     onRemove: removeMin,
-    selected: selectedMin,
+    state: stateMin,
   } = connect({
     values,
     omit: args.name,
     container,
-    args: {
-      id: `${args.name}_min`,
-      label: "min",
-    },
+    id: `${args.name}_min`,
+    label: "min",
     onChange(min) {
       onChange({ ...Object.assign(state, { min }) });
     },
@@ -47,15 +46,13 @@ export function random({ values, args, onRemove, onChange }: Args) {
     value: max,
     update: updateMax,
     onRemove: removeMax,
-    selected: selectedMax,
+    state: stateMax,
   } = connect({
     values,
     omit: args.name,
     container,
-    args: {
-      id: `${args.name}_max`,
-      label: "max",
-    },
+    id: `${args.name}_max`,
+    label: "max",
     onChange(max) {
       onChange({ ...Object.assign(state, { max }) });
     },
@@ -74,15 +71,12 @@ export function random({ values, args, onRemove, onChange }: Args) {
     updateMin(args.min);
     updateMax(args.max);
 
-    Object.assign(state, { min: selectedMin(), max: selectedMax() });
+    Object.assign(state, { min: stateMin(), max: stateMax() });
     onChange(state);
   }, 1);
 }
 
-export const randomSerde: ComponentSerde<RandomArgs> = (
-  serialize,
-  deserialize,
-) => {
+export const randomSerde: ComponentSerde<RandomArgs> = () => {
   const keys = ["name", "min", "max"] as const;
   return {
     toString(args) {
@@ -93,13 +87,19 @@ export const randomSerde: ComponentSerde<RandomArgs> = (
       let local_start = start;
       const res: RandomArgs = {
         name: "",
-        min: "",
-        max: "",
+        min: 0,
+        max: 0,
       };
       keys.forEach((key) => {
         const { val: v, end } = deserialize(val, local_start);
+        if (key === "name" && typeof v === "string") {
+          res[key] = v;
+        } else if (key !== "name") {
+          res[key] = v;
+        } else {
+          throw new Error(`Invalid value for ${key}: ${v}`);
+        }
         local_start = end;
-        res[key] = v;
       });
       return { val: res, end: local_start };
     },

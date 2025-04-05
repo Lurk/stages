@@ -2,13 +2,14 @@ import { Values, wave } from "../value.mjs";
 import { connect } from "./connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
+import { deserialize, serialize } from "../utils.mjs";
 
 export type OscillatorArgs = {
   name: string;
-  min?: string;
-  max?: string;
-  raise?: string;
-  fall?: string;
+  min?: string | number;
+  max?: string | number;
+  raise?: string | number;
+  fall?: string | number;
 };
 
 type Args = {
@@ -39,16 +40,14 @@ export function oscillatorWithConnectInput({
     value: min,
     update: updateMin,
     onRemove: removeMin,
-    selected: selectedMin,
+    state: stateMin,
   } = connect({
     values,
     omit: args.name,
     container,
-    args: {
-      id: `${args.name}_min`,
-      label: "min",
-      selected: args.min,
-    },
+    id: `${args.name}_min`,
+    label: "min",
+    value: args.min,
     onChange(min) {
       onChange({ ...Object.assign(state, { min }) });
     },
@@ -57,16 +56,14 @@ export function oscillatorWithConnectInput({
     value: max,
     update: updateMax,
     onRemove: removeMax,
-    selected: selectedMax,
+    state: stateMax,
   } = connect({
     values,
     omit: args.name,
     container,
-    args: {
-      id: `${args.name}_max`,
-      label: "max",
-      selected: args.max,
-    },
+    id: `${args.name}_max`,
+    label: "max",
+    value: args.max,
     onChange(max) {
       onChange({ ...Object.assign(state, { max }) });
     },
@@ -75,16 +72,14 @@ export function oscillatorWithConnectInput({
     value: raise,
     update: updateRaise,
     onRemove: removeRaise,
-    selected: selectedRaise,
+    state: stateRaise,
   } = connect({
     values,
     omit: args.name,
     container,
-    args: {
-      id: `${args.name}_raise`,
-      label: "raise",
-      selected: args.raise,
-    },
+    id: `${args.name}_raise`,
+    label: "raise",
+    value: args.raise,
     onChange(raise) {
       onChange({ ...Object.assign(state, { raise }) });
     },
@@ -93,16 +88,14 @@ export function oscillatorWithConnectInput({
     value: fall,
     update: updateFall,
     onRemove: removeFall,
-    selected: selectedFall,
+    state: stateFall,
   } = connect({
     values,
     omit: args.name,
     container,
-    args: {
-      id: `${args.name}_fall`,
-      label: "fall",
-      selected: args.fall,
-    },
+    id: `${args.name}_fall`,
+    label: "fall",
+    value: args.fall,
     onChange(fall) {
       onChange({ ...Object.assign(state, { fall }) });
     },
@@ -131,20 +124,17 @@ export function oscillatorWithConnectInput({
     updateFall(args.fall);
 
     Object.assign(state, {
-      min: selectedMin(),
-      max: selectedMax(),
-      raise: selectedRaise(),
-      fall: selectedFall(),
+      min: stateMin(),
+      max: stateMax(),
+      raise: stateRaise(),
+      fall: stateFall(),
     });
 
     onChange(state);
   }, 1);
 }
 
-export const oscillatorSerde: ComponentSerde<OscillatorArgs> = (
-  serialize,
-  deserialize,
-) => {
+export const oscillatorSerde: ComponentSerde<OscillatorArgs> = () => {
   const keys = ["name", "min", "max", "raise", "fall"] as const;
   return {
     toString(args) {
@@ -155,15 +145,22 @@ export const oscillatorSerde: ComponentSerde<OscillatorArgs> = (
       let local_start = start;
       const res: OscillatorArgs = {
         name: "",
-        min: "",
-        max: "",
-        raise: "",
-        fall: "",
+        min: 0,
+        max: 0,
+        raise: 0,
+        fall: 0,
       };
       keys.forEach((key) => {
         const { val: v, end } = deserialize(val, local_start);
+
+        if (key === "name" && typeof v === "string") {
+          res.name = v;
+        } else if (key !== "name") {
+          res[key] = v;
+        } else {
+          throw new Error(`Invalid value for ${key}: ${v}`);
+        }
         local_start = end;
-        res[key] = v;
       });
       return { val: res, end: local_start };
     },

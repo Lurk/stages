@@ -1,10 +1,8 @@
 import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
-import {
-  numberInput,
-  renderNumberInputTo,
-} from "../ui/common/number_input.mjs";
+import { numberInput } from "../ui/common/number_input.mjs";
 import { renderRangeTo } from "../ui/common/range.mjs";
+import { deserialize, serialize } from "../utils.mjs";
 import { Values } from "../value.mjs";
 
 export type SliderArgs = {
@@ -86,10 +84,7 @@ export function sliderWithNumericInputs({
   change();
 }
 
-export const sliderSerde: ComponentSerde<SliderArgs> = (
-  serialize,
-  deserialize,
-) => {
+export const sliderSerde: ComponentSerde<SliderArgs> = () => {
   const keys = ["name", "min", "value", "max"] as const;
   return {
     toString(args) {
@@ -114,10 +109,14 @@ export const sliderSerde: ComponentSerde<SliderArgs> = (
       keys.forEach((key) => {
         const { val: v, end } = deserialize(val, local_start);
         local_start = end;
-        if (key === "name") {
+        if (key === "name" && typeof v === "string") {
           res[key] = v;
-        } else {
+        } else if (key !== "name" && typeof v === "number") {
+          res[key] = v;
+        } else if (key !== "name" && typeof v === "string") {
           res[key] = parseFloat(v);
+        } else {
+          throw new Error(`Invalid value for ${key}: ${v}`);
         }
       });
       return { val: res, end: local_start };

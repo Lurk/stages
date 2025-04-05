@@ -1,47 +1,48 @@
 import { label } from "../ui/common/label.mjs";
 import { numberInput } from "../ui/common/number_input.mjs";
-import { RenderSelectInputArgs, select } from "../ui/common/select.mjs";
+import { select } from "../ui/common/select.mjs";
 import { toggle } from "../ui/common/toggle.mjs";
 import { assert } from "../utils.mjs";
 import { Values, Value } from "../value.mjs";
 
 type Args = {
+  id: string;
   values: Values;
+  value?: string | number;
   omit: string;
   container: HTMLDivElement;
-  args: Omit<RenderSelectInputArgs, "options" | "container">;
-  onChange: (key: string) => void;
+  label: string;
+  onChange: (key: string | number) => void;
 };
 
 type Connect = {
   value: Value;
-  update: (val?: string) => void;
+  update: (val?: string | number) => void;
   onRemove: () => void;
-  selected: () => string;
+  state: () => string | number;
 };
 
-export function connect({
-  values,
-  omit,
-  args,
-  onChange,
-  container,
-}: Args): Connect {
+export function connect(args: Args): Connect {
   const connectContainer = document.createElement("div");
   connectContainer.classList.add("input");
   connectContainer.classList.add("withToggle");
+
   const isStatic = toggle({
     container: connectContainer,
+    isActive: typeof args.value === "number",
     onChange: (isActive) => {
       if (isActive) {
         number.classList.remove("hidden");
         s.el.classList.add("hidden");
+        args.onChange(number.valueAsNumber);
       } else {
         s.el.classList.remove("hidden");
         number.classList.add("hidden");
+        args.onChange(s.el.value);
       }
     },
   });
+
   label({
     container: connectContainer,
     id: args.id,
@@ -51,13 +52,22 @@ export function connect({
   const number = numberInput({
     id: args.id,
     container: connectContainer,
-    value: 0,
+    value: typeof args.value === "number" ? args.value : 0,
   });
+
+  number.addEventListener("change", () => {
+    if (isStatic.isActive()) {
+      args.onChange(number.valueAsNumber);
+    }
+  });
+
   const s = select({
-    ...args,
-    options: values.keys(),
+    id: args.id,
+    options: args.values.keys(),
     container: connectContainer,
+    selected: typeof args.value === "string" ? args.value : undefined,
   });
+  s.el.addEventListener("change", () => args.onChange(s.el.value));
 
   if (isStatic.isActive()) {
     number.classList.remove("hidden");
@@ -68,34 +78,33 @@ export function connect({
   }
 
   const onChangeCb = (keys: string[]) => {
-    s.updateOptions(keys.filter((k) => k !== omit));
-    values.onChange(onChangeCb);
-    assert(
-      s.el instanceof HTMLSelectElement,
-      `element with id='${args.id}' is not HTMLSelectElement`,
-    );
-
-    s.el.addEventListener("change", () => onChange(s.el.value));
+    s.updateOptions(keys.filter((k) => k !== args.omit));
   };
 
-  container.appendChild(connectContainer);
+  args.values.onChange(onChangeCb);
+
+  args.container.appendChild(connectContainer);
 
   return {
     value: (now, i) => {
       return isStatic.isActive()
         ? number.valueAsNumber
-        : (values.get(s.el.value)?.(now, i) ?? 0);
+        : (args.values.get(s.el.value)?.(now, i) ?? 0);
     },
     update: (val) => {
-      if (val) {
+      if (typeof val === "string") {
         s.el.value = val;
+      } else if (typeof val === "number" || val === undefined) {
+        number.value = val?.toString() ?? "0";
+      } else {
+        assert(false, `val is not string or number`);
       }
     },
     onRemove() {
-      values.unsubscribe(onChangeCb);
+      args.values.unsubscribe(onChangeCb);
     },
-    selected() {
-      return s.el.value;
+    state: () => {
+      return isStatic.isActive() ? number.valueAsNumber : s.el.value;
     },
   };
 }
