@@ -1,4 +1,4 @@
-import { CreatorConfig } from "./controls/factory.mjs";
+import { CreatorConfig } from "./factory.mjs";
 import { serde } from "./serde.mjs";
 import { assert } from "./utils.mjs";
 

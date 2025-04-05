@@ -1,11 +1,11 @@
-import { oscillatorSerde } from "./controls/oscillator.mjs";
-import { lineSerde } from "./controls/line.mjs";
-import { mathSerde } from "./controls/math.mjs";
-import { randomSerde } from "./controls/random.mjs";
-import { CreatorConfig } from "./controls/factory.mjs";
+import { oscillatorSerde } from "./values/oscillator.mjs";
+import { lineSerde } from "./outputs/line.mjs";
+import { mathSerde } from "./values/math.mjs";
+import { randomSerde } from "./values/random.mjs";
+import { CreatorConfig } from "./factory.mjs";
 import { assert } from "./utils.mjs";
-import { logicSerde } from "./controls/logic.mjs";
-import { sliderSerde } from "./controls/slider.mjs";
+import { logicSerde } from "./values/logic.mjs";
+import { sliderSerde } from "./values/slider.mjs";
 
 const VERSION = 2;
 

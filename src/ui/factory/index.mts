@@ -1,4 +1,4 @@
-import { CreatorConfig } from "../../controls/factory.mjs";
+import { CreatorConfig } from "../../factory.mjs";
 import { renderContainer } from "../common/container.mjs";
 import { Canvas } from "../../canvas.mjs";
 import { controls } from "./controls.mjs";

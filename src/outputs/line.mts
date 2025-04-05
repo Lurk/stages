@@ -1,11 +1,12 @@
 import { Values, Value } from "../value.mjs";
-import { connect } from "./connect.mjs";
+import { connect } from "../values/connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
+import { Outputs } from "../output.mjs";
 
-export type Output = { y: Value; x: Value; sr: Value; vertices: Value };
+export type Line = { y: Value; x: Value; sr: Value; vertices: Value };
 
-export type AddOutputArgs = {
+export type AddLineArgs = {
   name: string;
   x?: string;
   y?: string;
@@ -15,10 +16,10 @@ export type AddOutputArgs = {
 
 type Args = {
   values: Values;
-  outputs: Map<string, Output>;
+  outputs: Outputs;
   onRemove: () => void;
-  args: AddOutputArgs;
-  onChange: (args: AddOutputArgs) => void;
+  args: AddLineArgs;
+  onChange: (args: AddLineArgs) => void;
 };
 
 export function line({ values, outputs, args, onRemove, onChange }: Args) {
@@ -107,10 +108,13 @@ export function line({ values, outputs, args, onRemove, onChange }: Args) {
   });
 
   outputs.set(args.name, {
-    x,
-    y,
-    sr,
-    vertices,
+    kind: "line",
+    value: {
+      x,
+      y,
+      sr,
+      vertices,
+    },
   });
 
   // TODO: come up with a better way to do this.
@@ -132,7 +136,7 @@ export function line({ values, outputs, args, onRemove, onChange }: Args) {
   }, 1);
 }
 
-export const lineSerde: ComponentSerde<AddOutputArgs> = (
+export const lineSerde: ComponentSerde<AddLineArgs> = (
   serialize,
   deserialize,
 ) => {
@@ -144,7 +148,7 @@ export const lineSerde: ComponentSerde<AddOutputArgs> = (
 
     fromString(val, start) {
       let local_start = start;
-      const res: AddOutputArgs = {
+      const res: AddLineArgs = {
         name: "",
         x: "",
         y: "",

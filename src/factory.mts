@@ -1,21 +1,25 @@
-import { AddOutputArgs, line, Output } from "./line.mjs";
-import { Values, values } from "../value.mjs";
-import { defaults } from "./defaults.mjs";
-import { render } from "../ui/factory/index.mjs";
-import { SliderArgs, sliderWithNumericInputs } from "./slider.mjs";
-import { OscillatorArgs, oscillatorWithConnectInput } from "./oscillator.mjs";
-import { math, MathArgs } from "./math.mjs";
-import { random, RandomArgs } from "./random.mjs";
-import { assert } from "../utils.mjs";
-import { State, state } from "../state.mjs";
-import { logic, LogicArgs } from "./logic.mjs";
-import { Canvas, initFullScreenCanvas } from "../canvas.mjs";
-import { animate } from "../animation.mjs";
+import { AddLineArgs, line } from "./outputs/line.mjs";
+import { Values, values } from "./value.mjs";
+import { defaults } from "./values/defaults.mjs";
+import { render } from "./ui/factory/index.mjs";
+import { SliderArgs, sliderWithNumericInputs } from "./values/slider.mjs";
+import {
+  OscillatorArgs,
+  oscillatorWithConnectInput,
+} from "./values/oscillator.mjs";
+import { math, MathArgs } from "./values/math.mjs";
+import { random, RandomArgs } from "./values/random.mjs";
+import { assert } from "./utils.mjs";
+import { State, state } from "./state.mjs";
+import { logic, LogicArgs } from "./values/logic.mjs";
+import { Canvas, initFullScreenCanvas } from "./canvas.mjs";
+import { animate } from "./animation.mjs";
+import { Outputs, outputs } from "./output.mjs";
 export type CreatorConfig =
   | { type: "slider"; args: SliderArgs }
   | { type: "oscillator"; args: OscillatorArgs }
   | { type: "math"; args: MathArgs }
-  | { type: "line"; args: AddOutputArgs }
+  | { type: "line"; args: AddLineArgs }
   | { type: "random"; args: RandomArgs }
   | { type: "logic"; args: LogicArgs };
 
@@ -64,7 +68,7 @@ function initEvents({ fullScreenTarget, toggleVisibility }: InitEventsArgs) {
 function init(
   state: State,
   values: Values,
-  outputs: Map<string, Output>,
+  outputs: Outputs,
 ): (config: CreatorConfig, init?: boolean) => void {
   return (config, init) => {
     if (!init) {
@@ -126,9 +130,9 @@ function init(
 
 export function factory() {
   const vals = values();
-  const outputs: Map<string, Output> = new Map();
+  const outputsState = outputs();
   const s = state();
-  const add = init(s, vals, outputs);
+  const add = init(s, vals, outputsState);
   const controls = document.getElementById("controls");
   assert(controls, "#controls element was not wound");
   const canvas = initFullScreenCanvas({
@@ -162,6 +166,6 @@ export function factory() {
 
   animate({
     canvas,
-    outputs,
+    outputs: outputsState,
   });
 }

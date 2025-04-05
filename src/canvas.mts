@@ -115,7 +115,7 @@ export function createMeter({
 
 export type PathOptions = {
   len: number;
-  resolution: number;
+  sampleRate: number;
   now: number;
   ctx: CanvasRenderingContext2D;
   x: Value;
@@ -123,11 +123,11 @@ export type PathOptions = {
 };
 
 export function path(opts: PathOptions) {
-  const now = Math.floor(opts.now / opts.resolution) * opts.resolution;
+  const now = Math.floor(opts.now / opts.sampleRate) * opts.sampleRate;
   opts.ctx.moveTo(opts.x(now, 0), opts.y(now, 0));
   const arr = [];
   for (let i = 1; i < opts.len; i++) {
-    let foo = now + i * opts.resolution;
+    let foo = now + i * opts.sampleRate;
     arr.push(opts.y(foo, i));
     opts.ctx.lineTo(opts.x(foo, i), opts.y(foo, i));
   }

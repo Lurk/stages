@@ -1,4 +1,4 @@
-import { factory } from "./controls/factory.mjs";
+import { factory } from "./factory.mjs";
 
 factory();
 

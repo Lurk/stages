@@ -1,5 +1,5 @@
 import { Canvas, path } from "./canvas.mjs";
-import { Output } from "./controls/line.mjs";
+import { Output } from "./output.mjs";
 
 export type AnimateArgs = {
   canvas: Canvas;
@@ -25,14 +25,21 @@ export function frame({ canvas, outputs, now }: FrameArgs) {
   canvas.ctx.beginPath();
   canvas.ctx.strokeStyle = "#cccccc";
   canvas.ctx.lineWidth = 1;
-  for (const { y, x, sr: resolution, vertices } of outputs.values()) {
-    path({
-      ctx: canvas.ctx,
-      now,
-      len: vertices(now, 0),
-      resolution: resolution(now, 0),
-      x,
-      y,
-    });
+  for (const output of outputs.values()) {
+    switch (output.kind) {
+      case "line":
+        path({
+          ctx: canvas.ctx,
+          now,
+          len: output.value.vertices(now, 0),
+          sampleRate: output.value.sr(now, 0),
+          x: output.value.x,
+          y: output.value.y,
+        });
+
+        break;
+      default:
+        throw new Error(`Unknown output kind: ${output.kind}`);
+    }
   }
 }

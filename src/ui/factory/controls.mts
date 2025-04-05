@@ -2,7 +2,7 @@ import {
   CONTROL_TYPES,
   controlTypeGuard,
   CreatorConfig,
-} from "../../controls/factory.mjs";
+} from "../../factory.mjs";
 import { button } from "../common/button.mjs";
 import { renderSelectInputTo } from "../common/select.mjs";
 import { renderTextInputTo } from "../common/text_input.mjs";
