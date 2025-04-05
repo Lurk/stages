@@ -4,6 +4,7 @@ import { ComponentSerde } from "../serde.mjs";
 import { renderSelectInputTo } from "../ui/common/select.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
 import { spanWithText } from "../ui/common/span.mjs";
+import { limiter } from "../utils.mjs";
 
 export type MathArgs = {
   name: string;
@@ -183,9 +184,11 @@ export function math({ values, args, onRemove, onChange }: Args) {
     return val;
   });
 
+  const limitedVelueB = limiter(100, (val) => showValue2(val));
+
   values.register(`${args.name}_b`, (now, i) => {
     const val = evaluate(mode_b.value, lhs2, rhs2, now, i);
-    showValue2(val.toPrecision(6));
+    limitedVelueB(val.toPrecision(6));
     return val;
   });
 
