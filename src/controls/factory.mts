@@ -9,7 +9,8 @@ import { random, RandomArgs } from "./random.mjs";
 import { assert } from "../utils.mjs";
 import { State, state } from "../state.mjs";
 import { logic, LogicArgs } from "./logic.mjs";
-import { Canvas } from "../canvas.mjs";
+import { Canvas, initFullScreenCanvas } from "../canvas.mjs";
+import { animate } from "../animation.mjs";
 export type CreatorConfig =
   | { type: "slider"; args: SliderArgs }
   | { type: "oscillator"; args: OscillatorArgs }
@@ -123,13 +124,17 @@ function init(
   };
 }
 
-export function factory({ canvas }: FactoryArgs): Map<string, Output> {
+export function factory() {
   const vals = values();
   const outputs: Map<string, Output> = new Map();
   const s = state();
   const add = init(s, vals, outputs);
   const controls = document.getElementById("controls");
   assert(controls, "#controls element was not wound");
+  const canvas = initFullScreenCanvas({
+    id: "canvas",
+    backgroundCollor: "#2b2a2a",
+  });
 
   if (!s.areControlsVisible()) {
     controls.classList.add("hidden");
@@ -155,5 +160,8 @@ export function factory({ canvas }: FactoryArgs): Map<string, Output> {
 
   s.eachControl((c) => add(c, true));
 
-  return outputs;
+  animate({
+    canvas,
+    outputs,
+  });
 }
