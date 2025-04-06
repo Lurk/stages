@@ -2,7 +2,7 @@ import { CreatorConfig } from "./factory.mjs";
 import { serde } from "./serde.mjs";
 import { assert } from "./utils.mjs";
 
-export type State = {
+export type URL = {
   toggleVisibility: () => void;
   areControlsVisible: () => boolean;
   addControl: (args: CreatorConfig) => void;
@@ -13,7 +13,7 @@ export type State = {
 
 const sync = (s: string) => window.history.pushState({}, "", `./?s=${s}`);
 
-export function state(): State {
+export function url(): URL {
   window.addEventListener("popstate", () => {
     window.location.reload();
   });

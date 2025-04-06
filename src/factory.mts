@@ -10,7 +10,7 @@ import {
 import { math, MathArgs } from "./values/math.mjs";
 import { random, RandomArgs } from "./values/random.mjs";
 import { assert } from "./utils.mjs";
-import { State, state } from "./state.mjs";
+import { URL, url } from "./url.mjs";
 import { logic, LogicArgs } from "./values/logic.mjs";
 import { Canvas, initFullScreenCanvas } from "./canvas.mjs";
 import { animate } from "./animation.mjs";
@@ -69,7 +69,7 @@ function initEvents({ fullScreenTarget, toggleVisibility }: InitEventsArgs) {
 }
 
 function init(
-  state: State,
+  state: URL,
   values: Values,
   outputs: Outputs,
 ): (config: CreatorConfig, init?: boolean) => void {
@@ -141,7 +141,7 @@ function init(
 export function factory() {
   const vals = values();
   const outputsState = outputs();
-  const s = state();
+  const s = url();
   const add = init(s, vals, outputsState);
   const controls = document.getElementById("controls");
   assert(controls, "#controls element was not wound");
