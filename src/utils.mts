@@ -46,57 +46,36 @@ export type Deserializer = (
   start: number,
 ) => { val: string | number; end: number };
 
-export const deserialize: Deserializer = (val, start) => {
-  if (val[start] === "N") {
-    const separator = val.indexOf(".", start + 1);
-    const len = parseInt(val.slice(start + 1, separator), 10);
-    assert(
-      !Number.isNaN(len),
-      `Unable to parse the len from: "${val.slice(start, separator)}"\nstart: ${start}\nseparator: ${separator}\nval: ${val}`,
-    );
-    const num = parseFloat(val.slice(separator + 1, separator + len + 1));
-
-    if (Number.isNaN(num)) {
-      throw new Error(`Unable to parse the number from: "${val}"`);
-    }
-
-    return {
-      val: num,
-      end: separator + len + 1,
-    };
-  } else if (val[start] === "S") {
-    const separator = val.indexOf(".", start + 1);
-    const len = parseInt(val.slice(start + 1, separator), 10);
-    assert(
-      !Number.isNaN(len),
-      `Unable to parse the len from: "${val.slice(start, separator)}"\nstart: ${start}\nseparator: ${separator}\nval: ${val}`,
-    );
-
-    const str = val.slice(separator + 1, separator + len + 1);
-
-    if (str.length !== len) {
-      throw new Error(`Unable to parse the string from: "${val}"`);
-    }
-
-    return {
-      val: str,
-      end: separator + len + 1,
-    };
-  }
-
-  // handle v.001 format
+function parseLength(val: string, start: number): [number, number] {
   const separator = val.indexOf(".", start);
+  assert(
+    separator !== -1,
+    `Unable to find the separator in: "${val}"\nstart: ${start}`,
+  );
   const len = parseInt(val.slice(start, separator), 10);
-
   assert(
     !Number.isNaN(len),
     `Unable to parse the len from: "${val.slice(start, separator)}"\nstart: ${start}\nseparator: ${separator}\nval: ${val}`,
   );
+  return [separator + 1, separator + len + 1];
+}
 
-  return {
-    val: val.slice(separator + 1, separator + len + 1),
-    end: separator + len + 1,
-  };
+export const deserialize: Deserializer = (val, start) => {
+  if (val[start] === "N") {
+    const [s, e] = parseLength(val, start + 1);
+    const num = parseFloat(val.slice(s, e));
+
+    assert(!Number.isNaN(num), `Unable to parse the number from: "${val}"`);
+
+    return { val: num, end: e };
+  } else if (val[start] === "S") {
+    const [s, e] = parseLength(val, start + 1);
+    return { val: val.slice(s, e), end: e };
+  }
+
+  // handle v.001 format
+  const [s, e] = parseLength(val, start);
+  return { val: val.slice(s, e), end: e };
 };
 
 export type ComponentArgs<T> = {

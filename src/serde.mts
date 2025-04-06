@@ -6,7 +6,7 @@ import { CreatorConfig } from "./factory.mjs";
 import { assert } from "./utils.mjs";
 import { logicSerde } from "./values/logic.mjs";
 import { sliderSerde } from "./values/slider.mjs";
-import { map, mapSerde } from "./values/map.mjs";
+import { mapSerde } from "./values/map.mjs";
 
 const VERSION = 2;
 
@@ -160,6 +160,7 @@ export function serde(): Serde {
             const { val, end } = lgc.fromString(str, pos);
             controls.set(val.name, { type, args: val });
             pos = end;
+            break;
           }
           case "map": {
             const { val, end } = map.fromString(str, pos);
