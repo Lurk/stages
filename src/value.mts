@@ -1,8 +1,6 @@
-import { Connectable } from "./values/connect.mjs";
+import { Connectable, OnRegisterCallback } from "./values/connect.mjs";
 
 export type Value = (now: number, i: number) => number[];
-
-export type OnRegisterCallback = (keys: string[]) => void;
 
 export type Values = {
   register(key: string, value: Value): void;

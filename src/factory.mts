@@ -15,6 +15,8 @@ import { Canvas, initFullScreenCanvas } from "./canvas.mjs";
 import { animate } from "./animation.mjs";
 import { map, MapArgs } from "./values/map.mjs";
 import { State, state } from "./state.mjs";
+import { color, ColorArgs } from "./values/color.mjs";
+
 export type CreatorConfig =
   | { type: "slider"; args: SliderArgs }
   | { type: "oscillator"; args: OscillatorArgs }
@@ -22,7 +24,8 @@ export type CreatorConfig =
   | { type: "line"; args: AddLineArgs }
   | { type: "random"; args: RandomArgs }
   | { type: "logic"; args: LogicArgs }
-  | { type: "map"; args: MapArgs };
+  | { type: "map"; args: MapArgs }
+  | { type: "color"; args: ColorArgs };
 
 export const CONTROL_TYPES: CreatorConfig["type"][] = [
   "slider",
@@ -32,6 +35,7 @@ export const CONTROL_TYPES: CreatorConfig["type"][] = [
   "random",
   "logic",
   "map",
+  "color",
 ] as const;
 
 export function controlTypeGuard(t: unknown): t is CreatorConfig["type"] {
@@ -124,6 +128,13 @@ function init(
         });
       case "map":
         return map({
+          state,
+          onRemove,
+          args: config.args,
+          onChange: (args) => url.updateControl({ type: config.type, args }),
+        });
+      case "color":
+        return color({
           state,
           onRemove,
           args: config.args,
