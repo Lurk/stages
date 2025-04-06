@@ -18,13 +18,17 @@ export function oscillatorWithConnectInput({
   onRemove,
   onChange,
 }: ComponentArgs<OscillatorArgs>) {
-  const { container, showValue } = renderContainer(args.name, false, () => {
-    values.unregister(args.name);
-    onRemove();
-    removeMin();
-    removeMax();
-    removeRaise();
-    removeFall();
+  const { container, showValue } = renderContainer({
+    id: args.name,
+    type: "oscillator",
+    onRemove: () => {
+      values.unregister(args.name);
+      onRemove();
+      removeMin();
+      removeMax();
+      removeRaise();
+      removeFall();
+    },
   });
 
   const state = { ...args };

@@ -20,13 +20,18 @@ type Args = ComponentArgs<AddLineArgs> & {
 };
 
 export function line({ values, outputs, args, onRemove, onChange }: Args) {
-  const { container } = renderContainer(args.name, true, () => {
-    outputs.delete(args.name);
-    onRemove();
-    removeX();
-    removeY();
-    removeSr();
-    removeVertices();
+  const { container } = renderContainer({
+    id: args.name,
+    type: "line",
+    isOutput: true,
+    onRemove: () => {
+      outputs.delete(args.name);
+      onRemove();
+      removeX();
+      removeY();
+      removeSr();
+      removeVertices();
+    },
   });
 
   const state = { ...args };

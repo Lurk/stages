@@ -18,14 +18,18 @@ export function map({
   onChange,
   onRemove,
 }: ComponentArgs<MapArgs>) {
-  const { container, showValue } = renderContainer(args.name, false, () => {
-    values.unregister(`${args.name}`);
-    onRemove();
-    fromMinRemove();
-    fromMaxRemove();
-    toMinRemove();
-    toMaxRemove();
-    sourceRemove();
+  const { container, showValue } = renderContainer({
+    id: args.name,
+    type: "mapper",
+    onRemove: () => {
+      values.unregister(`${args.name}`);
+      onRemove();
+      fromMinRemove();
+      fromMaxRemove();
+      toMinRemove();
+      toMaxRemove();
+      sourceRemove();
+    },
   });
   showValue("0");
 

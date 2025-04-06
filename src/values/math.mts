@@ -62,14 +62,18 @@ export function math({
   onRemove,
   onChange,
 }: ComponentArgs<MathArgs>) {
-  const { container, showValue } = renderContainer(args.name, false, () => {
-    values.unregister(`${args.name}_a`);
-    values.unregister(`${args.name}_b`);
-    onRemove();
-    lhs1Remove();
-    rhs1Remove();
-    lhs2Remove();
-    rhs2Remove();
+  const { container, showValue } = renderContainer({
+    id: args.name,
+    type: "math",
+    onRemove: () => {
+      values.unregister(`${args.name}_a`);
+      values.unregister(`${args.name}_b`);
+      onRemove();
+      lhs1Remove();
+      rhs1Remove();
+      lhs2Remove();
+      rhs2Remove();
+    },
   });
 
   showValue("0");

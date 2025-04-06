@@ -49,13 +49,17 @@ export function logic({
   onRemove,
   onChange,
 }: ComponentArgs<LogicArgs>) {
-  const { container, showValue } = renderContainer(args.name, false, () => {
-    values.unregister(args.name);
-    onRemove();
-    lhsRemove();
-    rhsRemove();
-    isFalseRemove();
-    isTrueRemove();
+  const { container, showValue } = renderContainer({
+    id: args.name,
+    type: "logic",
+    onRemove: () => {
+      values.unregister(args.name);
+      onRemove();
+      lhsRemove();
+      rhsRemove();
+      isFalseRemove();
+      isTrueRemove();
+    },
   });
 
   let state = { ...args };

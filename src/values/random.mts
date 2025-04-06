@@ -15,11 +15,15 @@ export function random({
   onRemove,
   onChange,
 }: ComponentArgs<RandomArgs>) {
-  const { container, showValue } = renderContainer(args.name, false, () => {
-    values.unregister(args.name);
-    onRemove();
-    removeMin();
-    removeMax();
+  const { container, showValue } = renderContainer({
+    id: args.name,
+    type: "random",
+    onRemove: () => {
+      values.unregister(args.name);
+      onRemove();
+      removeMin();
+      removeMax();
+    },
   });
 
   const state = { ...args };

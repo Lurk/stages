@@ -17,9 +17,12 @@ export function sliderWithNumericInputs({
   onRemove,
   onChange,
 }: ComponentArgs<SliderArgs>) {
-  const { container, showValue } = renderContainer(args.name, false, () => {
-    values.unregister(args.name);
-    onRemove();
+  const { container, showValue } = renderContainer({
+    id: args.name,
+    onRemove: () => {
+      values.unregister(args.name);
+      onRemove();
+    },
   });
 
   showValue((args.value ?? 50).toPrecision(6));

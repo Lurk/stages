@@ -120,7 +120,7 @@ label {
 .control {
 	display: flex;
 	flex-direction: column;
-	height: 215px;
+	height: 220px;
 	border: 2px solid var(--medium);
 	padding: 5px;
 	border-radius: 5px;
@@ -137,6 +137,12 @@ label {
 
 .control.output {
 	filter: sepia(100%);
+}
+
+.control .header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 
 .input {

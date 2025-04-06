@@ -11,7 +11,7 @@ type RenderProps = {
 };
 
 export function render(args: RenderProps) {
-  const { container } = renderContainer("factory");
+  const { container } = renderContainer({ id: "factory" });
 
   controls({
     container,

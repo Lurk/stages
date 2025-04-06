@@ -1,30 +1,47 @@
 import { assert, limiter } from "../../utils.mjs";
+import { button } from "./button.mjs";
 import { spanWithText } from "./span.mjs";
 
-export function renderContainer(
-  id: string,
-  isOutput?: boolean,
-  onremove?: () => void,
-): {
+export type ContainerArgs = {
+  id: string;
+  type?: string;
+  isOutput?: boolean;
+  onRemove?: () => void;
+};
+
+export type Container = {
   container: HTMLDivElement;
-  showValue(val: string): void;
-} {
+  showValue: (val: string) => void;
+};
+
+export function renderContainer({
+  id,
+  type,
+  isOutput,
+  onRemove,
+}: ContainerArgs): Container {
   const root = document.getElementById("controls");
   assert(root, 'root element id="controls" not found');
   const container = document.createElement("div");
   const control = document.createElement("div");
-  const header = document.createElement("h3");
+  const name = document.createElement("h3");
   const value = spanWithText(container, "");
+  const header = document.createElement("div");
+  header.classList.add("header");
 
-  if (onremove) {
-    const remove = document.createElement("button");
-    remove.classList.add("remove");
-    remove.innerText = "x";
-    remove.onclick = () => {
-      onremove();
-      control.remove();
-    };
-    control.appendChild(remove);
+  const typeEl = document.createElement("span");
+  typeEl.innerText = type ?? "";
+  header.appendChild(typeEl);
+
+  if (onRemove) {
+    button({
+      container: header,
+      text: "x",
+      onClick: () => {
+        onRemove();
+        control.remove();
+      },
+    });
   }
 
   control.classList.add("control");
@@ -32,11 +49,12 @@ export function renderContainer(
     control.classList.add("output");
   }
   container.classList.add("inputs");
-  header.innerText = `${id}:`;
+  name.innerText = `${id}:`;
 
-  root.appendChild(control);
   control.appendChild(header);
+  control.appendChild(name);
   control.appendChild(container);
+  root.appendChild(control);
 
   return {
     container,
