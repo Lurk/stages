@@ -85,7 +85,7 @@ export function logic({
     onRemove: lhsRemove,
     state: stateLhs,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: `${args.name}_a`,
     container,
     id: `${args.name}_lhs`,
@@ -103,7 +103,7 @@ export function logic({
     onRemove: rhsRemove,
     state: stateRhs,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: `${args.name}`,
     container,
     id: `${args.name}_rhs`,
@@ -121,7 +121,7 @@ export function logic({
     onRemove: isTrueRemove,
     state: stateIsTrue,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: `${args.name}`,
     container,
     id: `${args.name}_is_true`,
@@ -139,7 +139,7 @@ export function logic({
     onRemove: isFalseRemove,
     state: stateIsFalse,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: `${args.name}`,
     container,
     id: `${args.name}_is_false`,

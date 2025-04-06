@@ -41,7 +41,7 @@ export function map({
     onRemove: sourceRemove,
     state: stateSource,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: args.name,
     container,
     id: `${args.name}_source`,
@@ -59,7 +59,7 @@ export function map({
     onRemove: fromMinRemove,
     state: stateFromMin,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: args.name,
     container,
     id: `${args.name}_from_min`,
@@ -77,7 +77,7 @@ export function map({
     onRemove: fromMaxRemove,
     state: stateFromMax,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: args.name,
     container,
     id: `${args.name}_from_max`,
@@ -95,7 +95,7 @@ export function map({
     onRemove: toMinRemove,
     state: stateToMin,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: args.name,
     container,
     id: `${args.name}_to_min`,
@@ -113,7 +113,7 @@ export function map({
     onRemove: toMaxRemove,
     state: stateToMax,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: args.name,
     container,
     id: `${args.name}_to_max`,

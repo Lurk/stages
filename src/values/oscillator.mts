@@ -71,7 +71,7 @@ export function oscillatorWithConnectInput({
     onRemove: removeMin,
     state: stateMin,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: args.name,
     container,
     id: `${args.name}_min`,
@@ -87,7 +87,7 @@ export function oscillatorWithConnectInput({
     onRemove: removeMax,
     state: stateMax,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: args.name,
     container,
     id: `${args.name}_max`,
@@ -103,7 +103,7 @@ export function oscillatorWithConnectInput({
     onRemove: removeRaise,
     state: stateRaise,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: args.name,
     container,
     id: `${args.name}_raise`,
@@ -119,7 +119,7 @@ export function oscillatorWithConnectInput({
     onRemove: removeFall,
     state: stateFall,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: args.name,
     container,
     id: `${args.name}_fall`,

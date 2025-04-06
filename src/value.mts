@@ -1,3 +1,5 @@
+import { Connectable } from "./values/connect.mjs";
+
 export type Value = (now: number, i: number) => number;
 
 export type OnRegisterCallback = (keys: string[]) => void;
@@ -5,11 +7,7 @@ export type OnRegisterCallback = (keys: string[]) => void;
 export type Values = {
   register(key: string, value: Value): void;
   unregister(key: string): void;
-  get(key: string): Value | undefined;
-  onChange(fn: OnRegisterCallback): void;
-  unsubscribe(fn: OnRegisterCallback): void;
-  keys(): string[];
-};
+} & Connectable;
 
 export function values(): Values {
   const map: Map<string, Value> = new Map();

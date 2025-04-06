@@ -3,11 +3,18 @@ import { numberInput } from "../ui/common/number_input.mjs";
 import { select } from "../ui/common/select.mjs";
 import { toggle } from "../ui/common/toggle.mjs";
 import { assert } from "../utils.mjs";
-import { Values, Value } from "../value.mjs";
+import { Value } from "../value.mjs";
+
+export type Connectable = {
+  keys: () => string[];
+  get: (key: string) => Value | undefined;
+  onChange: (cb: (keys: string[]) => void) => void;
+  unsubscribe: (cb: (keys: string[]) => void) => void;
+};
 
 type Args = {
   id: string;
-  values: Values;
+  connectable: Connectable;
   value?: string | number;
   omit: string;
   container: HTMLDivElement;
@@ -63,7 +70,7 @@ export function connect(args: Args): Connect {
 
   const s = select({
     id: args.id,
-    options: args.values.keys(),
+    options: args.connectable.keys(),
     container: connectContainer,
     selected: typeof args.value === "string" ? args.value : undefined,
   });
@@ -81,7 +88,7 @@ export function connect(args: Args): Connect {
     s.updateOptions(keys.filter((k) => k !== args.omit));
   };
 
-  args.values.onChange(onChangeCb);
+  args.connectable.onChange(onChangeCb);
 
   args.container.appendChild(connectContainer);
 
@@ -89,7 +96,7 @@ export function connect(args: Args): Connect {
     value: (now, i) => {
       return isStatic.isActive()
         ? number.valueAsNumber
-        : (args.values.get(s.el.value)?.(now, i) ?? 0);
+        : (args.connectable.get(s.el.value)?.(now, i) ?? 0);
     },
     update: (val) => {
       if (typeof val === "string") {
@@ -101,7 +108,7 @@ export function connect(args: Args): Connect {
       }
     },
     onRemove() {
-      args.values.unsubscribe(onChangeCb);
+      args.connectable.unsubscribe(onChangeCb);
     },
     state: () => {
       return isStatic.isActive() ? number.valueAsNumber : s.el.value;

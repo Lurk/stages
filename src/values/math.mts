@@ -101,7 +101,7 @@ export function math({
     onRemove: lhs1Remove,
     state: stateLhs1,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: `${args.name}_a`,
     container,
     id: `${args.name}_lhs1`,
@@ -119,7 +119,7 @@ export function math({
     onRemove: rhs1Remove,
     state: stateRhs1,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: `${args.name}_a`,
     container,
     id: `${args.name}_rhs1`,
@@ -154,7 +154,7 @@ export function math({
     onRemove: lhs2Remove,
     state: stateLhs2,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: `${args.name}_b`,
     container,
     id: `${args.name}_lhs2`,
@@ -172,7 +172,7 @@ export function math({
     onRemove: rhs2Remove,
     state: stateRhs2,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: `${args.name}_b`,
     container,
     id: `${args.name}_in4`,

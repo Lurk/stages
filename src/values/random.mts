@@ -34,7 +34,7 @@ export function random({
     onRemove: removeMin,
     state: stateMin,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: args.name,
     container,
     id: `${args.name}_min`,
@@ -49,7 +49,7 @@ export function random({
     onRemove: removeMax,
     state: stateMax,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: args.name,
     container,
     id: `${args.name}_max`,

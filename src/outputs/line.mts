@@ -39,7 +39,7 @@ export function line({ state, args, onRemove, onChange }: Args) {
     onRemove: removeX,
     state: stateX,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: "",
     container,
     id: `${args.name}_x_input`,
@@ -56,7 +56,7 @@ export function line({ state, args, onRemove, onChange }: Args) {
     onRemove: removeY,
     state: stateY,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: "",
     container,
     id: `${args.name}_y_input`,
@@ -73,7 +73,7 @@ export function line({ state, args, onRemove, onChange }: Args) {
     onRemove: removeSr,
     state: stateSr,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: "",
     container,
     id: `${args.name}_sr_input`,
@@ -90,7 +90,7 @@ export function line({ state, args, onRemove, onChange }: Args) {
     onRemove: removeVertices,
     state: stateVertices,
   } = connect({
-    values: state.values,
+    connectable: state.values,
     omit: "",
     container,
     id: `${args.name}_vertices_input`,
