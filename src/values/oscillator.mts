@@ -1,8 +1,40 @@
-import { wave } from "../value.mjs";
 import { connect } from "./connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
 import { ComponentArgs, deserialize, serialize } from "../utils.mjs";
+import { Value } from "../value.mjs";
+
+type WaveOpts = {
+  min: Value;
+  max: Value;
+  raise: Value;
+  fall: Value;
+};
+
+function wave(opts: WaveOpts): Value {
+  return (now, i) => {
+    const raise = opts.raise(now, i);
+    const fall = opts.fall(now, i);
+    const min = opts.min(now, i);
+    const max = opts.max(now, i);
+
+    const duration = fall + raise;
+
+    const beginigOfCycle = Math.floor(now / duration) * duration;
+    const since = now - beginigOfCycle;
+    const distance = max - min;
+
+    if (since < raise) {
+      const speed = distance / raise;
+      const distanceCovered = since * speed;
+      return min + distanceCovered;
+    } else {
+      const speed = distance / fall;
+      const distanceCovered = (since - raise) * speed;
+      return max - distanceCovered;
+    }
+  };
+}
 
 export type OscillatorArgs = {
   name: string;
