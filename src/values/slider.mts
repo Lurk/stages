@@ -12,7 +12,7 @@ export type SliderArgs = {
 };
 
 export function sliderWithNumericInputs({
-  values,
+  state,
   args,
   onRemove,
   onChange,
@@ -20,7 +20,7 @@ export function sliderWithNumericInputs({
   const { container, showValue } = renderContainer({
     id: args.name,
     onRemove: () => {
-      values.unregister(args.name);
+      state.values.unregister(args.name);
       onRemove();
     },
   });
@@ -70,7 +70,7 @@ export function sliderWithNumericInputs({
 
   s.value = String(args.value ?? 50);
 
-  values.register(args.name, () => {
+  state.values.register(args.name, () => {
     const val = s.valueAsNumber;
     showValue(val.toPrecision(6));
     return val;

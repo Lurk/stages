@@ -44,7 +44,7 @@ function evaluate(
 }
 
 export function logic({
-  values,
+  state,
   args,
   onRemove,
   onChange,
@@ -53,7 +53,7 @@ export function logic({
     id: args.name,
     type: "logic",
     onRemove: () => {
-      values.unregister(args.name);
+      state.values.unregister(args.name);
       onRemove();
       lhsRemove();
       rhsRemove();
@@ -62,7 +62,7 @@ export function logic({
     },
   });
 
-  let state = { ...args };
+  let componentState = { ...args };
 
   const {
     select: { el: mode },
@@ -75,8 +75,8 @@ export function logic({
   });
 
   mode.addEventListener("change", () => {
-    state = { ...state, mode: mode.value };
-    onChange({ ...state });
+    componentState = { ...componentState, mode: mode.value };
+    onChange({ ...componentState });
   });
 
   const {
@@ -85,15 +85,15 @@ export function logic({
     onRemove: lhsRemove,
     state: stateLhs,
   } = connect({
-    values,
+    values: state.values,
     omit: `${args.name}_a`,
     container,
     id: `${args.name}_lhs`,
     label: `lhs`,
     value: args.lhs,
     onChange(lhs) {
-      state = { ...state, lhs };
-      onChange({ ...state, lhs });
+      componentState = { ...componentState, lhs };
+      onChange({ ...componentState, lhs });
     },
   });
 
@@ -103,15 +103,15 @@ export function logic({
     onRemove: rhsRemove,
     state: stateRhs,
   } = connect({
-    values,
+    values: state.values,
     omit: `${args.name}`,
     container,
     id: `${args.name}_rhs`,
     label: `rhs`,
     value: args.rhs,
     onChange(rhs) {
-      state = { ...state, rhs };
-      onChange({ ...state });
+      componentState = { ...componentState, rhs };
+      onChange({ ...componentState });
     },
   });
 
@@ -121,15 +121,15 @@ export function logic({
     onRemove: isTrueRemove,
     state: stateIsTrue,
   } = connect({
-    values,
+    values: state.values,
     omit: `${args.name}`,
     container,
     id: `${args.name}_is_true`,
     label: `is_true`,
     value: args.isTrue,
     onChange(is_true) {
-      state = { ...state, isTrue: is_true };
-      onChange({ ...state });
+      componentState = { ...componentState, isTrue: is_true };
+      onChange({ ...componentState });
     },
   });
 
@@ -139,19 +139,19 @@ export function logic({
     onRemove: isFalseRemove,
     state: stateIsFalse,
   } = connect({
-    values,
+    values: state.values,
     omit: `${args.name}`,
     container,
     id: `${args.name}_is_false`,
     label: `is_false`,
     value: args.isFalse,
     onChange(is_false) {
-      state = { ...state, isFalse: is_false };
-      onChange({ ...state });
+      componentState = { ...componentState, isFalse: is_false };
+      onChange({ ...componentState });
     },
   });
 
-  values.register(`${args.name}`, (now, i) => {
+  state.values.register(`${args.name}`, (now, i) => {
     const val = evaluate(mode.value, lhs, rhs, isRrue, isFalse, now, i);
     showValue(val.toPrecision(6));
     return val;
@@ -166,15 +166,15 @@ export function logic({
     isTrueUpdate(args.isTrue);
     isFalseUpdate(args.isFalse);
 
-    state = {
-      ...state,
+    componentState = {
+      ...componentState,
       lhs: stateLhs(),
       rhs: stateRhs(),
       isTrue: stateIsTrue(),
       isFalse: stateIsFalse(),
     };
 
-    onChange(state);
+    onChange(componentState);
   }, 1);
 }
 

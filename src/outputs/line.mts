@@ -2,7 +2,6 @@ import { Value } from "../value.mjs";
 import { connect } from "../values/connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
-import { Outputs } from "../output.mjs";
 import { ComponentArgs, deserialize, serialize } from "../utils.mjs";
 
 export type Line = { y: Value; x: Value; sr: Value; vertices: Value };
@@ -15,17 +14,15 @@ export type AddLineArgs = {
   vertices?: string | number;
 };
 
-type Args = ComponentArgs<AddLineArgs> & {
-  outputs: Outputs;
-};
+type Args = ComponentArgs<AddLineArgs>;
 
-export function line({ values, outputs, args, onRemove, onChange }: Args) {
+export function line({ state, args, onRemove, onChange }: Args) {
   const { container } = renderContainer({
     id: args.name,
     type: "line",
     isOutput: true,
     onRemove: () => {
-      outputs.delete(args.name);
+      state.outputs.delete(args.name);
       onRemove();
       removeX();
       removeY();
@@ -34,7 +31,7 @@ export function line({ values, outputs, args, onRemove, onChange }: Args) {
     },
   });
 
-  const state = { ...args };
+  let componentState = { ...args };
 
   const {
     value: x,
@@ -42,14 +39,15 @@ export function line({ values, outputs, args, onRemove, onChange }: Args) {
     onRemove: removeX,
     state: stateX,
   } = connect({
-    values,
+    values: state.values,
     omit: "",
     container,
     id: `${args.name}_x_input`,
     value: args.x,
     label: "x",
     onChange(x) {
-      onChange({ ...Object.assign(state, { x }) });
+      componentState = { ...componentState, x };
+      onChange({ ...componentState });
     },
   });
   const {
@@ -58,14 +56,15 @@ export function line({ values, outputs, args, onRemove, onChange }: Args) {
     onRemove: removeY,
     state: stateY,
   } = connect({
-    values,
+    values: state.values,
     omit: "",
     container,
     id: `${args.name}_y_input`,
     value: args.y,
     label: "y",
     onChange(y) {
-      onChange({ ...Object.assign(state, { y }) });
+      componentState = { ...componentState, y };
+      onChange({ ...componentState });
     },
   });
   const {
@@ -74,14 +73,15 @@ export function line({ values, outputs, args, onRemove, onChange }: Args) {
     onRemove: removeSr,
     state: stateSr,
   } = connect({
-    values,
+    values: state.values,
     omit: "",
     container,
     id: `${args.name}_sr_input`,
     value: args.sr,
     label: "sr",
     onChange(sr) {
-      onChange({ ...Object.assign(state, { sr }) });
+      componentState = { ...componentState, sr };
+      onChange({ ...componentState });
     },
   });
   const {
@@ -90,18 +90,19 @@ export function line({ values, outputs, args, onRemove, onChange }: Args) {
     onRemove: removeVertices,
     state: stateVertices,
   } = connect({
-    values,
+    values: state.values,
     omit: "",
     container,
     id: `${args.name}_vertices_input`,
     value: args.vertices,
     label: "vertices",
     onChange(vertices) {
-      onChange({ ...Object.assign(state, { vertices }) });
+      componentState = { ...componentState, vertices };
+      onChange({ ...componentState });
     },
   });
 
-  outputs.set(args.name, {
+  state.outputs.set(args.name, {
     kind: "line",
     value: {
       x,
@@ -120,13 +121,13 @@ export function line({ values, outputs, args, onRemove, onChange }: Args) {
     updateSr(args.sr);
     updateVertices(args.vertices);
 
-    Object.assign(state, {
+    Object.assign(componentState, {
       x: stateX(),
       y: stateY(),
       sr: stateSr(),
       vertices: stateVertices(),
     });
-    onChange(state);
+    onChange(componentState);
   }, 1);
 }
 

@@ -57,7 +57,7 @@ function evaluate(
 }
 
 export function math({
-  values,
+  state,
   args,
   onRemove,
   onChange,
@@ -66,8 +66,8 @@ export function math({
     id: args.name,
     type: "math",
     onRemove: () => {
-      values.unregister(`${args.name}_a`);
-      values.unregister(`${args.name}_b`);
+      state.values.unregister(`${args.name}_a`);
+      state.values.unregister(`${args.name}_b`);
       onRemove();
       lhs1Remove();
       rhs1Remove();
@@ -78,7 +78,7 @@ export function math({
 
   showValue("0");
 
-  let state = { ...args };
+  let componentState = { ...args };
 
   const {
     select: { el: mode_a },
@@ -91,8 +91,8 @@ export function math({
   });
 
   mode_a.addEventListener("change", () => {
-    state = { ...state, mode_a: mode_a.value };
-    onChange({ ...state });
+    componentState = { ...componentState, mode_a: mode_a.value };
+    onChange({ ...componentState });
   });
 
   const {
@@ -101,15 +101,15 @@ export function math({
     onRemove: lhs1Remove,
     state: stateLhs1,
   } = connect({
-    values,
+    values: state.values,
     omit: `${args.name}_a`,
     container,
     id: `${args.name}_lhs1`,
     label: `lhs`,
     value: args.lhs1,
     onChange(lhs1) {
-      state = { ...state, lhs1 };
-      onChange({ ...state });
+      componentState = { ...componentState, lhs1 };
+      onChange({ ...componentState });
     },
   });
 
@@ -119,15 +119,15 @@ export function math({
     onRemove: rhs1Remove,
     state: stateRhs1,
   } = connect({
-    values,
+    values: state.values,
     omit: `${args.name}_a`,
     container,
     id: `${args.name}_rhs1`,
     label: `rhs`,
     value: args.rhs1,
     onChange(rhs1) {
-      state = { ...state, rhs1 };
-      onChange({ ...state });
+      componentState = { ...componentState, rhs1 };
+      onChange({ ...componentState });
     },
   });
 
@@ -144,8 +144,8 @@ export function math({
   });
 
   mode_b.addEventListener("change", () => {
-    state = { ...state, mode_b: mode_b.value };
-    onChange({ ...state });
+    componentState = { ...componentState, mode_b: mode_b.value };
+    onChange({ ...componentState });
   });
 
   const {
@@ -154,15 +154,15 @@ export function math({
     onRemove: lhs2Remove,
     state: stateLhs2,
   } = connect({
-    values,
+    values: state.values,
     omit: `${args.name}_b`,
     container,
     id: `${args.name}_lhs2`,
     label: `lhs`,
     value: args.lhs2,
     onChange(lhs2) {
-      state = { ...state, lhs2 };
-      onChange({ ...state });
+      componentState = { ...componentState, lhs2 };
+      onChange({ ...componentState });
     },
   });
 
@@ -172,19 +172,19 @@ export function math({
     onRemove: rhs2Remove,
     state: stateRhs2,
   } = connect({
-    values,
+    values: state.values,
     omit: `${args.name}_b`,
     container,
     id: `${args.name}_in4`,
     label: `rhs`,
     value: args.rhs2,
     onChange(rhs2) {
-      state = { ...state, rhs2 };
-      onChange({ ...state });
+      componentState = { ...componentState, rhs2 };
+      onChange({ ...componentState });
     },
   });
 
-  values.register(`${args.name}_a`, (now, i) => {
+  state.values.register(`${args.name}_a`, (now, i) => {
     const val = evaluate(mode_a.value, lhs1, rhs1, now, i);
     showValue(val.toPrecision(6));
     return val;
@@ -192,7 +192,7 @@ export function math({
 
   const limitedVelueB = limiter(100, (val) => showValue2(val));
 
-  values.register(`${args.name}_b`, (now, i) => {
+  state.values.register(`${args.name}_b`, (now, i) => {
     const val = evaluate(mode_b.value, lhs2, rhs2, now, i);
     limitedVelueB(val.toPrecision(6));
     return val;
@@ -207,8 +207,8 @@ export function math({
     lhs2Update(args.lhs2);
     rhs2Update(args.rhs2);
 
-    state = {
-      name: state.name,
+    componentState = {
+      name: componentState.name,
       mode_a: mode_a.value,
       lhs1: stateLhs1(),
       rhs1: stateRhs1(),
@@ -217,7 +217,7 @@ export function math({
       rhs2: stateRhs2(),
     };
 
-    onChange(state);
+    onChange(componentState);
   }, 1);
 }
 

@@ -1,3 +1,4 @@
+import { State } from "./state.mjs";
 import { Values } from "./value.mjs";
 
 export function assert(lhs: any, message: string): asserts lhs {
@@ -100,7 +101,7 @@ export const deserialize: Deserializer = (val, start) => {
 };
 
 export type ComponentArgs<T> = {
-  values: Values;
+  state: State;
   args: T;
   onRemove: () => void;
   onChange: (args: T) => void;

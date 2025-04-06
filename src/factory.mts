@@ -1,5 +1,4 @@
 import { AddLineArgs, line } from "./outputs/line.mjs";
-import { Values, values } from "./value.mjs";
 import { defaults } from "./values/defaults.mjs";
 import { render } from "./ui/factory/index.mjs";
 import { SliderArgs, sliderWithNumericInputs } from "./values/slider.mjs";
@@ -14,8 +13,8 @@ import { URL, url } from "./url.mjs";
 import { logic, LogicArgs } from "./values/logic.mjs";
 import { Canvas, initFullScreenCanvas } from "./canvas.mjs";
 import { animate } from "./animation.mjs";
-import { Outputs, outputs } from "./output.mjs";
 import { map, MapArgs } from "./values/map.mjs";
+import { State, state } from "./state.mjs";
 export type CreatorConfig =
   | { type: "slider"; args: SliderArgs }
   | { type: "oscillator"; args: OscillatorArgs }
@@ -69,68 +68,66 @@ function initEvents({ fullScreenTarget, toggleVisibility }: InitEventsArgs) {
 }
 
 function init(
-  state: URL,
-  values: Values,
-  outputs: Outputs,
+  url: URL,
+  state: State,
 ): (config: CreatorConfig, init?: boolean) => void {
   return (config, init) => {
     if (!init) {
-      state.addControl(config);
+      url.addControl(config);
     }
 
-    const onRemove = () => state.removeControl(config.args.name);
+    const onRemove = () => url.removeControl(config.args.name);
 
     switch (config.type) {
       case "slider":
         return sliderWithNumericInputs({
-          values,
+          state,
           onRemove,
           args: config.args,
           onChange: (args: SliderArgs) =>
-            state.updateControl({ type: config.type, args }),
+            url.updateControl({ type: config.type, args }),
         });
       case "oscillator":
         return oscillatorWithConnectInput({
-          values,
+          state,
           onRemove,
           args: config.args,
-          onChange: (args) => state.updateControl({ type: config.type, args }),
+          onChange: (args) => url.updateControl({ type: config.type, args }),
         });
       case "math":
         return math({
-          values,
+          state,
           onRemove,
           args: config.args,
-          onChange: (args) => state.updateControl({ type: config.type, args }),
+          onChange: (args) => url.updateControl({ type: config.type, args }),
         });
       case "line":
         return line({
-          values,
-          outputs,
+          state,
           onRemove,
           args: config.args,
-          onChange: (args) => state.updateControl({ type: config.type, args }),
+          onChange: (args) => url.updateControl({ type: config.type, args }),
         });
       case "random":
         return random({
-          values,
+          state,
           onRemove,
           args: config.args,
-          onChange: (args) => state.updateControl({ type: config.type, args }),
+          onChange: (args) => url.updateControl({ type: config.type, args }),
         });
       case "logic":
         return logic({
-          values,
+          state,
           onRemove,
           args: config.args,
-          onChange: (args) => state.updateControl({ type: config.type, args }),
+          onChange: (args) => url.updateControl({ type: config.type, args }),
         });
       case "map":
         return map({
-          values,
+          state,
           onRemove,
           args: config.args,
-          onChange: (args) => state.updateControl({ type: config.type, args }),
+          onChange: (args) => url.updateControl({ type: config.type, args }),
         });
       default:
         throw new Error("Invalid control type");
@@ -139,10 +136,9 @@ function init(
 }
 
 export function factory() {
-  const vals = values();
-  const outputsState = outputs();
-  const s = url();
-  const add = init(s, vals, outputsState);
+  const s = state();
+  const u = url();
+  const add = init(u, s);
   const controls = document.getElementById("controls");
   assert(controls, "#controls element was not wound");
   const canvas = initFullScreenCanvas({
@@ -150,13 +146,13 @@ export function factory() {
     backgroundCollor: "#2b2a2a",
   });
 
-  if (!s.areControlsVisible()) {
+  if (!u.areControlsVisible()) {
     controls.classList.add("hidden");
     canvas.ctx.canvas.classList.add("fill");
   }
 
   render({
-    vals,
+    vals: s.values,
     add,
     canvas,
   });
@@ -166,16 +162,16 @@ export function factory() {
     toggleVisibility: () => {
       controls.classList.toggle("hidden");
       canvas.ctx.canvas.classList.toggle("fill");
-      s.toggleVisibility();
+      u.toggleVisibility();
     },
   });
 
-  defaults(vals, canvas.ctx);
+  defaults(s.values, canvas.ctx);
 
-  s.eachControl((c) => add(c, true));
+  u.eachControl((c) => add(c, true));
 
   animate({
     canvas,
-    outputs: outputsState,
+    outputs: s.outputs,
   });
 }

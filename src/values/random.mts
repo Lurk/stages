@@ -10,7 +10,7 @@ export type RandomArgs = {
 };
 
 export function random({
-  values,
+  state,
   args,
   onRemove,
   onChange,
@@ -19,14 +19,14 @@ export function random({
     id: args.name,
     type: "random",
     onRemove: () => {
-      values.unregister(args.name);
+      state.values.unregister(args.name);
       onRemove();
       removeMin();
       removeMax();
     },
   });
 
-  const state = { ...args };
+  const componentState = { ...args };
 
   const {
     value: min,
@@ -34,13 +34,13 @@ export function random({
     onRemove: removeMin,
     state: stateMin,
   } = connect({
-    values,
+    values: state.values,
     omit: args.name,
     container,
     id: `${args.name}_min`,
     label: "min",
     onChange(min) {
-      onChange({ ...Object.assign(state, { min }) });
+      onChange({ ...Object.assign(componentState, { min }) });
     },
   });
   const {
@@ -49,17 +49,17 @@ export function random({
     onRemove: removeMax,
     state: stateMax,
   } = connect({
-    values,
+    values: state.values,
     omit: args.name,
     container,
     id: `${args.name}_max`,
     label: "max",
     onChange(max) {
-      onChange({ ...Object.assign(state, { max }) });
+      onChange({ ...Object.assign(componentState, { max }) });
     },
   });
 
-  values.register(args.name, (now, i) => {
+  state.values.register(args.name, (now, i) => {
     const val = Math.random() * (max(now, i) - min(now, i)) + min(now, i);
     showValue(val.toPrecision(6));
     return val;
@@ -72,8 +72,8 @@ export function random({
     updateMin(args.min);
     updateMax(args.max);
 
-    Object.assign(state, { min: stateMin(), max: stateMax() });
-    onChange(state);
+    Object.assign(componentState, { min: stateMin(), max: stateMax() });
+    onChange(componentState);
   }, 1);
 }
 

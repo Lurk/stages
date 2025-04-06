@@ -13,7 +13,7 @@ export type MapArgs = {
 };
 
 export function map({
-  values,
+  state,
   args,
   onChange,
   onRemove,
@@ -22,7 +22,7 @@ export function map({
     id: args.name,
     type: "mapper",
     onRemove: () => {
-      values.unregister(`${args.name}`);
+      state.values.unregister(`${args.name}`);
       onRemove();
       fromMinRemove();
       fromMaxRemove();
@@ -33,7 +33,7 @@ export function map({
   });
   showValue("0");
 
-  let state = { ...args };
+  let componentState = { ...args };
 
   const {
     value: sourceValue,
@@ -41,15 +41,15 @@ export function map({
     onRemove: sourceRemove,
     state: stateSource,
   } = connect({
-    values,
+    values: state.values,
     omit: args.name,
     container,
     id: `${args.name}_source`,
     label: `source`,
     value: args.source,
     onChange(source) {
-      state = { ...state, source };
-      onChange({ ...state });
+      componentState = { ...componentState, source };
+      onChange({ ...componentState });
     },
   });
 
@@ -59,15 +59,15 @@ export function map({
     onRemove: fromMinRemove,
     state: stateFromMin,
   } = connect({
-    values,
+    values: state.values,
     omit: args.name,
     container,
     id: `${args.name}_from_min`,
     label: `min`,
     value: args.fromMin,
     onChange(fromMin) {
-      state = { ...state, fromMin };
-      onChange({ ...state });
+      componentState = { ...componentState, fromMin };
+      onChange({ ...componentState });
     },
   });
 
@@ -77,15 +77,15 @@ export function map({
     onRemove: fromMaxRemove,
     state: stateFromMax,
   } = connect({
-    values,
+    values: state.values,
     omit: args.name,
     container,
     id: `${args.name}_from_max`,
     label: `max`,
     value: args.fromMax,
     onChange(fromMax) {
-      state = { ...state, fromMax };
-      onChange({ ...state });
+      componentState = { ...componentState, fromMax };
+      onChange({ ...componentState });
     },
   });
 
@@ -95,15 +95,15 @@ export function map({
     onRemove: toMinRemove,
     state: stateToMin,
   } = connect({
-    values,
+    values: state.values,
     omit: args.name,
     container,
     id: `${args.name}_to_min`,
     label: `to min`,
     value: args.toMin,
     onChange(toMin) {
-      state = { ...state, toMin };
-      onChange({ ...state });
+      componentState = { ...componentState, toMin };
+      onChange({ ...componentState });
     },
   });
 
@@ -113,19 +113,19 @@ export function map({
     onRemove: toMaxRemove,
     state: stateToMax,
   } = connect({
-    values,
+    values: state.values,
     omit: args.name,
     container,
     id: `${args.name}_to_max`,
     label: `to max`,
     value: args.toMax,
     onChange(toMax) {
-      state = { ...state, toMax };
-      onChange({ ...state });
+      componentState = { ...componentState, toMax };
+      onChange({ ...componentState });
     },
   });
 
-  values.register(args.name, (now, i) => {
+  state.values.register(args.name, (now, i) => {
     const fromMin = fromMinValue(now, i);
     const fromMax = fromMaxValue(now, i);
     const toMin = toMinValue(now, i);
@@ -148,15 +148,15 @@ export function map({
     toMaxUpdate(args.toMax);
     sourceUpdate(args.source);
 
-    state = {
-      name: state.name,
+    componentState = {
+      name: componentState.name,
       source: stateSource(),
       fromMin: stateFromMin(),
       fromMax: stateFromMax(),
       toMin: stateToMin(),
       toMax: stateToMax(),
     };
-    onChange(state);
+    onChange(componentState);
   }, 1);
 }
 
