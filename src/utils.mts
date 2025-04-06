@@ -1,5 +1,4 @@
 import { State } from "./state.mjs";
-import { Values } from "./value.mjs";
 
 export function assert(lhs: any, message: string): asserts lhs {
   if (!lhs) {

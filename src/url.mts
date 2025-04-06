@@ -1,6 +1,6 @@
 import { CreatorConfig } from "./factory.mjs";
 import { serde } from "./serde.mjs";
-import { assert } from "./utils.mjs";
+import { assert, limiter } from "./utils.mjs";
 
 export type URL = {
   toggleVisibility: () => void;
@@ -11,7 +11,10 @@ export type URL = {
   eachControl: (cb: (args: CreatorConfig) => void) => void;
 };
 
-const sync = (s: string) => window.history.pushState({}, "", `./?s=${s}`);
+// TODO: should be debounced instead limited
+const sync = limiter(300, (s: string) =>
+  window.history.pushState({}, "", `./?s=${s}`),
+);
 
 export function url(): URL {
   window.addEventListener("popstate", () => {
