@@ -1,7 +1,12 @@
 import { connect } from "./connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
-import { ComponentArgs, deserialize, serialize } from "../utils.mjs";
+import {
+  ComponentArgs,
+  deserialize,
+  getOneNumber,
+  serialize,
+} from "../utils.mjs";
 import { Value } from "../value.mjs";
 
 type WaveOpts = {
@@ -13,10 +18,10 @@ type WaveOpts = {
 
 function wave(opts: WaveOpts): Value {
   return (now, i) => {
-    const raise = opts.raise(now, i);
-    const fall = opts.fall(now, i);
-    const min = opts.min(now, i);
-    const max = opts.max(now, i);
+    const raise = getOneNumber(opts.raise(now, i));
+    const fall = getOneNumber(opts.fall(now, i));
+    const min = getOneNumber(opts.min(now, i));
+    const max = getOneNumber(opts.max(now, i));
 
     const duration = fall + raise;
 
@@ -27,11 +32,11 @@ function wave(opts: WaveOpts): Value {
     if (since < raise) {
       const speed = distance / raise;
       const distanceCovered = since * speed;
-      return min + distanceCovered;
+      return [min + distanceCovered];
     } else {
       const speed = distance / fall;
       const distanceCovered = (since - raise) * speed;
-      return max - distanceCovered;
+      return [max - distanceCovered];
     }
   };
 }
@@ -138,9 +143,9 @@ export function oscillatorWithConnectInput({
   });
 
   state.values.register(args.name, (now, i) => {
-    const val = w(now, i);
+    const val = getOneNumber(w(now, i));
     showValue(val.toPrecision(6));
-    return val;
+    return [val];
   });
 
   // TODO: come up with a better way to do this.

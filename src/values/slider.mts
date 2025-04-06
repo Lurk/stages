@@ -73,7 +73,7 @@ export function sliderWithNumericInputs({
   state.values.register(args.name, () => {
     const val = s.valueAsNumber;
     showValue(val.toPrecision(6));
-    return val;
+    return [val];
   });
 
   change();

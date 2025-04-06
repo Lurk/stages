@@ -1,7 +1,12 @@
 import { connect } from "./connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
-import { ComponentArgs, deserialize, serialize } from "../utils.mjs";
+import {
+  ComponentArgs,
+  deserialize,
+  getOneNumber,
+  serialize,
+} from "../utils.mjs";
 
 export type RandomArgs = {
   name: string;
@@ -60,9 +65,11 @@ export function random({
   });
 
   state.values.register(args.name, (now, i) => {
-    const val = Math.random() * (max(now, i) - min(now, i)) + min(now, i);
+    const val =
+      Math.random() * (getOneNumber(max(now, i)) - getOneNumber(min(now, i))) +
+      getOneNumber(min(now, i));
     showValue(val.toPrecision(6));
-    return val;
+    return [val];
   });
 
   // TODO: come up with a better way to do this.

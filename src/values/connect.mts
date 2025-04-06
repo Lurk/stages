@@ -95,8 +95,8 @@ export function connect(args: Args): Connect {
   return {
     value: (now, i) => {
       return isStatic.isActive()
-        ? number.valueAsNumber
-        : (args.connectable.get(s.el.value)?.(now, i) ?? 0);
+        ? [number.valueAsNumber]
+        : (args.connectable.get(s.el.value)?.(now, i) ?? [0]);
     },
     update: (val) => {
       if (typeof val === "string") {

@@ -1,6 +1,11 @@
 import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
-import { ComponentArgs, deserialize, serialize } from "../utils.mjs";
+import {
+  ComponentArgs,
+  deserialize,
+  getOneNumber,
+  serialize,
+} from "../utils.mjs";
 import { connect } from "./connect.mjs";
 
 export type MapArgs = {
@@ -126,16 +131,16 @@ export function map({
   });
 
   state.values.register(args.name, (now, i) => {
-    const fromMin = fromMinValue(now, i);
-    const fromMax = fromMaxValue(now, i);
-    const toMin = toMinValue(now, i);
-    const toMax = toMaxValue(now, i);
-    const source = sourceValue(now, i);
+    const fromMin = getOneNumber(fromMinValue(now, i));
+    const fromMax = getOneNumber(fromMaxValue(now, i));
+    const toMin = getOneNumber(toMinValue(now, i));
+    const toMax = getOneNumber(toMaxValue(now, i));
+    const source = getOneNumber(sourceValue(now, i));
 
     const val =
       ((source - fromMin) / (fromMax - fromMin)) * (toMax - toMin) + toMin;
     showValue(val.toPrecision(6));
-    return val;
+    return [val];
   });
 
   // TODO: come up with a better way to do this.

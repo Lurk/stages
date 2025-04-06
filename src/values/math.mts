@@ -4,7 +4,13 @@ import { ComponentSerde } from "../serde.mjs";
 import { renderSelectInputTo } from "../ui/common/select.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
 import { spanWithText } from "../ui/common/span.mjs";
-import { ComponentArgs, deserialize, limiter, serialize } from "../utils.mjs";
+import {
+  ComponentArgs,
+  deserialize,
+  getOneNumber,
+  limiter,
+  serialize,
+} from "../utils.mjs";
 
 export type MathArgs = {
   name: string;
@@ -36,21 +42,21 @@ function evaluate(
 ): number {
   switch (o) {
     case "sum":
-      return lhs(now, i) + rhs(now, i);
+      return getOneNumber(lhs(now, i)) + getOneNumber(rhs(now, i));
     case "sub":
-      return lhs(now, i) - rhs(now, i);
+      return getOneNumber(lhs(now, i)) - getOneNumber(rhs(now, i));
     case "mul":
-      return lhs(now, i) * rhs(now, i);
+      return getOneNumber(lhs(now, i)) * getOneNumber(rhs(now, i));
     case "pow":
-      return Math.pow(lhs(now, i), rhs(now, i));
+      return Math.pow(getOneNumber(lhs(now, i)), getOneNumber(rhs(now, i)));
     case "div":
-      return lhs(now, i) / rhs(now, i);
+      return getOneNumber(lhs(now, i)) / getOneNumber(rhs(now, i));
     case "avg":
-      return (lhs(now, i) + rhs(now, i)) / 2;
+      return (getOneNumber(lhs(now, i)) + getOneNumber(rhs(now, i))) / 2;
     case "min":
-      return Math.min(lhs(now, i), rhs(now, i));
+      return Math.min(getOneNumber(lhs(now, i)), getOneNumber(rhs(now, i)));
     case "max":
-      return Math.max(lhs(now, i), rhs(now, i));
+      return Math.max(getOneNumber(lhs(now, i)), getOneNumber(rhs(now, i)));
     default:
       throw new Error(`option: ${o} is not supported`);
   }
@@ -187,7 +193,7 @@ export function math({
   state.values.register(`${args.name}_a`, (now, i) => {
     const val = evaluate(mode_a.value, lhs1, rhs1, now, i);
     showValue(val.toPrecision(6));
-    return val;
+    return [val];
   });
 
   const limitedVelueB = limiter(100, (val) => showValue2(val));
@@ -195,7 +201,7 @@ export function math({
   state.values.register(`${args.name}_b`, (now, i) => {
     const val = evaluate(mode_b.value, lhs2, rhs2, now, i);
     limitedVelueB(val.toPrecision(6));
-    return val;
+    return [val];
   });
 
   // TODO: come up with a better way to do this.

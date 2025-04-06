@@ -3,7 +3,12 @@ import { connect } from "./connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
 import { renderSelectInputTo } from "../ui/common/select.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
-import { ComponentArgs, deserialize, serialize } from "../utils.mjs";
+import {
+  ComponentArgs,
+  deserialize,
+  getOneNumber,
+  serialize,
+} from "../utils.mjs";
 
 export type LogicArgs = {
   name: string;
@@ -27,17 +32,29 @@ function evaluate(
 ): number {
   switch (o) {
     case "gt":
-      return lhs(now, i) > rhs(now, i) ? isTrue(now, i) : isFalse(now, i);
+      return getOneNumber(lhs(now, i)) > getOneNumber(rhs(now, i))
+        ? getOneNumber(isTrue(now, i))
+        : getOneNumber(isFalse(now, i));
     case "gte":
-      return lhs(now, i) >= rhs(now, i) ? isTrue(now, i) : isFalse(now, i);
+      return getOneNumber(lhs(now, i)) >= getOneNumber(rhs(now, i))
+        ? getOneNumber(isTrue(now, i))
+        : getOneNumber(isFalse(now, i));
     case "lt":
-      return lhs(now, i) < rhs(now, i) ? isTrue(now, i) : isFalse(now, i);
+      return getOneNumber(lhs(now, i)) < getOneNumber(rhs(now, i))
+        ? getOneNumber(isTrue(now, i))
+        : getOneNumber(isFalse(now, i));
     case "lte":
-      return lhs(now, i) <= rhs(now, i) ? isTrue(now, i) : isFalse(now, i);
+      return getOneNumber(lhs(now, i)) <= getOneNumber(rhs(now, i))
+        ? getOneNumber(isTrue(now, i))
+        : getOneNumber(isFalse(now, i));
     case "eq":
-      return lhs(now, i) == rhs(now, i) ? isTrue(now, i) : isFalse(now, i);
+      return getOneNumber(lhs(now, i)) == getOneNumber(rhs(now, i))
+        ? getOneNumber(isTrue(now, i))
+        : getOneNumber(isFalse(now, i));
     case "neq":
-      return lhs(now, i) != rhs(now, i) ? isTrue(now, i) : isFalse(now, i);
+      return getOneNumber(lhs(now, i)) != getOneNumber(rhs(now, i))
+        ? getOneNumber(isTrue(now, i))
+        : getOneNumber(isFalse(now, i));
     default:
       throw new Error(`option: ${o} is not supported`);
   }
@@ -154,7 +171,7 @@ export function logic({
   state.values.register(`${args.name}`, (now, i) => {
     const val = evaluate(mode.value, lhs, rhs, isRrue, isFalse, now, i);
     showValue(val.toPrecision(6));
-    return val;
+    return [val];
   });
 
   // TODO: come up with a better way to do this.

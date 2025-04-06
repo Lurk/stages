@@ -1,5 +1,6 @@
 import { Canvas, path } from "./canvas.mjs";
 import { Output } from "./output.mjs";
+import { getOneNumber } from "./utils.mjs";
 
 export type AnimateArgs = {
   canvas: Canvas;
@@ -31,8 +32,8 @@ export function frame({ canvas, outputs, now }: FrameArgs) {
         path({
           ctx: canvas.ctx,
           now,
-          len: output.value.vertices(now, 0),
-          sampleRate: output.value.sr(now, 0),
+          len: getOneNumber(output.value.vertices(now, 0)),
+          sampleRate: getOneNumber(output.value.sr(now, 0)),
           x: output.value.x,
           y: output.value.y,
         });

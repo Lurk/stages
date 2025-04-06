@@ -1,5 +1,5 @@
 import { Value } from "./value.mjs";
-import { assert } from "./utils.mjs";
+import { assert, getOneNumber } from "./utils.mjs";
 
 type InitFullScreenCanvasArgs = {
   backgroundCollor: string;
@@ -124,12 +124,12 @@ export type PathOptions = {
 
 export function path(opts: PathOptions) {
   const now = Math.floor(opts.now / opts.sampleRate) * opts.sampleRate;
-  opts.ctx.moveTo(opts.x(now, 0), opts.y(now, 0));
+  opts.ctx.moveTo(getOneNumber(opts.x(now, 0)), getOneNumber(opts.y(now, 0)));
   const arr = [];
   for (let i = 1; i < opts.len; i++) {
     let foo = now + i * opts.sampleRate;
     arr.push(opts.y(foo, i));
-    opts.ctx.lineTo(opts.x(foo, i), opts.y(foo, i));
+    opts.ctx.lineTo(getOneNumber(opts.x(foo, i)), getOneNumber(opts.y(foo, i)));
   }
   opts.ctx.stroke();
 }
