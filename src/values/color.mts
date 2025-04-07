@@ -1,11 +1,7 @@
 import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
-import {
-  ComponentArgs,
-  deserialize,
-  getOneNumber,
-  serialize,
-} from "../utils.mjs";
+import { ComponentArgs, deserialize, serialize } from "../utils.mjs";
+import { getOneNumber } from "../value.mjs";
 import { connect } from "./connect.mjs";
 
 export type ColorArgs = {
@@ -115,12 +111,12 @@ export function color({
   });
 
   state.colors.register(args.name, (now, i) => {
-    const hueValue = getOneNumber(hue(now, i)) % 360;
-    const saturationValue = getOneNumber(saturation(now, i)) % 100;
-    const lightnessValue = getOneNumber(lightness(now, i)) % 100;
-    const alphaValue = getOneNumber(alpha(now, i)) % 1;
+    const hueValue = getOneNumber(hue(now, i)) % 360 || 360;
+    const saturationValue = getOneNumber(saturation(now, i)) % 100 || 100;
+    const lightnessValue = getOneNumber(lightness(now, i)) % 100 || 100;
+    const alphaValue = getOneNumber(alpha(now, i)) % 1 || 1;
 
-    preview.style.backgroundColor = `hsl(${hueValue}, ${saturationValue}%, ${lightnessValue}%, ${alphaValue})`;
+    preview.style.backgroundColor = `hsla(${hueValue}, ${saturationValue}%, ${lightnessValue}%, ${alphaValue})`;
     return [hueValue, saturationValue, lightnessValue, alphaValue];
   });
 

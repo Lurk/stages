@@ -200,3 +200,7 @@ label {
 .toggle.active {
 	background-color: var(--light);
 }
+
+.color-preview {
+	height: 20px;
+}

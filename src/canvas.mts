@@ -1,5 +1,5 @@
-import { Value } from "./value.mjs";
-import { assert, getOneNumber } from "./utils.mjs";
+import { getFourNumbers, getOneNumber, Value } from "./value.mjs";
+import { assert } from "./utils.mjs";
 
 type InitFullScreenCanvasArgs = {
   backgroundCollor: string;
@@ -113,7 +113,7 @@ export function createMeter({
   };
 }
 
-export type PathOptions = {
+export type PathArgs = {
   len: number;
   sampleRate: number;
   now: number;
@@ -122,14 +122,42 @@ export type PathOptions = {
   y: Value;
 };
 
-export function path(opts: PathOptions) {
-  const now = Math.floor(opts.now / opts.sampleRate) * opts.sampleRate;
-  opts.ctx.moveTo(getOneNumber(opts.x(now, 0)), getOneNumber(opts.y(now, 0)));
-  const arr = [];
-  for (let i = 1; i < opts.len; i++) {
-    let foo = now + i * opts.sampleRate;
-    arr.push(opts.y(foo, i));
-    opts.ctx.lineTo(getOneNumber(opts.x(foo, i)), getOneNumber(opts.y(foo, i)));
+export function path(args: PathArgs) {
+  const now = Math.floor(args.now / args.sampleRate) * args.sampleRate;
+  args.ctx.beginPath();
+  args.ctx.moveTo(getOneNumber(args.x(now, 0)), getOneNumber(args.y(now, 0)));
+  args.ctx.strokeStyle = "#cccccc";
+  args.ctx.lineWidth = 1;
+  for (let i = 1; i < args.len; i++) {
+    let foo = now + i * args.sampleRate;
+    args.ctx.lineTo(getOneNumber(args.x(foo, i)), getOneNumber(args.y(foo, i)));
   }
-  opts.ctx.stroke();
+  args.ctx.stroke();
+}
+
+export type BoxArgs = {
+  x: Value;
+  y: Value;
+  width: Value;
+  height: Value;
+  color: Value;
+  len: number;
+  sampleRate: number;
+  now: number;
+  ctx: CanvasRenderingContext2D;
+};
+
+export function box(args: BoxArgs) {
+  const now = Math.floor(args.now / args.sampleRate) * args.sampleRate;
+  for (let i = 0; i < args.len; i++) {
+    const x = getOneNumber(args.x(now + i * args.sampleRate, i));
+    const y = getOneNumber(args.y(now + i * args.sampleRate, i));
+    const width = getOneNumber(args.width(now + i * args.sampleRate, i));
+    const height = getOneNumber(args.height(now + i * args.sampleRate, i));
+    const color = getFourNumbers(args.color(now + i * args.sampleRate, i));
+
+    args.ctx.fillStyle = `hsla(${color[0]}, ${color[1]}%, ${color[2]}%, ${color[3]})`;
+
+    args.ctx.fillRect(x, y, width, height);
+  }
 }

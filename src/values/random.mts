@@ -1,12 +1,8 @@
 import { connect } from "./connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
-import {
-  ComponentArgs,
-  deserialize,
-  getOneNumber,
-  serialize,
-} from "../utils.mjs";
+import { ComponentArgs, deserialize, serialize } from "../utils.mjs";
+import { getOneNumber } from "../value.mjs";
 
 export type RandomArgs = {
   name: string;

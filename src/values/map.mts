@@ -1,11 +1,7 @@
 import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
-import {
-  ComponentArgs,
-  deserialize,
-  getOneNumber,
-  serialize,
-} from "../utils.mjs";
+import { ComponentArgs, deserialize, serialize } from "../utils.mjs";
+import { getOneNumber } from "../value.mjs";
 import { connect } from "./connect.mjs";
 
 export type MapArgs = {

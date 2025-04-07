@@ -1,3 +1,4 @@
+import { assert } from "./utils.mjs";
 import { Connectable, OnRegisterCallback } from "./values/connect.mjs";
 
 export type Value = (now: number, i: number) => number[];
@@ -43,4 +44,22 @@ export function values(): Values {
       }
     },
   };
+}
+
+export function getOneNumber(number: number[]): number {
+  assert(
+    number.length === 1,
+    `Expected array of length 1 but got ${number.length}`,
+  );
+  return number[0];
+}
+
+export function getFourNumbers(
+  number: number[],
+): [number, number, number, number] {
+  assert(
+    number.length === 4,
+    `Expected array of length 4 but got ${number.length}`,
+  );
+  return number as [number, number, number, number];
 }

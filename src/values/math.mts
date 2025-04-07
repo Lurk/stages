@@ -1,16 +1,10 @@
-import { Value } from "../value.mjs";
+import { getOneNumber, Value } from "../value.mjs";
 import { connect } from "./connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
 import { renderSelectInputTo } from "../ui/common/select.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
 import { spanWithText } from "../ui/common/span.mjs";
-import {
-  ComponentArgs,
-  deserialize,
-  getOneNumber,
-  limiter,
-  serialize,
-} from "../utils.mjs";
+import { ComponentArgs, deserialize, limiter, serialize } from "../utils.mjs";
 
 export type MathArgs = {
   name: string;

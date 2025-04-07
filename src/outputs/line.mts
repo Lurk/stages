@@ -121,12 +121,14 @@ export function line({ state, args, onRemove, onChange }: Args) {
     updateSr(args.sr);
     updateVertices(args.vertices);
 
-    Object.assign(componentState, {
+    componentState = {
+      name: componentState.name,
       x: stateX(),
       y: stateY(),
       sr: stateSr(),
       vertices: stateVertices(),
-    });
+    };
+
     onChange(componentState);
   }, 1);
 }

@@ -1,6 +1,6 @@
-import { Canvas, path } from "./canvas.mjs";
+import { box, Canvas, path } from "./canvas.mjs";
 import { Output } from "./output.mjs";
-import { getOneNumber } from "./utils.mjs";
+import { getOneNumber } from "./value.mjs";
 
 export type AnimateArgs = {
   canvas: Canvas;
@@ -23,9 +23,6 @@ export type FrameArgs = {
 export function frame({ canvas, outputs, now }: FrameArgs) {
   canvas.ctx.fillStyle = "#2b2a2a";
   canvas.ctx.fillRect(0, 0, canvas.ctx.canvas.width, canvas.ctx.canvas.height);
-  canvas.ctx.beginPath();
-  canvas.ctx.strokeStyle = "#cccccc";
-  canvas.ctx.lineWidth = 1;
   for (const output of outputs.values()) {
     switch (output.kind) {
       case "line":
@@ -37,9 +34,22 @@ export function frame({ canvas, outputs, now }: FrameArgs) {
           x: output.value.x,
           y: output.value.y,
         });
-
+        break;
+      case "box":
+        box({
+          ctx: canvas.ctx,
+          now,
+          len: getOneNumber(output.value.amount(now, 0)),
+          sampleRate: getOneNumber(output.value.sr(now, 0)),
+          x: output.value.x,
+          y: output.value.y,
+          width: output.value.width,
+          height: output.value.height,
+          color: output.value.color,
+        });
         break;
       default:
+        // @ts-expect-error
         throw new Error(`Unknown output kind: ${output.kind}`);
     }
   }

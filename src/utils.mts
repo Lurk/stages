@@ -84,11 +84,3 @@ export type ComponentArgs<T> = {
   onRemove: () => void;
   onChange: (args: T) => void;
 };
-
-export function getOneNumber(number: number[]): number {
-  assert(
-    number.length === 1,
-    `Expected array of length 1 but got ${number.length}`,
-  );
-  return number[0];
-}
