@@ -1,44 +1,44 @@
 import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
 import { assert, ComponentArgs, deserialize, serialize } from "../utils.mjs";
-import { Value } from "../value.mjs";
 import { connect } from "../values/connect.mjs";
+import { Value } from "../value.mjs";
 
-export type Box = {
+export type Circle = {
   x: Value;
   y: Value;
-  width: Value;
-  height: Value;
+  radius: Value;
   color: Value;
   amount: Value;
   sr: Value;
 };
 
-export type BoxArgs = {
+export type CircleArgs = {
   name: string;
   x?: string | number;
   y?: string | number;
-  width?: string | number;
-  height?: string | number;
+  radius?: string | number;
   color?: string;
   amount?: string | number;
   sr?: string | number;
 };
 
-type Args = ComponentArgs<BoxArgs>;
-
-export function box({ state, args, onRemove, onChange }: Args) {
+export function circle({
+  state,
+  args,
+  onRemove,
+  onChange,
+}: ComponentArgs<CircleArgs>) {
   const { container } = renderContainer({
     id: args.name,
-    type: "box",
+    type: "circle",
     isOutput: true,
     onRemove: () => {
       state.outputs.delete(args.name);
       onRemove();
       removeX();
       removeY();
-      removeWidth();
-      removeHeight();
+      removeRadius();
       removeColor();
       removeAmount();
       removeSr();
@@ -84,37 +84,19 @@ export function box({ state, args, onRemove, onChange }: Args) {
   });
 
   const {
-    value: width,
-    update: updateWidth,
-    onRemove: removeWidth,
-    state: stateWidth,
+    value: radius,
+    update: updateRadius,
+    onRemove: removeRadius,
+    state: stateRadius,
   } = connect({
     connectable: state.values,
     omit: "",
     container,
-    id: `${args.name}_width_input`,
-    value: args.width,
-    label: "width",
-    onChange(width) {
-      componentState = { ...componentState, width };
-      onChange({ ...componentState });
-    },
-  });
-
-  const {
-    value: height,
-    update: updateHeight,
-    onRemove: removeHeight,
-    state: stateHeight,
-  } = connect({
-    connectable: state.values,
-    omit: "",
-    container,
-    id: `${args.name}_height_input`,
-    value: args.height,
-    label: "height",
-    onChange(height) {
-      componentState = { ...componentState, height };
+    id: `${args.name}_radius_input`,
+    value: args.radius,
+    label: "radius",
+    onChange(radius) {
+      componentState = { ...componentState, radius };
       onChange({ ...componentState });
     },
   });
@@ -136,6 +118,7 @@ export function box({ state, args, onRemove, onChange }: Args) {
         typeof color === "string",
         "color can only be provided by a color component",
       );
+
       componentState = { ...componentState, color };
       onChange({ ...componentState });
     },
@@ -178,23 +161,21 @@ export function box({ state, args, onRemove, onChange }: Args) {
   });
 
   state.outputs.set(args.name, {
-    kind: "box",
+    kind: "circle",
     value: {
       x,
       y,
-      width,
-      height,
+      radius,
       color,
-      sr,
       amount,
+      sr,
     },
   });
 
   setTimeout(() => {
     updateX(args.x);
     updateY(args.y);
-    updateWidth(args.width);
-    updateHeight(args.height);
+    updateRadius(args.radius);
     updateColor(args.color);
     updateAmount(args.amount);
     updateSr(args.sr);
@@ -209,8 +190,7 @@ export function box({ state, args, onRemove, onChange }: Args) {
       name: componentState.name,
       x: stateX(),
       y: stateY(),
-      width: stateWidth(),
-      height: stateHeight(),
+      radius: stateRadius(),
       color,
       amount: stateAmount(),
       sr: stateSr(),
@@ -220,35 +200,24 @@ export function box({ state, args, onRemove, onChange }: Args) {
   });
 }
 
-export const boxSerde: ComponentSerde<BoxArgs> = () => {
-  const keys = [
-    "name",
-    "x",
-    "y",
-    "width",
-    "height",
-    "amount",
-    "sr",
-    "color",
-  ] as const;
+export const circleSerde: ComponentSerde<CircleArgs> = () => {
+  const keys = ["name", "x", "y", "radius", "color", "amount", "sr"] as const;
 
   return {
-    toString(args) {
-      return keys.map((k) => serialize(args[k])).join("");
+    toString(args: CircleArgs) {
+      return keys.map((key) => serialize(args[key])).join("");
     },
-    fromString(v, val, start) {
+    fromString(version, val, start) {
       let local_start = start;
-      const res: BoxArgs = {
+      const res: CircleArgs = {
         name: "",
         x: 0,
         y: 0,
-        width: 0,
-        height: 0,
+        radius: 0,
+        color: "",
         amount: 0,
         sr: 0,
-        color: "",
       };
-
       keys.forEach((key) => {
         const { val: v, end } = deserialize(val, local_start);
         if ((key === "name" || key === "color") && typeof v === "string") {
@@ -261,7 +230,10 @@ export const boxSerde: ComponentSerde<BoxArgs> = () => {
         local_start = end;
       });
 
-      return { val: res, end: local_start };
+      return {
+        val: res,
+        end: local_start,
+      };
     },
   };
 };

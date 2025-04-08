@@ -1,4 +1,5 @@
 import { Box } from "./outputs/box.mjs";
+import { Circle } from "./outputs/circle.mjs";
 import { Line } from "./outputs/line.mjs";
 
 export type Output =
@@ -9,6 +10,10 @@ export type Output =
   | {
       kind: "box";
       value: Box;
+    }
+  | {
+      kind: "circle";
+      value: Circle;
     };
 
 export type Outputs = Map<string, Output>;

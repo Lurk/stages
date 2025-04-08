@@ -9,6 +9,7 @@ import { sliderSerde } from "./values/slider.mjs";
 import { mapSerde } from "./values/map.mjs";
 import { colorSerde } from "./values/color.mjs";
 import { boxSerde } from "./outputs/box.mjs";
+import { circleSerde } from "./outputs/circle.mjs";
 
 const VERSION = 2;
 
@@ -32,6 +33,8 @@ function typeToString(type: CreatorConfig["type"]): string {
       return "07";
     case "box":
       return "08";
+    case "circle":
+      return "09";
     default:
       throw new Error(`Unknown type: ${type}`);
   }
@@ -57,6 +60,8 @@ function stringToType(type: string): CreatorConfig["type"] {
       return "color";
     case "08":
       return "box";
+    case "09":
+      return "circle";
     default:
       throw new Error(`Unknown type: ${type}`);
   }
@@ -91,6 +96,7 @@ export function serde(): Serde {
   const map = mapSerde();
   const c = colorSerde();
   const b = boxSerde();
+  const circle = circleSerde();
 
   const controlToString = (control: CreatorConfig): string => {
     const type = typeToString(control.type);
@@ -113,6 +119,8 @@ export function serde(): Serde {
         return `${type}${c.toString(control.args)}`;
       case "box":
         return `${type}${b.toString(control.args)}`;
+      case "circle":
+        return `${type}${circle.toString(control.args)}`;
     }
   };
 
@@ -196,6 +204,12 @@ export function serde(): Serde {
           }
           case "box": {
             const { val, end } = b.fromString(version, str, pos);
+            controls.set(val.name, { type, args: val });
+            pos = end;
+            break;
+          }
+          case "circle": {
+            const { val, end } = circle.fromString(version, str, pos);
             controls.set(val.name, { type, args: val });
             pos = end;
             break;

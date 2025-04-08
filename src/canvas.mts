@@ -166,3 +166,30 @@ export function box(args: BoxArgs) {
     args.ctx.fillRect(x, y, width, height);
   }
 }
+
+export type CircleArgs = {
+  x: Value;
+  y: Value;
+  radius: Value;
+  color: Value;
+  sampleRate: number;
+  len: number;
+  now: number;
+  ctx: CanvasRenderingContext2D;
+};
+
+export function circle(args: CircleArgs) {
+  const now = Math.floor(args.now / args.sampleRate) * args.sampleRate;
+  for (let i = 0; i < args.len; i++) {
+    const x = getOneNumber(args.x(now + i * args.sampleRate, i));
+    const y = getOneNumber(args.y(now + i * args.sampleRate, i));
+    const radius = getOneNumber(args.radius(now + i * args.sampleRate, i));
+    const color = getFourNumbers(args.color(now + i * args.sampleRate, i));
+
+    args.ctx.fillStyle = `hsla(${color[0]}, ${color[1]}%, ${color[2]}%, ${color[3]})`;
+
+    args.ctx.beginPath();
+    args.ctx.arc(x, y, radius, 0, Math.PI * 2);
+    args.ctx.fill();
+  }
+}

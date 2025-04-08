@@ -16,7 +16,8 @@ import { animate } from "./animation.mjs";
 import { map, MapArgs } from "./values/map.mjs";
 import { State, state } from "./state.mjs";
 import { color, ColorArgs } from "./values/color.mjs";
-import { AddBoxArgs, box } from "./outputs/box.mjs";
+import { BoxArgs, box } from "./outputs/box.mjs";
+import { circle, CircleArgs } from "./outputs/circle.mjs";
 
 export type CreatorConfig =
   | { type: "slider"; args: SliderArgs }
@@ -27,7 +28,8 @@ export type CreatorConfig =
   | { type: "logic"; args: LogicArgs }
   | { type: "map"; args: MapArgs }
   | { type: "color"; args: ColorArgs }
-  | { type: "box"; args: AddBoxArgs };
+  | { type: "box"; args: BoxArgs }
+  | { type: "circle"; args: CircleArgs };
 
 export const CONTROL_TYPES: CreatorConfig["type"][] = [
   "slider",
@@ -39,6 +41,7 @@ export const CONTROL_TYPES: CreatorConfig["type"][] = [
   "map",
   "color",
   "box",
+  "circle",
 ] as const;
 
 export function controlTypeGuard(t: unknown): t is CreatorConfig["type"] {
@@ -145,6 +148,13 @@ function init(
         });
       case "box":
         return box({
+          state,
+          onRemove,
+          args: config.args,
+          onChange: (args) => url.updateControl({ type: config.type, args }),
+        });
+      case "circle":
+        return circle({
           state,
           onRemove,
           args: config.args,

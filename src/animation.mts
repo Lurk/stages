@@ -1,4 +1,4 @@
-import { box, Canvas, path } from "./canvas.mjs";
+import { box, Canvas, circle, path } from "./canvas.mjs";
 import { Output } from "./output.mjs";
 import { getOneNumber } from "./value.mjs";
 
@@ -49,8 +49,20 @@ export function frame({ canvas, outputs, now }: FrameArgs) {
           color: output.value.color,
         });
         break;
+      case "circle":
+        circle({
+          ctx: canvas.ctx,
+          now,
+          len: getOneNumber(output.value.amount(now, 0)),
+          sampleRate: getOneNumber(output.value.sr(now, 0)),
+          x: output.value.x,
+          y: output.value.y,
+          radius: output.value.radius,
+          color: output.value.color,
+        });
+        break;
       default:
-        // @ts-expect-error
+        //@ts-expect-error
         throw new Error(`Unknown output kind: ${output.kind}`);
     }
   }
