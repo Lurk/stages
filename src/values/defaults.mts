@@ -9,11 +9,13 @@ export function defaults(values: Values, ctx: CanvasRenderingContext2D) {
   };
   values.register("width", () => [ctx.canvas.width]);
   values.register("height", () => [ctx.canvas.height]);
+  values.register("halfWidth", () => [ctx.canvas.width / 2]);
+  values.register("halfHeight", () => [ctx.canvas.height / 2]);
   values.register("zero", () => [0]);
   values.register("one", () => [1]);
   values.register("two", () => [2]);
   values.register("i", (now, i) => [i]);
   values.register("now", (now) => [now]);
-  values.register("mouseX", () => [mouse_x]);
-  values.register("mouseY", () => [mouse_y]);
+  values.register("mouseX", () => [mouse_x * window.devicePixelRatio]);
+  values.register("mouseY", () => [mouse_y * window.devicePixelRatio]);
 }
