@@ -147,7 +147,7 @@ export const colorSerde: ComponentSerde<ColorArgs> = () => {
       return keys.map((key) => serialize(args[key])).join("");
     },
 
-    fromString(val, start) {
+    fromString(v, val, start) {
       let local_start = start;
       const res: ColorArgs = {
         name: "",

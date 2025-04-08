@@ -33,6 +33,7 @@ export function frame({ canvas, outputs, now }: FrameArgs) {
           sampleRate: getOneNumber(output.value.sr(now, 0)),
           x: output.value.x,
           y: output.value.y,
+          color: output.value.color,
         });
         break;
       case "box":

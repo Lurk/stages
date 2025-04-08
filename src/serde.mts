@@ -64,7 +64,11 @@ function stringToType(type: string): CreatorConfig["type"] {
 
 export type ComponentSerde<T> = () => {
   toString: (args: T) => string;
-  fromString: (val: string, start: number) => { val: T; end: number };
+  fromString: (
+    v: number,
+    val: string,
+    start: number,
+  ) => { val: T; end: number };
 };
 
 type State = {
@@ -143,55 +147,55 @@ export function serde(): Serde {
         pos += 2;
         switch (type) {
           case "slider": {
-            const { val, end } = s.fromString(str, pos);
+            const { val, end } = s.fromString(version, str, pos);
             controls.set(val.name, { type, args: val });
             pos = end;
             break;
           }
           case "oscillator": {
-            const { val, end } = o.fromString(str, pos);
+            const { val, end } = o.fromString(version, str, pos);
             controls.set(val.name, { type, args: val });
             pos = end;
             break;
           }
           case "line": {
-            const { val, end } = l.fromString(str, pos);
+            const { val, end } = l.fromString(version, str, pos);
             controls.set(val.name, { type, args: val });
             pos = end;
             break;
           }
           case "math": {
-            const { val, end } = m.fromString(str, pos);
+            const { val, end } = m.fromString(version, str, pos);
             controls.set(val.name, { type, args: val });
             pos = end;
             break;
           }
           case "random": {
-            const { val, end } = r.fromString(str, pos);
+            const { val, end } = r.fromString(version, str, pos);
             controls.set(val.name, { type, args: val });
             pos = end;
             break;
           }
           case "logic": {
-            const { val, end } = lgc.fromString(str, pos);
+            const { val, end } = lgc.fromString(version, str, pos);
             controls.set(val.name, { type, args: val });
             pos = end;
             break;
           }
           case "map": {
-            const { val, end } = map.fromString(str, pos);
+            const { val, end } = map.fromString(version, str, pos);
             controls.set(val.name, { type, args: val });
             pos = end;
             break;
           }
           case "color": {
-            const { val, end } = c.fromString(str, pos);
+            const { val, end } = c.fromString(version, str, pos);
             controls.set(val.name, { type, args: val });
             pos = end;
             break;
           }
           case "box": {
-            const { val, end } = b.fromString(str, pos);
+            const { val, end } = b.fromString(version, str, pos);
             controls.set(val.name, { type, args: val });
             pos = end;
             break;

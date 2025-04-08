@@ -93,7 +93,7 @@ export const sliderSerde: ComponentSerde<SliderArgs> = () => {
         .join("");
     },
 
-    fromString(val, start) {
+    fromString(v, val, start) {
       let local_start = start;
       const res: SliderArgs = {
         name: "",

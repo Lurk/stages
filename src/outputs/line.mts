@@ -2,14 +2,21 @@ import { Value } from "../value.mjs";
 import { connect } from "../values/connect.mjs";
 import { ComponentSerde } from "../serde.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
-import { ComponentArgs, deserialize, serialize } from "../utils.mjs";
+import { assert, ComponentArgs, deserialize, serialize } from "../utils.mjs";
 
-export type Line = { y: Value; x: Value; sr: Value; vertices: Value };
+export type Line = {
+  y: Value;
+  x: Value;
+  sr: Value;
+  vertices: Value;
+  color: Value;
+};
 
 export type AddLineArgs = {
   name: string;
   x?: string | number;
   y?: string | number;
+  color?: string;
   sr?: string | number;
   vertices?: string | number;
 };
@@ -28,6 +35,7 @@ export function line({ state, args, onRemove, onChange }: Args) {
       removeY();
       removeSr();
       removeVertices();
+      removeColor();
     },
   });
 
@@ -67,6 +75,26 @@ export function line({ state, args, onRemove, onChange }: Args) {
       onChange({ ...componentState });
     },
   });
+
+  const {
+    value: color,
+    update: updateColor,
+    onRemove: removeColor,
+    state: stateColor,
+  } = connect({
+    connectable: state.colors,
+    omit: "",
+    container,
+    id: `${args.name}_color_input`,
+    value: args.color,
+    label: "color",
+    onChange(color) {
+      assert(typeof color === "string", "color can be only connected");
+      componentState = { ...componentState, color };
+      onChange({ ...componentState });
+    },
+  });
+
   const {
     value: sr,
     update: updateSr,
@@ -109,6 +137,7 @@ export function line({ state, args, onRemove, onChange }: Args) {
       y,
       sr,
       vertices,
+      color,
     },
   });
 
@@ -120,6 +149,10 @@ export function line({ state, args, onRemove, onChange }: Args) {
     updateY(args.y);
     updateSr(args.sr);
     updateVertices(args.vertices);
+    updateColor(args.color);
+
+    const color = stateColor();
+    assert(typeof color === "string", "color can be only connected");
 
     componentState = {
       name: componentState.name,
@@ -127,6 +160,7 @@ export function line({ state, args, onRemove, onChange }: Args) {
       y: stateY(),
       sr: stateSr(),
       vertices: stateVertices(),
+      color,
     };
 
     onChange(componentState);
@@ -134,13 +168,13 @@ export function line({ state, args, onRemove, onChange }: Args) {
 }
 
 export const lineSerde: ComponentSerde<AddLineArgs> = () => {
-  const keys = ["name", "x", "y", "sr", "vertices"] as const;
+  const keys = ["name", "x", "y", "sr", "vertices", "color"] as const;
   return {
     toString(args) {
       return keys.map((key) => serialize(args[key])).join("");
     },
 
-    fromString(val, start) {
+    fromString(version, val, start) {
       let local_start = start;
       const res: AddLineArgs = {
         name: "",
@@ -148,12 +182,18 @@ export const lineSerde: ComponentSerde<AddLineArgs> = () => {
         y: 0,
         sr: 0,
         vertices: 0,
+        color: "",
       };
+
       keys.forEach((key) => {
+        if (key === "color" && version < 2) {
+          // color is not serialized, so we skip it
+          return;
+        }
         const { val: v, end } = deserialize(val, local_start);
-        if (key === "name" && typeof v === "string") {
+        if ((key === "name" || key === "color") && typeof v === "string") {
           res[key] = v;
-        } else if (key !== "name") {
+        } else if (key !== "name" && key !== "color") {
           res[key] = v;
         } else {
           throw new Error(`Invalid value for ${key}: ${v}`);

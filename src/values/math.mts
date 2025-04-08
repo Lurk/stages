@@ -236,7 +236,7 @@ export const mathSerde: ComponentSerde<MathArgs> = () => {
       return keys.map((key) => serialize(args[key])).join("");
     },
 
-    fromString(val, start) {
+    fromString(v, val, start) {
       let local_start = start;
       const res: MathArgs = {
         name: "",

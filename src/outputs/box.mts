@@ -236,7 +236,7 @@ export const boxSerde: ComponentSerde<AddBoxArgs> = () => {
     toString(args) {
       return keys.map((k) => serialize(args[k])).join("");
     },
-    fromString(val, start) {
+    fromString(v, val, start) {
       let local_start = start;
       const res: AddBoxArgs = {
         name: "",

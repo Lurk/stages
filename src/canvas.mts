@@ -120,6 +120,7 @@ export type PathArgs = {
   ctx: CanvasRenderingContext2D;
   x: Value;
   y: Value;
+  color: Value;
 };
 
 export function path(args: PathArgs) {
@@ -129,6 +130,10 @@ export function path(args: PathArgs) {
   args.ctx.strokeStyle = "#cccccc";
   args.ctx.lineWidth = 1;
   for (let i = 1; i < args.len; i++) {
+    const color = args.color(now + i * args.sampleRate, i);
+    if (color.length === 4) {
+      args.ctx.strokeStyle = `hsla(${color[0]}, ${color[1]}%, ${color[2]}%, ${color[3]})`;
+    }
     let foo = now + i * args.sampleRate;
     args.ctx.lineTo(getOneNumber(args.x(foo, i)), getOneNumber(args.y(foo, i)));
   }
