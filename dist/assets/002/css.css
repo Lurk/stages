@@ -22,7 +22,7 @@ body {
 	background-color: var(--darker);
 }
 
-body:has(#canvas.fit) {
+body:has(#canvas.fill) {
 	height: 100vh;
 	overflow-y: hidden;
 }
@@ -87,6 +87,7 @@ a {
 #controls {
 	display: flex;
 	gap: 10px;
+	flex-wrap: wrap;
 }
 
 #controls.hidden {
@@ -118,8 +119,6 @@ label {
 }
 
 .control {
-	display: flex;
-	flex-direction: column;
 	height: 220px;
 	border: 2px solid var(--medium);
 	padding: 5px;
@@ -163,11 +162,8 @@ label {
 }
 
 .docs {
-	align-self: center;
-	height: 100%;
 	display: flex;
-	flex-direction: column;
-	justify-content: end;
+	justify-content: space-around;
 }
 
 .divider {
