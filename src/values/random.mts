@@ -8,6 +8,7 @@ export type RandomArgs = {
   name: string;
   min?: string | number;
   max?: string | number;
+  rate?: string | number;
 };
 
 export function random({
@@ -24,10 +25,11 @@ export function random({
       onRemove();
       removeMin();
       removeMax();
+      removeRate();
     },
   });
 
-  const componentState = { ...args };
+  let componentState = { ...args };
 
   const {
     value: min,
@@ -41,7 +43,8 @@ export function random({
     id: `${args.name}_min`,
     label: "min",
     onChange(min) {
-      onChange({ ...Object.assign(componentState, { min }) });
+      componentState = { ...componentState, min };
+      onChange(componentState);
     },
   });
   const {
@@ -56,16 +59,46 @@ export function random({
     id: `${args.name}_max`,
     label: "max",
     onChange(max) {
-      onChange({ ...Object.assign(componentState, { max }) });
+      componentState = { ...componentState, max };
+      onChange(componentState);
     },
   });
 
+  const {
+    value: rate,
+    update: updateRate,
+    onRemove: removeRate,
+    state: stateRate,
+  } = connect({
+    connectable: state.values,
+    omit: args.name,
+    container,
+    id: `${args.name}_rate`,
+    label: "rate",
+    value: args.rate,
+    onChange(rate) {
+      componentState = { ...componentState, rate };
+      onChange(componentState);
+    },
+  });
+
+  let lastTime: (number | undefined)[] = [];
+  let lastValue: (number | undefined)[] = [];
+
   state.values.register(args.name, (now, i) => {
-    const val =
-      Math.random() * (getOneNumber(max(now, i)) - getOneNumber(min(now, i))) +
-      getOneNumber(min(now, i));
-    showValue(val.toPrecision(6));
-    return [val];
+    if (
+      lastValue[i] === undefined ||
+      now - (lastTime[i] || 0) > getOneNumber(rate(now, i))
+    ) {
+      const val =
+        Math.random() *
+          (getOneNumber(max(now, i)) - getOneNumber(min(now, i))) +
+        getOneNumber(min(now, i));
+      showValue(val.toPrecision(6));
+      lastValue[i] = val;
+      lastTime[i] = now;
+    }
+    return [lastValue[i]];
   });
 
   // TODO: come up with a better way to do this.
@@ -74,27 +107,38 @@ export function random({
   setTimeout(() => {
     updateMin(args.min);
     updateMax(args.max);
+    updateRate(args.rate);
 
-    Object.assign(componentState, { min: stateMin(), max: stateMax() });
+    componentState = {
+      name: args.name,
+      min: stateMin(),
+      max: stateMax(),
+      rate: stateRate(),
+    };
+
     onChange(componentState);
   }, 1);
 }
 
 export const randomSerde: ComponentSerde<RandomArgs> = () => {
-  const keys = ["name", "min", "max"] as const;
+  const keys = ["name", "min", "max", "rate"] as const;
   return {
     toString(args) {
       return keys.map((key) => serialize(args[key])).join("");
     },
 
-    fromString(v, val, start) {
+    fromString(vevrison, val, start) {
       let local_start = start;
       const res: RandomArgs = {
         name: "",
         min: 0,
         max: 0,
+        rate: 25,
       };
       keys.forEach((key) => {
+        if (key === "rate" && vevrison < 2) {
+          return;
+        }
         const { val: v, end } = deserialize(val, local_start);
         if (key === "name" && typeof v === "string") {
           res[key] = v;

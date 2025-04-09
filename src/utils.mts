@@ -82,5 +82,5 @@ export type ComponentArgs<T> = {
   state: State;
   args: T;
   onRemove: () => void;
-  onChange: (args: T) => void;
+  onChange: (args: Readonly<T>) => void;
 };
