@@ -20,16 +20,16 @@ import { BoxArgs, box } from "./outputs/box.mjs";
 import { circle, CircleArgs } from "./outputs/circle.mjs";
 
 export type CreatorConfig =
-  | { type: "slider"; args: SliderArgs }
-  | { type: "oscillator"; args: OscillatorArgs }
-  | { type: "math"; args: MathArgs }
-  | { type: "line"; args: AddLineArgs }
-  | { type: "random"; args: RandomArgs }
-  | { type: "logic"; args: LogicArgs }
-  | { type: "map"; args: MapArgs }
-  | { type: "color"; args: ColorArgs }
-  | { type: "box"; args: BoxArgs }
-  | { type: "circle"; args: CircleArgs };
+  | { type: "slider"; args: Readonly<SliderArgs> }
+  | { type: "oscillator"; args: Readonly<OscillatorArgs> }
+  | { type: "math"; args: Readonly<MathArgs> }
+  | { type: "line"; args: Readonly<AddLineArgs> }
+  | { type: "random"; args: Readonly<RandomArgs> }
+  | { type: "logic"; args: Readonly<LogicArgs> }
+  | { type: "map"; args: Readonly<MapArgs> }
+  | { type: "color"; args: Readonly<ColorArgs> }
+  | { type: "box"; args: Readonly<BoxArgs> }
+  | { type: "circle"; args: Readonly<CircleArgs> };
 
 export const CONTROL_TYPES: CreatorConfig["type"][] = [
   "slider",

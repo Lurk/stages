@@ -6,7 +6,7 @@ export type URL = {
   toggleVisibility: () => void;
   areControlsVisible: () => boolean;
   addControl: (args: CreatorConfig) => void;
-  updateControl: (args: CreatorConfig) => void;
+  updateControl: (args: Readonly<CreatorConfig>) => void;
   removeControl: (args: string) => void;
   eachControl: (cb: (args: CreatorConfig) => void) => void;
 };

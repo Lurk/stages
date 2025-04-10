@@ -13,11 +13,25 @@ export function limiter(
 ): (val: string) => void {
   let lastVal = "";
   let lastTime = Date.now();
+  let timeout: ReturnType<typeof setTimeout> | undefined = undefined;
+
   return (val) => {
-    if (lastVal !== val && Date.now() - lastTime > limit) {
+    const since = Date.now() - lastTime;
+    if (lastVal !== val && since > limit) {
       cb(val);
       lastVal = val;
       lastTime = Date.now();
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = undefined;
+      }
+    } else if (lastVal !== val && timeout === undefined) {
+      lastVal = val;
+      timeout = setTimeout(() => {
+        lastTime = Date.now();
+        timeout = undefined;
+        cb(val);
+      }, limit - since);
     }
   };
 }

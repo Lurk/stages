@@ -78,21 +78,21 @@ export function math({
 
   showValue("0");
 
-  let componentState = { ...args };
+  let componentState: Readonly<MathArgs> = { ...args };
 
   const {
     select: { el: mode_a },
   } = renderSelectInputTo({
     id: `${args.name}_mode_a`,
     label: "mode",
-    selected: args.mode_a,
+    selected: args.mode_a ?? options[0],
     options,
     container,
   });
 
   mode_a.addEventListener("change", () => {
     componentState = { ...componentState, mode_a: mode_a.value };
-    onChange({ ...componentState });
+    onChange(componentState);
   });
 
   const {
@@ -109,7 +109,7 @@ export function math({
     value: args.lhs1,
     onChange(lhs1) {
       componentState = { ...componentState, lhs1 };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 
@@ -127,7 +127,7 @@ export function math({
     value: args.rhs1,
     onChange(rhs1) {
       componentState = { ...componentState, rhs1 };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 
@@ -138,14 +138,14 @@ export function math({
   } = renderSelectInputTo({
     id: `${args.name}_mode_b`,
     label: "mode",
-    selected: args.mode_b,
+    selected: args.mode_b || options[0],
     options,
     container,
   });
 
   mode_b.addEventListener("change", () => {
     componentState = { ...componentState, mode_b: mode_b.value };
-    onChange({ ...componentState });
+    onChange(componentState);
   });
 
   const {
@@ -162,7 +162,7 @@ export function math({
     value: args.lhs2,
     onChange(lhs2) {
       componentState = { ...componentState, lhs2 };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 
@@ -180,7 +180,7 @@ export function math({
     value: args.rhs2,
     onChange(rhs2) {
       componentState = { ...componentState, rhs2 };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 
@@ -209,10 +209,10 @@ export function math({
 
     componentState = {
       name: componentState.name,
-      mode_a: mode_a.value,
+      mode_a: mode_a.value || options[0],
       lhs1: stateLhs1(),
       rhs1: stateRhs1(),
-      mode_b: mode_b.value,
+      mode_b: mode_b.value || options[0],
       lhs2: stateLhs2(),
       rhs2: stateRhs2(),
     };

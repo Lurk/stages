@@ -77,7 +77,7 @@ export type ComponentSerde<T> = () => {
 };
 
 type State = {
-  controls: Map<string, CreatorConfig>;
+  controls: Map<string, Readonly<CreatorConfig>>;
   areControlsVisible: boolean;
 };
 

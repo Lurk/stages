@@ -4,6 +4,7 @@ import { ComponentSerde } from "../serde.mjs";
 import { renderSelectInputTo } from "../ui/common/select.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
 import { ComponentArgs, deserialize, serialize } from "../utils.mjs";
+import { debug } from "console";
 
 export type LogicArgs = {
   name: string;
@@ -74,21 +75,21 @@ export function logic({
     },
   });
 
-  let componentState = { ...args };
+  let componentState: Readonly<LogicArgs> = { ...args };
 
   const {
     select: { el: mode },
   } = renderSelectInputTo({
     id: `${args.name}_mode`,
     label: "mode",
-    selected: args.mode,
+    selected: args.mode ?? options[0],
     options,
     container,
   });
 
   mode.addEventListener("change", () => {
     componentState = { ...componentState, mode: mode.value };
-    onChange({ ...componentState });
+    onChange(componentState);
   });
 
   const {
@@ -105,7 +106,7 @@ export function logic({
     value: args.lhs,
     onChange(lhs) {
       componentState = { ...componentState, lhs };
-      onChange({ ...componentState, lhs });
+      onChange(componentState);
     },
   });
 
@@ -123,7 +124,7 @@ export function logic({
     value: args.rhs,
     onChange(rhs) {
       componentState = { ...componentState, rhs };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 
@@ -141,7 +142,7 @@ export function logic({
     value: args.isTrue,
     onChange(is_true) {
       componentState = { ...componentState, isTrue: is_true };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 
@@ -159,7 +160,7 @@ export function logic({
     value: args.isFalse,
     onChange(is_false) {
       componentState = { ...componentState, isFalse: is_false };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 
@@ -179,7 +180,8 @@ export function logic({
     isFalseUpdate(args.isFalse);
 
     componentState = {
-      ...componentState,
+      name: componentState.name,
+      mode: mode.value ?? options[0],
       lhs: stateLhs(),
       rhs: stateRhs(),
       isTrue: stateIsTrue(),
