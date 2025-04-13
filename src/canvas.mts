@@ -10,12 +10,15 @@ export type Canvas = {
   ctx: CanvasRenderingContext2D;
   resize: (width: number, height: number) => void;
   resizeToFit: () => void;
+  onResizeSubscribe: (cb: () => void) => void;
+  onResizeUnsubscribe: (cb: () => void) => void;
 };
 
 export function initFullScreenCanvas({
   backgroundCollor,
   id,
 }: InitFullScreenCanvasArgs): Canvas {
+  const resizeCallbacks: (() => void)[] = [];
   const body = document.querySelector("body");
   assert(body, "body must be present");
   body.style.backgroundColor = backgroundCollor;
@@ -31,22 +34,23 @@ export function initFullScreenCanvas({
   assert(ctx, "could not get 2d context");
 
   const dpr = window.devicePixelRatio;
-  const rect = canvasElement.getBoundingClientRect();
-
-  canvasElement.width = rect.width * dpr;
-  canvasElement.height = rect.height * dpr;
 
   ctx.scale(dpr, dpr);
 
-  let observer = new ResizeObserver(() => {
+  const resizeObserverCb = () =>
     requestAnimationFrame(() => {
       const rect = canvasElement.getBoundingClientRect();
 
       canvasElement.width = rect.width * dpr;
       canvasElement.height = rect.height * dpr;
+      resizeCallbacks.forEach((cb) => cb());
     });
-  });
+
+  resizeObserverCb();
+
+  let observer = new ResizeObserver(resizeObserverCb);
   observer.observe(canvasElement);
+
   return {
     ctx,
     resize(width, height) {
@@ -56,6 +60,7 @@ export function initFullScreenCanvas({
       canvasElement.style.width = `${width / dpr}px`;
       canvasElement.style.height = `${height / dpr}px`;
       observer.disconnect();
+      resizeCallbacks.forEach((cb) => cb());
     },
     resizeToFit() {
       canvasElement.classList.add("fit");
@@ -64,15 +69,18 @@ export function initFullScreenCanvas({
       canvasElement.height = rect.height * dpr;
       canvasElement.style.width = "";
       canvasElement.style.height = "";
-      observer = new ResizeObserver(() => {
-        requestAnimationFrame(() => {
-          const rect = canvasElement.getBoundingClientRect();
-
-          canvasElement.width = rect.width * dpr;
-          canvasElement.height = rect.height * dpr;
-        });
-      });
+      observer = new ResizeObserver(resizeObserverCb);
       observer.observe(canvasElement);
+      resizeCallbacks.forEach((cb) => cb());
+    },
+    onResizeSubscribe(cb) {
+      resizeCallbacks.push(cb);
+    },
+    onResizeUnsubscribe(cb) {
+      const index = resizeCallbacks.indexOf(cb);
+      if (index !== -1) {
+        resizeCallbacks.splice(index, 1);
+      }
     },
   };
 }

@@ -29,6 +29,10 @@ export function animation(args: AnimationArgs): Animation {
     offset: 0,
   };
 
+  args.canvas.onResizeSubscribe(() => {
+    frame({ ...args, now: state.now + state.offset });
+  });
+
   const play = () => {
     requestAnimationFrame((now) => {
       if (!state.isPlaying) {
