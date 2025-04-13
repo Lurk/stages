@@ -62,21 +62,17 @@ export function math({
   onRemove,
   onChange,
 }: ComponentArgs<MathArgs>) {
-  const { container, showValue } = renderContainer({
+  const container = renderContainer({
     id: args.name,
     type: "math",
-    onRemove: () => {
-      state.values.unregister(`${args.name}_a`);
-      state.values.unregister(`${args.name}_b`);
-      onRemove();
-      lhs1Remove();
-      rhs1Remove();
-      lhs2Remove();
-      rhs2Remove();
-    },
   });
 
-  showValue("0");
+  container.showValue("0");
+  container.onRemove(() => {
+    state.values.unregister(`${args.name}_a`);
+    state.values.unregister(`${args.name}_b`);
+    onRemove();
+  });
 
   let componentState: Readonly<MathArgs> = { ...args };
 
@@ -87,7 +83,7 @@ export function math({
     label: "mode",
     selected: args.mode_a ?? options[0],
     options,
-    container,
+    container: container.el,
   });
 
   mode_a.addEventListener("change", () => {
@@ -98,7 +94,6 @@ export function math({
   const {
     value: lhs1,
     update: lhs1Update,
-    onRemove: lhs1Remove,
     state: stateLhs1,
   } = connect({
     connectable: state.values,
@@ -116,7 +111,6 @@ export function math({
   const {
     value: rhs1,
     update: rhs1Update,
-    onRemove: rhs1Remove,
     state: stateRhs1,
   } = connect({
     connectable: state.values,
@@ -131,7 +125,7 @@ export function math({
     },
   });
 
-  const showValue2 = spanWithText(container, "0");
+  const showValue2 = spanWithText(container.el, "0");
 
   const {
     select: { el: mode_b },
@@ -140,7 +134,7 @@ export function math({
     label: "mode",
     selected: args.mode_b || options[0],
     options,
-    container,
+    container: container.el,
   });
 
   mode_b.addEventListener("change", () => {
@@ -151,7 +145,6 @@ export function math({
   const {
     value: lhs2,
     update: lhs2Update,
-    onRemove: lhs2Remove,
     state: stateLhs2,
   } = connect({
     connectable: state.values,
@@ -169,7 +162,6 @@ export function math({
   const {
     value: rhs2,
     update: rhs2Update,
-    onRemove: rhs2Remove,
     state: stateRhs2,
   } = connect({
     connectable: state.values,
@@ -186,7 +178,7 @@ export function math({
 
   state.values.register(`${args.name}_a`, (now, i) => {
     const val = evaluate(mode_a.value, lhs1, rhs1, now, i);
-    showValue(val.toPrecision(6));
+    container.showValue(val.toPrecision(6));
     return [val];
   });
 

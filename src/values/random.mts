@@ -17,24 +17,21 @@ export function random({
   onRemove,
   onChange,
 }: ComponentArgs<RandomArgs>) {
-  const { container, showValue } = renderContainer({
+  const container = renderContainer({
     id: args.name,
     type: "random",
-    onRemove: () => {
-      state.values.unregister(args.name);
-      onRemove();
-      removeMin();
-      removeMax();
-      removeRate();
-    },
   });
 
-  let componentState = { ...args };
+  container.onRemove(() => {
+    state.values.unregister(args.name);
+    onRemove();
+  });
+
+  let componentState: Readonly<RandomArgs> = { ...args };
 
   const {
     value: min,
     update: updateMin,
-    onRemove: removeMin,
     state: stateMin,
   } = connect({
     connectable: state.values,
@@ -50,7 +47,6 @@ export function random({
   const {
     value: max,
     update: updateMax,
-    onRemove: removeMax,
     state: stateMax,
   } = connect({
     connectable: state.values,
@@ -67,7 +63,6 @@ export function random({
   const {
     value: rate,
     update: updateRate,
-    onRemove: removeRate,
     state: stateRate,
   } = connect({
     connectable: state.values,
@@ -94,7 +89,7 @@ export function random({
         Math.random() *
           (getOneNumber(max(now, i)) - getOneNumber(min(now, i))) +
         getOneNumber(min(now, i));
-      showValue(val.toPrecision(6));
+      container.showValue(val.toPrecision(6));
       lastValue[i] = val;
       lastTime[i] = now;
     }

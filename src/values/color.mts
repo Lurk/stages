@@ -18,17 +18,14 @@ export function color({
   onRemove,
   onChange,
 }: ComponentArgs<ColorArgs>) {
-  const { container } = renderContainer({
+  const container = renderContainer({
     id: args.name,
     type: "color",
-    onRemove: () => {
-      state.colors.unregister(`${args.name}`);
-      onRemove();
-      removeHue();
-      removeSaturation();
-      removeLightness();
-      removeAlpha();
-    },
+  });
+
+  container.onRemove(() => {
+    state.colors.unregister(args.name);
+    onRemove();
   });
 
   let componentState = { ...args };
@@ -36,12 +33,11 @@ export function color({
   const preview = document.createElement("div");
   preview.classList.add("color-preview");
   preview.style.backgroundColor = `hsl(${args.hue}, ${args.saturation}%, ${args.lightness}%, ${args.alpha})`;
-  container.appendChild(preview);
+  container.el.appendChild(preview);
 
   const {
     value: hue,
     update: updateHue,
-    onRemove: removeHue,
     state: stateHue,
   } = connect({
     connectable: state.values,
@@ -52,14 +48,13 @@ export function color({
     value: args.hue,
     onChange(hue) {
       componentState = { ...componentState, hue };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 
   const {
     value: saturation,
     update: updateSaturation,
-    onRemove: removeSaturation,
     state: stateSaturation,
   } = connect({
     connectable: state.values,
@@ -70,14 +65,13 @@ export function color({
     value: args.saturation,
     onChange(saturation) {
       componentState = { ...componentState, saturation };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 
   const {
     value: lightness,
     update: updateLightness,
-    onRemove: removeLightness,
     state: stateLightness,
   } = connect({
     connectable: state.values,
@@ -88,14 +82,13 @@ export function color({
     value: args.lightness,
     onChange(lightness) {
       componentState = { ...componentState, lightness };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 
   const {
     value: alpha,
     update: updateAlpha,
-    onRemove: removeAlpha,
     state: stateAlpha,
   } = connect({
     connectable: state.values,
@@ -106,7 +99,7 @@ export function color({
     value: args.alpha,
     onChange(alpha) {
       componentState = { ...componentState, alpha };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 

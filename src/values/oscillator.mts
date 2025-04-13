@@ -50,25 +50,21 @@ export function oscillatorWithConnectInput({
   onRemove,
   onChange,
 }: ComponentArgs<OscillatorArgs>) {
-  const { container, showValue } = renderContainer({
+  const container = renderContainer({
     id: args.name,
     type: "oscillator",
-    onRemove: () => {
-      state.values.unregister(args.name);
-      onRemove();
-      removeMin();
-      removeMax();
-      removeRaise();
-      removeFall();
-    },
   });
 
-  const componentState = { ...args };
+  container.onRemove(() => {
+    state.values.unregister(args.name);
+    onRemove();
+  });
+
+  let componentState: Readonly<OscillatorArgs> = { ...args };
 
   const {
     value: min,
     update: updateMin,
-    onRemove: removeMin,
     state: stateMin,
   } = connect({
     connectable: state.values,
@@ -78,13 +74,13 @@ export function oscillatorWithConnectInput({
     label: "min",
     value: args.min,
     onChange(min) {
-      onChange({ ...Object.assign(componentState, { min }) });
+      componentState = { ...componentState, min };
+      onChange(componentState);
     },
   });
   const {
     value: max,
     update: updateMax,
-    onRemove: removeMax,
     state: stateMax,
   } = connect({
     connectable: state.values,
@@ -94,13 +90,13 @@ export function oscillatorWithConnectInput({
     label: "max",
     value: args.max,
     onChange(max) {
-      onChange({ ...Object.assign(componentState, { max }) });
+      componentState = { ...componentState, max };
+      onChange(componentState);
     },
   });
   const {
     value: raise,
     update: updateRaise,
-    onRemove: removeRaise,
     state: stateRaise,
   } = connect({
     connectable: state.values,
@@ -110,13 +106,13 @@ export function oscillatorWithConnectInput({
     label: "raise",
     value: args.raise,
     onChange(raise) {
-      onChange({ ...Object.assign(componentState, { raise }) });
+      componentState = { ...componentState, raise };
+      onChange(componentState);
     },
   });
   const {
     value: fall,
     update: updateFall,
-    onRemove: removeFall,
     state: stateFall,
   } = connect({
     connectable: state.values,
@@ -126,7 +122,8 @@ export function oscillatorWithConnectInput({
     label: "fall",
     value: args.fall,
     onChange(fall) {
-      onChange({ ...Object.assign(componentState, { fall }) });
+      componentState = { ...componentState, fall };
+      onChange(componentState);
     },
   });
 
@@ -139,7 +136,7 @@ export function oscillatorWithConnectInput({
 
   state.values.register(args.name, (now, i) => {
     const val = getOneNumber(w(now, i));
-    showValue(val.toPrecision(6));
+    container.showValue(val.toPrecision(6));
     return [val];
   });
 

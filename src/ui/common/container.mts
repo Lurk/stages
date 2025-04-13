@@ -6,20 +6,20 @@ export type ContainerArgs = {
   id: string;
   type?: string;
   isOutput?: boolean;
-  onRemove?: () => void;
 };
 
 export type Container = {
-  container: HTMLDivElement;
+  el: HTMLDivElement;
   showValue: (val: string) => void;
+  onRemove: (cb: () => void) => void;
 };
 
 export function renderContainer({
   id,
   type,
   isOutput,
-  onRemove,
 }: ContainerArgs): Container {
+  const onRemoveCallbacks: (() => void)[] = [];
   const root = document.getElementById("controls");
   assert(root, 'root element id="controls" not found');
   const container = document.createElement("div");
@@ -33,16 +33,14 @@ export function renderContainer({
   typeEl.innerText = type ?? "";
   header.appendChild(typeEl);
 
-  if (onRemove) {
-    button({
-      container: header,
-      text: "x",
-      onClick: () => {
-        onRemove();
-        control.remove();
-      },
-    });
-  }
+  button({
+    container: header,
+    text: "x",
+    onClick: () => {
+      onRemoveCallbacks.forEach((cb) => cb());
+      control.remove();
+    },
+  });
 
   control.classList.add("control");
   if (isOutput) {
@@ -57,7 +55,10 @@ export function renderContainer({
   root.appendChild(control);
 
   return {
-    container,
+    el: container,
     showValue: limiter(100, value),
+    onRemove: (cb) => {
+      onRemoveCallbacks.push(cb);
+    },
   };
 }

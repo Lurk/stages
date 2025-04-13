@@ -19,27 +19,21 @@ export function map({
   onChange,
   onRemove,
 }: ComponentArgs<MapArgs>) {
-  const { container, showValue } = renderContainer({
+  const container = renderContainer({
     id: args.name,
     type: "mapper",
-    onRemove: () => {
-      state.values.unregister(`${args.name}`);
-      onRemove();
-      fromMinRemove();
-      fromMaxRemove();
-      toMinRemove();
-      toMaxRemove();
-      sourceRemove();
-    },
   });
-  showValue("0");
+  container.showValue("0");
+  container.onRemove(() => {
+    state.values.unregister(args.name);
+    onRemove();
+  });
 
-  let componentState = { ...args };
+  let componentState: Readonly<MapArgs> = { ...args };
 
   const {
     value: sourceValue,
     update: sourceUpdate,
-    onRemove: sourceRemove,
     state: stateSource,
   } = connect({
     connectable: state.values,
@@ -50,14 +44,13 @@ export function map({
     value: args.source,
     onChange(source) {
       componentState = { ...componentState, source };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 
   const {
     value: fromMinValue,
     update: fromMinUpdate,
-    onRemove: fromMinRemove,
     state: stateFromMin,
   } = connect({
     connectable: state.values,
@@ -68,14 +61,13 @@ export function map({
     value: args.fromMin,
     onChange(fromMin) {
       componentState = { ...componentState, fromMin };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 
   const {
     value: fromMaxValue,
     update: fromMaxUpdate,
-    onRemove: fromMaxRemove,
     state: stateFromMax,
   } = connect({
     connectable: state.values,
@@ -86,14 +78,13 @@ export function map({
     value: args.fromMax,
     onChange(fromMax) {
       componentState = { ...componentState, fromMax };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 
   const {
     value: toMinValue,
     update: toMinUpdate,
-    onRemove: toMinRemove,
     state: stateToMin,
   } = connect({
     connectable: state.values,
@@ -104,14 +95,13 @@ export function map({
     value: args.toMin,
     onChange(toMin) {
       componentState = { ...componentState, toMin };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 
   const {
     value: toMaxValue,
     update: toMaxUpdate,
-    onRemove: toMaxRemove,
     state: stateToMax,
   } = connect({
     connectable: state.values,
@@ -122,7 +112,7 @@ export function map({
     value: args.toMax,
     onChange(toMax) {
       componentState = { ...componentState, toMax };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 
@@ -135,7 +125,7 @@ export function map({
 
     const val =
       ((source - fromMin) / (fromMax - fromMin)) * (toMax - toMin) + toMin;
-    showValue(val.toPrecision(6));
+    container.showValue(val.toPrecision(6));
     return [val];
   });
 

@@ -1,3 +1,4 @@
+import { Container } from "../ui/common/container.mjs";
 import { label } from "../ui/common/label.mjs";
 import { numberInput } from "../ui/common/number_input.mjs";
 import { select } from "../ui/common/select.mjs";
@@ -19,7 +20,7 @@ type Args = {
   connectable: Connectable;
   value?: string | number;
   omit: string;
-  container: HTMLDivElement;
+  container: Container;
   label: string;
   hasNumberInput?: boolean;
   onChange: (key: string | number) => void;
@@ -28,7 +29,6 @@ type Args = {
 type Connect = {
   value: Value;
   update: (val?: string | number) => void;
-  onRemove: () => void;
   state: () => string | number;
 };
 
@@ -94,7 +94,8 @@ export function connect(args: Args): Connect {
 
   args.connectable.onChange(onChangeCb);
 
-  args.container.appendChild(connectContainer);
+  args.container.el.appendChild(connectContainer);
+  args.container.onRemove(() => args.connectable.unsubscribe(onChangeCb));
 
   return {
     value: (now, i) => {
@@ -110,9 +111,6 @@ export function connect(args: Args): Connect {
       } else {
         assert(false, `val is not string or number`);
       }
-    },
-    onRemove() {
-      args.connectable.unsubscribe(onChangeCb);
     },
     state: () => {
       return isStatic.isActive() ? number.valueAsNumber : s.el.value;

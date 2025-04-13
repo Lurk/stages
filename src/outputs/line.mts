@@ -24,27 +24,22 @@ export type AddLineArgs = {
 type Args = ComponentArgs<AddLineArgs>;
 
 export function line({ state, args, onRemove, onChange }: Args) {
-  const { container } = renderContainer({
+  const container = renderContainer({
     id: args.name,
     type: "line",
     isOutput: true,
-    onRemove: () => {
-      state.outputs.delete(args.name);
-      onRemove();
-      removeX();
-      removeY();
-      removeSr();
-      removeVertices();
-      removeColor();
-    },
   });
 
-  let componentState = { ...args };
+  container.onRemove(() => {
+    state.outputs.delete(args.name);
+    onRemove();
+  });
+
+  let componentState: Readonly<AddLineArgs> = { ...args };
 
   const {
     value: x,
     update: updateX,
-    onRemove: removeX,
     state: stateX,
   } = connect({
     connectable: state.values,
@@ -55,13 +50,12 @@ export function line({ state, args, onRemove, onChange }: Args) {
     label: "x",
     onChange(x) {
       componentState = { ...componentState, x };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
   const {
     value: y,
     update: updateY,
-    onRemove: removeY,
     state: stateY,
   } = connect({
     connectable: state.values,
@@ -72,14 +66,13 @@ export function line({ state, args, onRemove, onChange }: Args) {
     label: "y",
     onChange(y) {
       componentState = { ...componentState, y };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 
   const {
     value: color,
     update: updateColor,
-    onRemove: removeColor,
     state: stateColor,
   } = connect({
     connectable: state.colors,
@@ -92,14 +85,13 @@ export function line({ state, args, onRemove, onChange }: Args) {
     onChange(color) {
       assert(typeof color === "string", "color can be only connected");
       componentState = { ...componentState, color };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 
   const {
     value: sr,
     update: updateSr,
-    onRemove: removeSr,
     state: stateSr,
   } = connect({
     connectable: state.values,
@@ -110,13 +102,12 @@ export function line({ state, args, onRemove, onChange }: Args) {
     label: "sr",
     onChange(sr) {
       componentState = { ...componentState, sr };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
   const {
     value: vertices,
     update: updateVertices,
-    onRemove: removeVertices,
     state: stateVertices,
   } = connect({
     connectable: state.values,
@@ -127,7 +118,7 @@ export function line({ state, args, onRemove, onChange }: Args) {
     label: "vertices",
     onChange(vertices) {
       componentState = { ...componentState, vertices };
-      onChange({ ...componentState });
+      onChange(componentState);
     },
   });
 

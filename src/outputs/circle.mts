@@ -29,20 +29,15 @@ export function circle({
   onRemove,
   onChange,
 }: ComponentArgs<CircleArgs>) {
-  const { container } = renderContainer({
+  const container = renderContainer({
     id: args.name,
     type: "circle",
     isOutput: true,
-    onRemove: () => {
-      state.outputs.delete(args.name);
-      onRemove();
-      removeX();
-      removeY();
-      removeRadius();
-      removeColor();
-      removeAmount();
-      removeSr();
-    },
+  });
+
+  container.onRemove(() => {
+    state.outputs.delete(args.name);
+    onRemove();
   });
 
   let componentState = { ...args };
@@ -50,7 +45,6 @@ export function circle({
   const {
     value: x,
     update: updateX,
-    onRemove: removeX,
     state: stateX,
   } = connect({
     connectable: state.values,
@@ -68,7 +62,6 @@ export function circle({
   const {
     value: y,
     update: updateY,
-    onRemove: removeY,
     state: stateY,
   } = connect({
     connectable: state.values,
@@ -86,7 +79,6 @@ export function circle({
   const {
     value: radius,
     update: updateRadius,
-    onRemove: removeRadius,
     state: stateRadius,
   } = connect({
     connectable: state.values,
@@ -104,7 +96,6 @@ export function circle({
   const {
     value: color,
     update: updateColor,
-    onRemove: removeColor,
     state: stateColor,
   } = connect({
     connectable: state.colors,
@@ -128,7 +119,6 @@ export function circle({
   const {
     value: amount,
     update: updateAmount,
-    onRemove: removeAmount,
     state: stateAmount,
   } = connect({
     connectable: state.values,
@@ -146,7 +136,6 @@ export function circle({
   const {
     value: sr,
     update: updateSr,
-    onRemove: removeSr,
     state: stateSr,
   } = connect({
     connectable: state.values,

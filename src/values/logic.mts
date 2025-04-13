@@ -61,17 +61,14 @@ export function logic({
   onRemove,
   onChange,
 }: ComponentArgs<LogicArgs>) {
-  const { container, showValue } = renderContainer({
+  const container = renderContainer({
     id: args.name,
     type: "logic",
-    onRemove: () => {
-      state.values.unregister(args.name);
-      onRemove();
-      lhsRemove();
-      rhsRemove();
-      isFalseRemove();
-      isTrueRemove();
-    },
+  });
+
+  container.onRemove(() => {
+    state.values.unregister(args.name);
+    onRemove();
   });
 
   let componentState: Readonly<LogicArgs> = { ...args };
@@ -83,7 +80,7 @@ export function logic({
     label: "mode",
     selected: args.mode ?? options[0],
     options,
-    container,
+    container: container.el,
   });
 
   mode.addEventListener("change", () => {
@@ -94,7 +91,6 @@ export function logic({
   const {
     value: lhs,
     update: lhsUpdate,
-    onRemove: lhsRemove,
     state: stateLhs,
   } = connect({
     connectable: state.values,
@@ -112,7 +108,6 @@ export function logic({
   const {
     value: rhs,
     update: rhsUpdate,
-    onRemove: rhsRemove,
     state: stateRhs,
   } = connect({
     connectable: state.values,
@@ -130,7 +125,6 @@ export function logic({
   const {
     value: isTrue,
     update: isTrueUpdate,
-    onRemove: isTrueRemove,
     state: stateIsTrue,
   } = connect({
     connectable: state.values,
@@ -148,7 +142,6 @@ export function logic({
   const {
     value: isFalse,
     update: isFalseUpdate,
-    onRemove: isFalseRemove,
     state: stateIsFalse,
   } = connect({
     connectable: state.values,
@@ -165,7 +158,7 @@ export function logic({
 
   state.values.register(`${args.name}`, (now, i) => {
     const val = evaluate(mode.value, lhs, rhs, isTrue, isFalse, now, i);
-    showValue(val.toPrecision(6));
+    container.showValue(val.toPrecision(6));
     return [val];
   });
 

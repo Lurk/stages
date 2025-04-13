@@ -17,19 +17,18 @@ export function sliderWithNumericInputs({
   onRemove,
   onChange,
 }: ComponentArgs<SliderArgs>) {
-  const { container, showValue } = renderContainer({
-    id: args.name,
-    onRemove: () => {
-      state.values.unregister(args.name);
-      onRemove();
-    },
-  });
+  const container = renderContainer({ id: args.name });
 
-  showValue((args.value ?? 50).toPrecision(6));
+  container.showValue((args.value ?? 50).toPrecision(6));
+
+  container.onRemove(() => {
+    state.values.unregister(args.name);
+    onRemove();
+  });
 
   const to = numberInput({
     id: `${args.name}_max`,
-    container,
+    container: container.el,
     value: args.max ?? 500,
   });
 
@@ -38,13 +37,13 @@ export function sliderWithNumericInputs({
     max: args.max ?? 500,
     min: args.min ?? 0,
     value: args.value ?? 50,
-    container,
+    container: container.el,
     label: "",
   });
 
   const from = numberInput({
     id: `${args.name}_min`,
-    container,
+    container: container.el,
     value: args.min ?? 0,
   });
 
@@ -72,7 +71,7 @@ export function sliderWithNumericInputs({
 
   state.values.register(args.name, () => {
     const val = s.valueAsNumber;
-    showValue(val.toPrecision(6));
+    container.showValue(val.toPrecision(6));
     return [val];
   });
 

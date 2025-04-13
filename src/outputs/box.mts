@@ -28,21 +28,15 @@ export type BoxArgs = {
 type Args = ComponentArgs<BoxArgs>;
 
 export function box({ state, args, onRemove, onChange }: Args) {
-  const { container } = renderContainer({
+  const container = renderContainer({
     id: args.name,
     type: "box",
     isOutput: true,
-    onRemove: () => {
-      state.outputs.delete(args.name);
-      onRemove();
-      removeX();
-      removeY();
-      removeWidth();
-      removeHeight();
-      removeColor();
-      removeAmount();
-      removeSr();
-    },
+  });
+
+  container.onRemove(() => {
+    state.outputs.delete(args.name);
+    onRemove();
   });
 
   let componentState = { ...args };
@@ -50,7 +44,6 @@ export function box({ state, args, onRemove, onChange }: Args) {
   const {
     value: x,
     update: updateX,
-    onRemove: removeX,
     state: stateX,
   } = connect({
     connectable: state.values,
@@ -68,7 +61,6 @@ export function box({ state, args, onRemove, onChange }: Args) {
   const {
     value: y,
     update: updateY,
-    onRemove: removeY,
     state: stateY,
   } = connect({
     connectable: state.values,
@@ -86,7 +78,6 @@ export function box({ state, args, onRemove, onChange }: Args) {
   const {
     value: width,
     update: updateWidth,
-    onRemove: removeWidth,
     state: stateWidth,
   } = connect({
     connectable: state.values,
@@ -104,7 +95,6 @@ export function box({ state, args, onRemove, onChange }: Args) {
   const {
     value: height,
     update: updateHeight,
-    onRemove: removeHeight,
     state: stateHeight,
   } = connect({
     connectable: state.values,
@@ -122,7 +112,6 @@ export function box({ state, args, onRemove, onChange }: Args) {
   const {
     value: color,
     update: updateColor,
-    onRemove: removeColor,
     state: stateColor,
   } = connect({
     connectable: state.colors,
@@ -145,7 +134,6 @@ export function box({ state, args, onRemove, onChange }: Args) {
   const {
     value: amount,
     update: updateAmount,
-    onRemove: removeAmount,
     state: stateAmount,
   } = connect({
     connectable: state.values,
@@ -163,7 +151,6 @@ export function box({ state, args, onRemove, onChange }: Args) {
   const {
     value: sr,
     update: updateSr,
-    onRemove: removeSr,
     state: stateSr,
   } = connect({
     connectable: state.values,
