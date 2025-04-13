@@ -171,6 +171,7 @@ export function factory() {
   const u = url();
   const add = init(u, s);
   const controls = document.getElementById("controls");
+  const factory = document.getElementById("factory");
   assert(controls, "#controls element was not wound");
   const canvas = initFullScreenCanvas({
     id: "canvas",
@@ -185,6 +186,7 @@ export function factory() {
 
   if (!u.areControlsVisible()) {
     controls.classList.add("hidden");
+    factory?.classList.add("hidden");
     canvas.ctx.canvas.classList.add("fill");
   }
 
@@ -199,6 +201,7 @@ export function factory() {
     fullScreenTarget: canvas.ctx.canvas,
     toggleVisibility: () => {
       controls.classList.toggle("hidden");
+      factory?.classList.toggle("hidden");
       canvas.ctx.canvas.classList.toggle("fill");
       u.toggleVisibility();
     },
