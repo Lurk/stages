@@ -10,6 +10,7 @@ import { mapSerde } from "./values/map.mjs";
 import { colorSerde } from "./values/color.mjs";
 import { boxSerde } from "./outputs/box.mjs";
 import { circleSerde } from "./outputs/circle.mjs";
+import { clockSerde } from "./values/clock.mjs";
 
 const VERSION = 2;
 
@@ -35,6 +36,8 @@ function typeToString(type: CreatorConfig["type"]): string {
       return "08";
     case "circle":
       return "09";
+    case "clock":
+      return "0A";
     default:
       throw new Error(`Unknown type: ${type}`);
   }
@@ -62,6 +65,8 @@ function stringToType(type: string): CreatorConfig["type"] {
       return "box";
     case "09":
       return "circle";
+    case "0A":
+      return "clock";
     default:
       throw new Error(`Unknown type: ${type}`);
   }
@@ -97,6 +102,7 @@ export function serde(): Serde {
   const c = colorSerde();
   const b = boxSerde();
   const circle = circleSerde();
+  const clock = clockSerde();
 
   const controlToString = (control: CreatorConfig): string => {
     const type = typeToString(control.type);
@@ -121,6 +127,8 @@ export function serde(): Serde {
         return `${type}${b.toString(control.args)}`;
       case "circle":
         return `${type}${circle.toString(control.args)}`;
+      case "clock":
+        return `${type}${clock.toString(control.args)}`;
     }
   };
 
@@ -210,6 +218,12 @@ export function serde(): Serde {
           }
           case "circle": {
             const { val, end } = circle.fromString(version, str, pos);
+            controls.set(val.name, { type, args: val });
+            pos = end;
+            break;
+          }
+          case "clock": {
+            const { val, end } = clock.fromString(version, str, pos);
             controls.set(val.name, { type, args: val });
             pos = end;
             break;

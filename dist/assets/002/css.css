@@ -195,3 +195,8 @@ label {
 .color-preview {
 	height: 20px;
 }
+
+.clockTable {
+	display: grid;
+	grid-template-columns: auto auto;
+}

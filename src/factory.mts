@@ -18,6 +18,7 @@ import { State, state } from "./state.mjs";
 import { color, ColorArgs } from "./values/color.mjs";
 import { BoxArgs, box } from "./outputs/box.mjs";
 import { circle, CircleArgs } from "./outputs/circle.mjs";
+import { clock, ClockArgs } from "./values/clock.mjs";
 
 export type CreatorConfig =
   | { type: "slider"; args: Readonly<SliderArgs> }
@@ -29,19 +30,21 @@ export type CreatorConfig =
   | { type: "map"; args: Readonly<MapArgs> }
   | { type: "color"; args: Readonly<ColorArgs> }
   | { type: "box"; args: Readonly<BoxArgs> }
-  | { type: "circle"; args: Readonly<CircleArgs> };
+  | { type: "circle"; args: Readonly<CircleArgs> }
+  | { type: "clock"; args: Readonly<ClockArgs> };
 
 export const CONTROL_TYPES: CreatorConfig["type"][] = [
-  "slider",
-  "oscillator",
-  "math",
-  "line",
-  "random",
-  "logic",
-  "map",
-  "color",
   "box",
   "circle",
+  "clock",
+  "color",
+  "line",
+  "logic",
+  "map",
+  "math",
+  "oscillator",
+  "random",
+  "slider",
 ] as const;
 
 export function controlTypeGuard(t: unknown): t is CreatorConfig["type"] {
@@ -155,6 +158,13 @@ function init(
         });
       case "circle":
         return circle({
+          state,
+          onRemove,
+          args: config.args,
+          onChange: (args) => url.updateControl({ type: config.type, args }),
+        });
+      case "clock":
+        return clock({
           state,
           onRemove,
           args: config.args,
