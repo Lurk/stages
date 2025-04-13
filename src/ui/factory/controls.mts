@@ -4,6 +4,7 @@ import {
   CreatorConfig,
 } from "../../factory.mjs";
 import { button } from "../common/button.mjs";
+import { divider } from "../common/divider.mjs";
 import { renderSelectInputTo } from "../common/select.mjs";
 import { renderTextInputTo } from "../common/text_input.mjs";
 
@@ -13,6 +14,8 @@ export type ControlsArgs = {
 };
 
 export function controls({ container, add }: ControlsArgs) {
+  divider({ container });
+
   const nameInput = renderTextInputTo({
     label: "name:",
     container,
@@ -28,7 +31,7 @@ export function controls({ container, add }: ControlsArgs) {
   });
 
   button({
-    text: "Create Control",
+    text: "+",
     container,
     onClick: () => {
       const type = controlTypeSelect.value;

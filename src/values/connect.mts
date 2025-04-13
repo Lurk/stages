@@ -5,13 +5,13 @@ import { toggle } from "../ui/common/toggle.mjs";
 import { assert } from "../utils.mjs";
 import { Value } from "../value.mjs";
 
-export type OnRegisterCallback = (keys: string[]) => void;
+export type OnChangeCallback = (keys: string[]) => void;
 
 export type Connectable = {
   keys: () => string[];
   get: (key: string) => Value | undefined;
-  onChange: (cb: OnRegisterCallback) => void;
-  unsubscribe: (cb: OnRegisterCallback) => void;
+  onChange: (cb: OnChangeCallback) => void;
+  unsubscribe: (cb: OnChangeCallback) => void;
 };
 
 type Args = {

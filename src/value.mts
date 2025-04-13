@@ -1,5 +1,5 @@
 import { assert } from "./utils.mjs";
-import { Connectable, OnRegisterCallback } from "./values/connect.mjs";
+import { Connectable, OnChangeCallback } from "./values/connect.mjs";
 
 export type Value = (now: number, i: number) => number[];
 
@@ -10,7 +10,7 @@ export type Values = {
 
 export function values(): Values {
   const map: Map<string, Value> = new Map();
-  const onRegisterCallbacks: OnRegisterCallback[] = [];
+  const onRegisterCallbacks: OnChangeCallback[] = [];
   return {
     register(key, value) {
       if (map.has(key)) {

@@ -4,7 +4,6 @@ import { ComponentSerde } from "../serde.mjs";
 import { renderSelectInputTo } from "../ui/common/select.mjs";
 import { renderContainer } from "../ui/common/container.mjs";
 import { ComponentArgs, deserialize, serialize } from "../utils.mjs";
-import { debug } from "console";
 
 export type LogicArgs = {
   name: string;
@@ -129,7 +128,7 @@ export function logic({
   });
 
   const {
-    value: isRrue,
+    value: isTrue,
     update: isTrueUpdate,
     onRemove: isTrueRemove,
     state: stateIsTrue,
@@ -165,7 +164,7 @@ export function logic({
   });
 
   state.values.register(`${args.name}`, (now, i) => {
-    const val = evaluate(mode.value, lhs, rhs, isRrue, isFalse, now, i);
+    const val = evaluate(mode.value, lhs, rhs, isTrue, isFalse, now, i);
     showValue(val.toPrecision(6));
     return [val];
   });

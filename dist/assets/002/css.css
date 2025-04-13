@@ -46,7 +46,8 @@ select {
 	width: 60px;
 }
 
-select:disabled {
+select:disabled,
+button:disabled {
 	color: var(--extra-dark);
 	background-color: var(--dark);
 }
@@ -82,6 +83,22 @@ a {
 	#canvas {
 		height: 100vh;
 	}
+}
+
+#factory {
+	display: flex;
+	gap: 5px;
+	padding: 5px;
+	border-bottom: 1px solid var(--medium);
+	margin-bottom: 10px;
+}
+
+#factory>:first-child {
+	width: 80px;
+}
+
+#factory .input {
+	display: block;
 }
 
 #controls {
@@ -120,7 +137,7 @@ label {
 
 .control {
 	height: 220px;
-	border: 2px solid var(--medium);
+	border: 1px solid var(--medium);
 	padding: 5px;
 	border-radius: 5px;
 }
@@ -161,30 +178,8 @@ label {
 	align-self: end;
 }
 
-.docs {
-	display: flex;
-	justify-content: space-around;
-}
-
 .divider {
-	display: flex;
-	align-items: center;
-	text-align: center;
-}
-
-.divider::before,
-.divider::after {
-	content: '';
-	flex: 1;
-	border-bottom: 1px solid var(--medium);
-}
-
-.divider:not(:empty)::before {
-	margin-right: .25em;
-}
-
-.divider:not(:empty)::after {
-	margin-left: .25em;
+	border-left: 1px solid var(--medium);
 }
 
 .toggle {

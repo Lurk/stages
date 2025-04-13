@@ -1,7 +1,5 @@
 import { renderSelectInputTo } from "../common/select.mjs";
 import { Canvas } from "../../canvas.mjs";
-import { recorder } from "../../recorder.mjs";
-import { button } from "../common/button.mjs";
 import { divider } from "../common/divider.mjs";
 
 export type CanvasArgs = {
@@ -10,10 +8,7 @@ export type CanvasArgs = {
 };
 
 export function canvas({ canvas, container }: CanvasArgs) {
-  divider({
-    container,
-    label: "canvas",
-  });
+  divider({ container });
 
   const {
     select: { el: aspectRatio },
@@ -21,7 +16,7 @@ export function canvas({ canvas, container }: CanvasArgs) {
     container,
     options: ["free", "16:9", "5:4", "4:3", "2:1", "1:1"],
     id: "aspect",
-    label: "aspect ratio:",
+    label: "aspect:",
   });
 
   const {
@@ -77,19 +72,4 @@ export function canvas({ canvas, container }: CanvasArgs) {
 
   longSide.addEventListener("change", changeCanvasSize);
   orientation.addEventListener("change", changeCanvasSize);
-
-  const rec = recorder(canvas.ctx);
-
-  const recButton = button({
-    text: rec.state() === "inactive" ? "record" : "stop",
-    container,
-    onClick: () => {
-      if (rec.state() === "inactive") {
-        rec.start();
-      } else {
-        rec.stop();
-      }
-    },
-  });
-  rec.subscribe((state) => recButton(state === "inactive" ? "record" : "stop"));
 }

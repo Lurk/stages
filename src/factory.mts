@@ -12,7 +12,7 @@ import { assert } from "./utils.mjs";
 import { URL, url } from "./url.mjs";
 import { logic, LogicArgs } from "./values/logic.mjs";
 import { Canvas, initFullScreenCanvas } from "./canvas.mjs";
-import { animate } from "./animation.mjs";
+import { animation } from "./animation.mjs";
 import { map, MapArgs } from "./values/map.mjs";
 import { State, state } from "./state.mjs";
 import { color, ColorArgs } from "./values/color.mjs";
@@ -176,6 +176,12 @@ export function factory() {
     id: "canvas",
     backgroundCollor: "#2b2a2a",
   });
+  const a = animation({
+    canvas,
+    outputs: s.outputs,
+  });
+  defaults(s.values, canvas.ctx);
+  u.eachControl((c) => add(c, true));
 
   if (!u.areControlsVisible()) {
     controls.classList.add("hidden");
@@ -183,6 +189,7 @@ export function factory() {
   }
 
   render({
+    animation: a,
     vals: s.values,
     add,
     canvas,
@@ -197,12 +204,5 @@ export function factory() {
     },
   });
 
-  defaults(s.values, canvas.ctx);
-
-  u.eachControl((c) => add(c, true));
-
-  animate({
-    canvas,
-    outputs: s.outputs,
-  });
+  a.play();
 }

@@ -2,16 +2,83 @@ import { box, Canvas, circle, path } from "./canvas.mjs";
 import { Output } from "./output.mjs";
 import { getOneNumber } from "./value.mjs";
 
-export type AnimateArgs = {
+export type AnimationArgs = {
   canvas: Canvas;
   outputs: Map<string, Output>;
 };
 
-export function animate(args: AnimateArgs) {
-  requestAnimationFrame((now) => {
-    frame({ ...args, now });
-    animate(args);
-  });
+type OnFrameCb = (now: number) => void;
+export type Animation = {
+  onFrameSubscribe: (cb: OnFrameCb) => void;
+  onFrameUnsubscribe: (cb: OnFrameCb) => void;
+  isPlaying: () => boolean;
+  getNow: () => number;
+  play: () => void;
+  pause: () => void;
+  forward: () => void;
+  backward: () => void;
+};
+
+export function animation(args: AnimationArgs): Animation {
+  const onFrameCallbacks: OnFrameCb[] = [];
+  const frameLength = 1000 / 60;
+  const state = {
+    isPlaying: true,
+    now: 0,
+    pausedAt: 0,
+    offset: 0,
+  };
+
+  const play = () => {
+    requestAnimationFrame((now) => {
+      if (!state.isPlaying) {
+        return;
+      }
+      if (state.pausedAt) {
+        state.offset = state.now + state.offset - now;
+        state.pausedAt = 0;
+      }
+      state.now = now;
+      frame({ ...args, now: now + state.offset });
+      onFrameCallbacks.forEach((cb) => cb(now + state.offset));
+      play();
+    });
+  };
+
+  return {
+    play() {
+      state.isPlaying = true;
+      play();
+    },
+    pause: () => {
+      state.pausedAt = state.now;
+      state.isPlaying = false;
+    },
+    forward: () => {
+      state.offset += frameLength;
+      frame({ ...args, now: state.now + state.offset });
+      onFrameCallbacks.forEach((cb) => cb(state.now + state.offset));
+    },
+    backward: () => {
+      state.offset =
+        Math.abs(state.offset - frameLength) < state.now
+          ? state.offset - frameLength
+          : -state.now;
+      frame({ ...args, now: state.now + state.offset });
+      onFrameCallbacks.forEach((cb) => cb(state.now + state.offset));
+    },
+    isPlaying: () => state.isPlaying,
+    getNow: () => state.now,
+    onFrameSubscribe: (cb) => {
+      onFrameCallbacks.push(cb);
+    },
+    onFrameUnsubscribe: (cb) => {
+      const index = onFrameCallbacks.indexOf(cb);
+      if (index > -1) {
+        onFrameCallbacks.splice(index, 1);
+      }
+    },
+  };
 }
 
 export type FrameArgs = {
