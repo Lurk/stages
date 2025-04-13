@@ -29,11 +29,7 @@ export function random({
 
   let componentState: Readonly<RandomArgs> = { ...args };
 
-  const {
-    value: min,
-    update: updateMin,
-    state: stateMin,
-  } = connect({
+  const min = connect({
     connectable: state.values,
     omit: args.name,
     container,
@@ -44,11 +40,7 @@ export function random({
       onChange(componentState);
     },
   });
-  const {
-    value: max,
-    update: updateMax,
-    state: stateMax,
-  } = connect({
+  const max = connect({
     connectable: state.values,
     omit: args.name,
     container,
@@ -60,11 +52,7 @@ export function random({
     },
   });
 
-  const {
-    value: rate,
-    update: updateRate,
-    state: stateRate,
-  } = connect({
+  const rate = connect({
     connectable: state.values,
     omit: args.name,
     container,
@@ -95,24 +83,6 @@ export function random({
     }
     return [lastValue[i]];
   });
-
-  // TODO: come up with a better way to do this.
-  // Because controls can be in random order, first, we need to create them all, and only then connect.
-  // Somehow, without this timeout update doesn't work (at least in Safari).
-  setTimeout(() => {
-    updateMin(args.min);
-    updateMax(args.max);
-    updateRate(args.rate);
-
-    componentState = {
-      name: args.name,
-      min: stateMin(),
-      max: stateMax(),
-      rate: stateRate(),
-    };
-
-    onChange(componentState);
-  }, 1);
 }
 
 export const randomSerde: ComponentSerde<RandomArgs> = () => {

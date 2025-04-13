@@ -31,11 +31,7 @@ export function map({
 
   let componentState: Readonly<MapArgs> = { ...args };
 
-  const {
-    value: sourceValue,
-    update: sourceUpdate,
-    state: stateSource,
-  } = connect({
+  const sourceValue = connect({
     connectable: state.values,
     omit: args.name,
     container,
@@ -48,11 +44,7 @@ export function map({
     },
   });
 
-  const {
-    value: fromMinValue,
-    update: fromMinUpdate,
-    state: stateFromMin,
-  } = connect({
+  const fromMinValue = connect({
     connectable: state.values,
     omit: args.name,
     container,
@@ -65,11 +57,7 @@ export function map({
     },
   });
 
-  const {
-    value: fromMaxValue,
-    update: fromMaxUpdate,
-    state: stateFromMax,
-  } = connect({
+  const fromMaxValue = connect({
     connectable: state.values,
     omit: args.name,
     container,
@@ -82,11 +70,7 @@ export function map({
     },
   });
 
-  const {
-    value: toMinValue,
-    update: toMinUpdate,
-    state: stateToMin,
-  } = connect({
+  const toMinValue = connect({
     connectable: state.values,
     omit: args.name,
     container,
@@ -99,11 +83,7 @@ export function map({
     },
   });
 
-  const {
-    value: toMaxValue,
-    update: toMaxUpdate,
-    state: stateToMax,
-  } = connect({
+  const toMaxValue = connect({
     connectable: state.values,
     omit: args.name,
     container,
@@ -128,27 +108,6 @@ export function map({
     container.showValue(val.toPrecision(6));
     return [val];
   });
-
-  // TODO: come up with a better way to do this.
-  // Because controls can be in random order, first, we need to create them all, and only then connect.
-  // Somehow, without this timeout update doesn't work (at least in Safari).
-  setTimeout(() => {
-    fromMinUpdate(args.fromMin);
-    fromMaxUpdate(args.fromMax);
-    toMinUpdate(args.toMin);
-    toMaxUpdate(args.toMax);
-    sourceUpdate(args.source);
-
-    componentState = {
-      name: componentState.name,
-      source: stateSource(),
-      fromMin: stateFromMin(),
-      fromMax: stateFromMax(),
-      toMin: stateToMin(),
-      toMax: stateToMax(),
-    };
-    onChange(componentState);
-  }, 1);
 }
 
 export const mapSerde: ComponentSerde<MapArgs> = () => {

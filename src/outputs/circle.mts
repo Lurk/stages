@@ -42,11 +42,7 @@ export function circle({
 
   let componentState = { ...args };
 
-  const {
-    value: x,
-    update: updateX,
-    state: stateX,
-  } = connect({
+  const x = connect({
     connectable: state.values,
     omit: "",
     container,
@@ -59,11 +55,7 @@ export function circle({
     },
   });
 
-  const {
-    value: y,
-    update: updateY,
-    state: stateY,
-  } = connect({
+  const y = connect({
     connectable: state.values,
     omit: "",
     container,
@@ -76,11 +68,7 @@ export function circle({
     },
   });
 
-  const {
-    value: radius,
-    update: updateRadius,
-    state: stateRadius,
-  } = connect({
+  const radius = connect({
     connectable: state.values,
     omit: "",
     container,
@@ -93,11 +81,7 @@ export function circle({
     },
   });
 
-  const {
-    value: color,
-    update: updateColor,
-    state: stateColor,
-  } = connect({
+  const color = connect({
     connectable: state.colors,
     omit: "",
     container,
@@ -116,11 +100,7 @@ export function circle({
     },
   });
 
-  const {
-    value: amount,
-    update: updateAmount,
-    state: stateAmount,
-  } = connect({
+  const amount = connect({
     connectable: state.values,
     omit: "",
     container,
@@ -133,11 +113,7 @@ export function circle({
     },
   });
 
-  const {
-    value: sr,
-    update: updateSr,
-    state: stateSr,
-  } = connect({
+  const sr = connect({
     connectable: state.values,
     omit: "",
     container,
@@ -160,33 +136,6 @@ export function circle({
       amount,
       sr,
     },
-  });
-
-  setTimeout(() => {
-    updateX(args.x);
-    updateY(args.y);
-    updateRadius(args.radius);
-    updateColor(args.color);
-    updateAmount(args.amount);
-    updateSr(args.sr);
-
-    const color = stateColor();
-    assert(
-      typeof color === "string",
-      "color can only be provided by a color component",
-    );
-
-    componentState = {
-      name: componentState.name,
-      x: stateX(),
-      y: stateY(),
-      radius: stateRadius(),
-      color,
-      amount: stateAmount(),
-      sr: stateSr(),
-    };
-
-    onChange({ ...componentState });
   });
 }
 

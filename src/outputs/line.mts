@@ -37,11 +37,7 @@ export function line({ state, args, onRemove, onChange }: Args) {
 
   let componentState: Readonly<AddLineArgs> = { ...args };
 
-  const {
-    value: x,
-    update: updateX,
-    state: stateX,
-  } = connect({
+  const x = connect({
     connectable: state.values,
     omit: "",
     container,
@@ -53,11 +49,7 @@ export function line({ state, args, onRemove, onChange }: Args) {
       onChange(componentState);
     },
   });
-  const {
-    value: y,
-    update: updateY,
-    state: stateY,
-  } = connect({
+  const y = connect({
     connectable: state.values,
     omit: "",
     container,
@@ -70,11 +62,7 @@ export function line({ state, args, onRemove, onChange }: Args) {
     },
   });
 
-  const {
-    value: color,
-    update: updateColor,
-    state: stateColor,
-  } = connect({
+  const color = connect({
     connectable: state.colors,
     omit: "",
     container,
@@ -89,11 +77,7 @@ export function line({ state, args, onRemove, onChange }: Args) {
     },
   });
 
-  const {
-    value: sr,
-    update: updateSr,
-    state: stateSr,
-  } = connect({
+  const sr = connect({
     connectable: state.values,
     omit: "",
     container,
@@ -105,11 +89,7 @@ export function line({ state, args, onRemove, onChange }: Args) {
       onChange(componentState);
     },
   });
-  const {
-    value: vertices,
-    update: updateVertices,
-    state: stateVertices,
-  } = connect({
+  const vertices = connect({
     connectable: state.values,
     omit: "",
     container,
@@ -132,31 +112,6 @@ export function line({ state, args, onRemove, onChange }: Args) {
       color,
     },
   });
-
-  // TODO: come up with a better way to do this.
-  // Because controls can be in random order, first, we need to create them all, and only then connect.
-  // Somehow, without this timeout update doesn't work (at least in Safari).
-  setTimeout(() => {
-    updateX(args.x);
-    updateY(args.y);
-    updateSr(args.sr);
-    updateVertices(args.vertices);
-    updateColor(args.color);
-
-    const color = stateColor();
-    assert(typeof color === "string", "color can be only connected");
-
-    componentState = {
-      name: componentState.name,
-      x: stateX(),
-      y: stateY(),
-      sr: stateSr(),
-      vertices: stateVertices(),
-      color,
-    };
-
-    onChange(componentState);
-  }, 1);
 }
 
 export const lineSerde: ComponentSerde<AddLineArgs> = () => {

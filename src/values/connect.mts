@@ -26,13 +26,7 @@ type Args = {
   onChange: (key: string | number) => void;
 };
 
-type Connect = {
-  value: Value;
-  update: (val?: string | number) => void;
-  state: () => string | number;
-};
-
-export function connect(args: Args): Connect {
+export function connect(args: Args): Value {
   const connectContainer = document.createElement("div");
   connectContainer.classList.add("input");
   connectContainer.classList.add("withToggle");
@@ -97,23 +91,29 @@ export function connect(args: Args): Connect {
   args.container.el.appendChild(connectContainer);
   args.container.onRemove(() => args.connectable.unsubscribe(onChangeCb));
 
-  return {
-    value: (now, i) => {
-      return isStatic.isActive()
-        ? [number.valueAsNumber]
-        : (args.connectable.get(s.el.value)?.(now, i) ?? [0]);
-    },
-    update: (val) => {
-      if (typeof val === "string") {
-        s.el.value = val;
-      } else if (typeof val === "number" || val === undefined) {
-        number.value = val?.toString() ?? "0";
-      } else {
-        assert(false, `val is not string or number`);
-      }
-    },
-    state: () => {
-      return isStatic.isActive() ? number.valueAsNumber : s.el.value;
-    },
+  // TODO: come up with a better way to do this.
+  // Because controls can be in random order, first, we need to create them all, and only then connect.
+  // Somehow, without this timeout update doesn't work (at least in Safari).
+  setTimeout(() => {
+    if (typeof args.value === "string") {
+      s.el.value = args.value;
+    } else if (typeof args.value === "number") {
+      number.value = args.value.toString() ?? "0";
+    } else if (args.value === undefined) {
+    } else {
+      assert(false, `val is not string or number`);
+    }
+
+    if (typeof args.value === "number") {
+      args.onChange(number.valueAsNumber);
+    } else {
+      args.onChange(s.el.value);
+    }
+  }, 1);
+
+  return (now, i) => {
+    return isStatic.isActive()
+      ? [number.valueAsNumber]
+      : (args.connectable.get(s.el.value)?.(now, i) ?? [0]);
   };
 }

@@ -35,11 +35,7 @@ export function color({
   preview.style.backgroundColor = `hsl(${args.hue}, ${args.saturation}%, ${args.lightness}%, ${args.alpha})`;
   container.el.appendChild(preview);
 
-  const {
-    value: hue,
-    update: updateHue,
-    state: stateHue,
-  } = connect({
+  const hue = connect({
     connectable: state.values,
     omit: args.name,
     container,
@@ -52,11 +48,7 @@ export function color({
     },
   });
 
-  const {
-    value: saturation,
-    update: updateSaturation,
-    state: stateSaturation,
-  } = connect({
+  const saturation = connect({
     connectable: state.values,
     omit: args.name,
     container,
@@ -69,11 +61,7 @@ export function color({
     },
   });
 
-  const {
-    value: lightness,
-    update: updateLightness,
-    state: stateLightness,
-  } = connect({
+  const lightness = connect({
     connectable: state.values,
     omit: args.name,
     container,
@@ -86,11 +74,7 @@ export function color({
     },
   });
 
-  const {
-    value: alpha,
-    update: updateAlpha,
-    state: stateAlpha,
-  } = connect({
+  const alpha = connect({
     connectable: state.values,
     omit: args.name,
     container,
@@ -112,25 +96,6 @@ export function color({
     preview.style.backgroundColor = `hsla(${hueValue}, ${saturationValue}%, ${lightnessValue}%, ${alphaValue})`;
     return [hueValue, saturationValue, lightnessValue, alphaValue];
   });
-
-  // TODO: come up with a better way to do this.
-  // Because controls can be in random order, first, we need to create them all, and only then connect.
-  // Somehow, without this timeout update doesn't work (at least in Safari).
-  setTimeout(() => {
-    updateHue(args.hue);
-    updateSaturation(args.saturation);
-    updateLightness(args.lightness);
-    updateAlpha(args.alpha);
-
-    componentState = {
-      name: componentState.name,
-      hue: stateHue(),
-      saturation: stateSaturation(),
-      lightness: stateLightness(),
-      alpha: stateAlpha(),
-    };
-    onChange(componentState);
-  }, 1);
 }
 
 export const colorSerde: ComponentSerde<ColorArgs> = () => {

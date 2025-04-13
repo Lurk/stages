@@ -91,11 +91,7 @@ export function math({
     onChange(componentState);
   });
 
-  const {
-    value: lhs1,
-    update: lhs1Update,
-    state: stateLhs1,
-  } = connect({
+  const lhs1 = connect({
     connectable: state.values,
     omit: `${args.name}_a`,
     container,
@@ -108,11 +104,7 @@ export function math({
     },
   });
 
-  const {
-    value: rhs1,
-    update: rhs1Update,
-    state: stateRhs1,
-  } = connect({
+  const rhs1 = connect({
     connectable: state.values,
     omit: `${args.name}_a`,
     container,
@@ -142,11 +134,7 @@ export function math({
     onChange(componentState);
   });
 
-  const {
-    value: lhs2,
-    update: lhs2Update,
-    state: stateLhs2,
-  } = connect({
+  const lhs2 = connect({
     connectable: state.values,
     omit: `${args.name}_b`,
     container,
@@ -159,11 +147,7 @@ export function math({
     },
   });
 
-  const {
-    value: rhs2,
-    update: rhs2Update,
-    state: stateRhs2,
-  } = connect({
+  const rhs2 = connect({
     connectable: state.values,
     omit: `${args.name}_b`,
     container,
@@ -189,28 +173,6 @@ export function math({
     limitedVelueB(val.toPrecision(6));
     return [val];
   });
-
-  // TODO: come up with a better way to do this.
-  // Because controls can be in random order, first, we need to create them all, and only then connect.
-  // Somehow, without this timeout update doesn't work (at least in Safari).
-  setTimeout(() => {
-    lhs1Update(args.lhs1);
-    rhs1Update(args.rhs1);
-    lhs2Update(args.lhs2);
-    rhs2Update(args.rhs2);
-
-    componentState = {
-      name: componentState.name,
-      mode_a: mode_a.value || options[0],
-      lhs1: stateLhs1(),
-      rhs1: stateRhs1(),
-      mode_b: mode_b.value || options[0],
-      lhs2: stateLhs2(),
-      rhs2: stateRhs2(),
-    };
-
-    onChange(componentState);
-  }, 1);
 }
 
 export const mathSerde: ComponentSerde<MathArgs> = () => {

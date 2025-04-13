@@ -26,7 +26,7 @@ export function clock({
     rate: 0,
   };
 
-  const { value: rate, update: updateRate } = connect({
+  const rate = connect({
     connectable: state.values,
     omit: "clock",
     container,

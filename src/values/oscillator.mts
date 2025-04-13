@@ -62,11 +62,7 @@ export function oscillatorWithConnectInput({
 
   let componentState: Readonly<OscillatorArgs> = { ...args };
 
-  const {
-    value: min,
-    update: updateMin,
-    state: stateMin,
-  } = connect({
+  const min = connect({
     connectable: state.values,
     omit: args.name,
     container,
@@ -78,11 +74,7 @@ export function oscillatorWithConnectInput({
       onChange(componentState);
     },
   });
-  const {
-    value: max,
-    update: updateMax,
-    state: stateMax,
-  } = connect({
+  const max = connect({
     connectable: state.values,
     omit: args.name,
     container,
@@ -94,11 +86,7 @@ export function oscillatorWithConnectInput({
       onChange(componentState);
     },
   });
-  const {
-    value: raise,
-    update: updateRaise,
-    state: stateRaise,
-  } = connect({
+  const raise = connect({
     connectable: state.values,
     omit: args.name,
     container,
@@ -110,11 +98,7 @@ export function oscillatorWithConnectInput({
       onChange(componentState);
     },
   });
-  const {
-    value: fall,
-    update: updateFall,
-    state: stateFall,
-  } = connect({
+  const fall = connect({
     connectable: state.values,
     omit: args.name,
     container,
@@ -139,25 +123,6 @@ export function oscillatorWithConnectInput({
     container.showValue(val.toPrecision(6));
     return [val];
   });
-
-  // TODO: come up with a better way to do this.
-  // Because controls can be in random order, first, we need to create them all, and only then connect.
-  // Somehow, without this timeout update doesn't work (at least in Safari).
-  setTimeout(() => {
-    updateMin(args.min);
-    updateMax(args.max);
-    updateRaise(args.raise);
-    updateFall(args.fall);
-
-    Object.assign(componentState, {
-      min: stateMin(),
-      max: stateMax(),
-      raise: stateRaise(),
-      fall: stateFall(),
-    });
-
-    onChange(componentState);
-  }, 1);
 }
 
 export const oscillatorSerde: ComponentSerde<OscillatorArgs> = () => {

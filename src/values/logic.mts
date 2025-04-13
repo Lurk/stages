@@ -88,11 +88,7 @@ export function logic({
     onChange(componentState);
   });
 
-  const {
-    value: lhs,
-    update: lhsUpdate,
-    state: stateLhs,
-  } = connect({
+  const lhs = connect({
     connectable: state.values,
     omit: `${args.name}_a`,
     container,
@@ -105,11 +101,7 @@ export function logic({
     },
   });
 
-  const {
-    value: rhs,
-    update: rhsUpdate,
-    state: stateRhs,
-  } = connect({
+  const rhs = connect({
     connectable: state.values,
     omit: `${args.name}`,
     container,
@@ -122,11 +114,7 @@ export function logic({
     },
   });
 
-  const {
-    value: isTrue,
-    update: isTrueUpdate,
-    state: stateIsTrue,
-  } = connect({
+  const isTrue = connect({
     connectable: state.values,
     omit: `${args.name}`,
     container,
@@ -139,11 +127,7 @@ export function logic({
     },
   });
 
-  const {
-    value: isFalse,
-    update: isFalseUpdate,
-    state: stateIsFalse,
-  } = connect({
+  const isFalse = connect({
     connectable: state.values,
     omit: `${args.name}`,
     container,
@@ -161,27 +145,6 @@ export function logic({
     container.showValue(val.toPrecision(6));
     return [val];
   });
-
-  // TODO: come up with a better way to do this.
-  // Because controls can be in random order, first, we need to create them all, and only then connect.
-  // Somehow, without this timeout update doesn't work (at least in Safari).
-  setTimeout(() => {
-    lhsUpdate(args.lhs);
-    rhsUpdate(args.rhs);
-    isTrueUpdate(args.isTrue);
-    isFalseUpdate(args.isFalse);
-
-    componentState = {
-      name: componentState.name,
-      mode: mode.value ?? options[0],
-      lhs: stateLhs(),
-      rhs: stateRhs(),
-      isTrue: stateIsTrue(),
-      isFalse: stateIsFalse(),
-    };
-
-    onChange(componentState);
-  }, 1);
 }
 
 export const logicSerde: ComponentSerde<LogicArgs> = () => {

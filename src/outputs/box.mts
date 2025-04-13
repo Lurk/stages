@@ -41,11 +41,7 @@ export function box({ state, args, onRemove, onChange }: Args) {
 
   let componentState = { ...args };
 
-  const {
-    value: x,
-    update: updateX,
-    state: stateX,
-  } = connect({
+  const x = connect({
     connectable: state.values,
     omit: "",
     container,
@@ -58,11 +54,7 @@ export function box({ state, args, onRemove, onChange }: Args) {
     },
   });
 
-  const {
-    value: y,
-    update: updateY,
-    state: stateY,
-  } = connect({
+  const y = connect({
     connectable: state.values,
     omit: "",
     container,
@@ -75,11 +67,7 @@ export function box({ state, args, onRemove, onChange }: Args) {
     },
   });
 
-  const {
-    value: width,
-    update: updateWidth,
-    state: stateWidth,
-  } = connect({
+  const width = connect({
     connectable: state.values,
     omit: "",
     container,
@@ -92,11 +80,7 @@ export function box({ state, args, onRemove, onChange }: Args) {
     },
   });
 
-  const {
-    value: height,
-    update: updateHeight,
-    state: stateHeight,
-  } = connect({
+  const height = connect({
     connectable: state.values,
     omit: "",
     container,
@@ -109,11 +93,7 @@ export function box({ state, args, onRemove, onChange }: Args) {
     },
   });
 
-  const {
-    value: color,
-    update: updateColor,
-    state: stateColor,
-  } = connect({
+  const color = connect({
     connectable: state.colors,
     omit: "",
     container,
@@ -131,11 +111,7 @@ export function box({ state, args, onRemove, onChange }: Args) {
     },
   });
 
-  const {
-    value: amount,
-    update: updateAmount,
-    state: stateAmount,
-  } = connect({
+  const amount = connect({
     connectable: state.values,
     omit: "",
     container,
@@ -148,11 +124,7 @@ export function box({ state, args, onRemove, onChange }: Args) {
     },
   });
 
-  const {
-    value: sr,
-    update: updateSr,
-    state: stateSr,
-  } = connect({
+  const sr = connect({
     connectable: state.values,
     omit: "",
     container,
@@ -176,35 +148,6 @@ export function box({ state, args, onRemove, onChange }: Args) {
       sr,
       amount,
     },
-  });
-
-  setTimeout(() => {
-    updateX(args.x);
-    updateY(args.y);
-    updateWidth(args.width);
-    updateHeight(args.height);
-    updateColor(args.color);
-    updateAmount(args.amount);
-    updateSr(args.sr);
-
-    const color = stateColor();
-    assert(
-      typeof color === "string",
-      "color can only be provided by a color component",
-    );
-
-    componentState = {
-      name: componentState.name,
-      x: stateX(),
-      y: stateY(),
-      width: stateWidth(),
-      height: stateHeight(),
-      color,
-      amount: stateAmount(),
-      sr: stateSr(),
-    };
-
-    onChange({ ...componentState });
   });
 }
 
