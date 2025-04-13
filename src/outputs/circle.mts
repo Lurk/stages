@@ -113,6 +113,7 @@ export function circle({
     id: `${args.name}_color_input`,
     value: args.color,
     label: "color",
+    hasNumberInput: false,
     onChange(color) {
       assert(
         typeof color === "string",

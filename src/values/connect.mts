@@ -21,6 +21,7 @@ type Args = {
   omit: string;
   container: HTMLDivElement;
   label: string;
+  hasNumberInput?: boolean;
   onChange: (key: string | number) => void;
 };
 
@@ -39,6 +40,7 @@ export function connect(args: Args): Connect {
   const isStatic = toggle({
     container: connectContainer,
     isActive: typeof args.value === "number",
+    disabled: args.hasNumberInput === false,
     onChange: (isActive) => {
       if (isActive) {
         number.classList.remove("hidden");

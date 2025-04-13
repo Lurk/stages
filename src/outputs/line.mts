@@ -88,6 +88,7 @@ export function line({ state, args, onRemove, onChange }: Args) {
     id: `${args.name}_color_input`,
     value: args.color,
     label: "color",
+    hasNumberInput: false,
     onChange(color) {
       assert(typeof color === "string", "color can be only connected");
       componentState = { ...componentState, color };

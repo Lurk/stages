@@ -1,6 +1,7 @@
 type ToggleArgs = {
   container: HTMLElement;
   isActive?: boolean;
+  disabled?: boolean;
   onChange: (isActive: boolean) => void;
 };
 
@@ -19,6 +20,7 @@ export function toggle(args: ToggleArgs): Toggle {
     el.classList.toggle("active");
     args.onChange(isActive);
   });
+  el.disabled = args.disabled ?? false;
   args.container.appendChild(el);
 
   return {
