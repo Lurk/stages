@@ -25,29 +25,26 @@ export function animation(args: AnimationArgs): Animation {
   const state = {
     isPlaying: true,
     now: 0,
-    pausedAt: 0,
-    offset: 0,
+    frame: 0,
   };
 
   args.canvas.onResizeSubscribe(() => {
-    frame({ ...args, now: state.now + state.offset });
+    frame({ ...args, now: state.now });
   });
 
   const play = () => {
-    requestAnimationFrame((now) => {
-      if (!state.isPlaying) {
-        return;
+    requestAnimationFrame(() => {
+      if (state.isPlaying) {
+        state.frame += 1;
+        state.now = state.frame * frameLength;
       }
-      if (state.pausedAt) {
-        state.offset = state.now + state.offset - now;
-        state.pausedAt = 0;
-      }
-      state.now = now;
-      frame({ ...args, now: now + state.offset });
-      onFrameCallbacks.forEach((cb) => cb(now + state.offset));
+      frame({ ...args, now: state.now });
+      onFrameCallbacks.forEach((cb) => cb(state.now));
       play();
     });
   };
+
+  play();
 
   return {
     play() {
@@ -55,21 +52,15 @@ export function animation(args: AnimationArgs): Animation {
       play();
     },
     pause: () => {
-      state.pausedAt = state.now;
       state.isPlaying = false;
     },
     forward: () => {
-      state.offset += frameLength;
-      frame({ ...args, now: state.now + state.offset });
-      onFrameCallbacks.forEach((cb) => cb(state.now + state.offset));
+      state.frame += 1;
+      state.now = state.frame * frameLength;
     },
     backward: () => {
-      state.offset =
-        Math.abs(state.offset - frameLength) < state.now
-          ? state.offset - frameLength
-          : -state.now;
-      frame({ ...args, now: state.now + state.offset });
-      onFrameCallbacks.forEach((cb) => cb(state.now + state.offset));
+      state.frame = state.frame > 0 ? state.frame - 1 : 0;
+      state.now = state.frame * frameLength;
     },
     isPlaying: () => state.isPlaying,
     getNow: () => state.now,

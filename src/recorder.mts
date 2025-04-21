@@ -12,27 +12,25 @@ export type Recorder = {
 
 export function recorder(ctx: CanvasRenderingContext2D): Recorder {
   const cbs: RecorderCallback[] = [];
-  const recordedChunks: Blob[] = [];
   const stream = ctx.canvas.captureStream(60);
+
+  let recordingInterval: NodeJS.Timeout | null = null;
+
   const mediaRecorder = new MediaRecorder(stream, {
     mimeType: 'video/mp4; codecs="avc1.4d002a"',
   });
 
   mediaRecorder.ondataavailable = (event) => {
-    recordedChunks.push(event.data);
-  };
-
-  mediaRecorder.onstop = () => {
     const anchor = document.createElement("a");
     document.body.appendChild(anchor);
-    anchor.href = URL.createObjectURL(
-      new Blob(recordedChunks, { type: "video/mp4" }),
-    );
-    anchor.download = `stages ${toISOTime(new Date())}.mp4`;
+    anchor.href = URL.createObjectURL(new Blob([event.data]));
+    anchor.download = `stages ${toISOTime(new Date())}.ts`;
     anchor.click();
     document.body.removeChild(anchor);
     URL.revokeObjectURL(anchor.href);
-    recordedChunks.splice(0, recordedChunks.length);
+  };
+
+  mediaRecorder.onstop = () => {
     cbs.forEach((cb) => cb("inactive"));
   };
 
@@ -43,7 +41,16 @@ export function recorder(ctx: CanvasRenderingContext2D): Recorder {
     start: () => {
       mediaRecorder.start();
       cbs.forEach((cb) => cb("recording"));
+      recordingInterval = setInterval(() => {
+        mediaRecorder.requestData();
+      }, 10000);
     },
-    stop: () => mediaRecorder.stop(),
+    stop: () => {
+      if (recordingInterval) {
+        clearInterval(recordingInterval);
+        recordingInterval = null;
+      }
+      mediaRecorder.stop();
+    },
   };
 }

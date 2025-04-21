@@ -34,8 +34,8 @@ export function canvas({ canvas, container }: CanvasArgs) {
     label,
   } = renderSelectInputTo({
     container,
-    options: ["4096", "2048", "1024", "512", "256", "128"],
-    selected: "2048",
+    options: ["3840", "1920", "1280", "720"],
+    selected: "1920",
     id: "long-side",
     label: "width",
     disabled: true,

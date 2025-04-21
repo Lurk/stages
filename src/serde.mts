@@ -11,6 +11,7 @@ import { colorSerde } from "./values/color.mjs";
 import { boxSerde } from "./outputs/box.mjs";
 import { circleSerde } from "./outputs/circle.mjs";
 import { clockSerde } from "./values/clock.mjs";
+import { seq8Serde } from "./values/seq8.mjs";
 
 const VERSION = 2;
 
@@ -38,6 +39,8 @@ function typeToString(type: CreatorConfig["type"]): string {
       return "09";
     case "clock":
       return "0A";
+    case "seq8":
+      return "0B";
     default:
       throw new Error(`Unknown type: ${type}`);
   }
@@ -67,6 +70,8 @@ function stringToType(type: string): CreatorConfig["type"] {
       return "circle";
     case "0A":
       return "clock";
+    case "0B":
+      return "seq8";
     default:
       throw new Error(`Unknown type: ${type}`);
   }
@@ -92,44 +97,26 @@ export type Serde = {
 };
 
 export function serde(): Serde {
-  const s = sliderSerde();
-  const o = oscillatorSerde();
-  const l = lineSerde();
-  const m = mathSerde();
-  const r = randomSerde();
-  const lgc = logicSerde();
-  const map = mapSerde();
-  const c = colorSerde();
-  const b = boxSerde();
-  const circle = circleSerde();
-  const clock = clockSerde();
+  const sd = {
+    slider: sliderSerde(),
+    oscillator: oscillatorSerde(),
+    line: lineSerde(),
+    math: mathSerde(),
+    random: randomSerde(),
+    logic: logicSerde(),
+    map: mapSerde(),
+    color: colorSerde(),
+    box: boxSerde(),
+    circle: circleSerde(),
+    clock: clockSerde(),
+    seq8: seq8Serde(),
+  } as const;
 
   const controlToString = (control: CreatorConfig): string => {
     const type = typeToString(control.type);
-    switch (control.type) {
-      case "slider":
-        return `${type}${s.toString(control.args)}`;
-      case "oscillator":
-        return `${type}${o.toString(control.args)}`;
-      case "line":
-        return `${type}${l.toString(control.args)}`;
-      case "math":
-        return `${type}${m.toString(control.args)}`;
-      case "random":
-        return `${type}${r.toString(control.args)}`;
-      case "logic":
-        return `${type}${lgc.toString(control.args)}`;
-      case "map":
-        return `${type}${map.toString(control.args)}`;
-      case "color":
-        return `${type}${c.toString(control.args)}`;
-      case "box":
-        return `${type}${b.toString(control.args)}`;
-      case "circle":
-        return `${type}${circle.toString(control.args)}`;
-      case "clock":
-        return `${type}${clock.toString(control.args)}`;
-    }
+    const serde = sd[control.type];
+    // @ts-expect-error
+    return `${type}${serde.toString(control.args)}`;
   };
 
   return {
@@ -161,74 +148,16 @@ export function serde(): Serde {
       while (pos < str.length) {
         const type = stringToType(str.slice(pos, pos + 2));
         pos += 2;
-        switch (type) {
-          case "slider": {
-            const { val, end } = s.fromString(version, str, pos);
-            controls.set(val.name, { type, args: val });
-            pos = end;
-            break;
-          }
-          case "oscillator": {
-            const { val, end } = o.fromString(version, str, pos);
-            controls.set(val.name, { type, args: val });
-            pos = end;
-            break;
-          }
-          case "line": {
-            const { val, end } = l.fromString(version, str, pos);
-            controls.set(val.name, { type, args: val });
-            pos = end;
-            break;
-          }
-          case "math": {
-            const { val, end } = m.fromString(version, str, pos);
-            controls.set(val.name, { type, args: val });
-            pos = end;
-            break;
-          }
-          case "random": {
-            const { val, end } = r.fromString(version, str, pos);
-            controls.set(val.name, { type, args: val });
-            pos = end;
-            break;
-          }
-          case "logic": {
-            const { val, end } = lgc.fromString(version, str, pos);
-            controls.set(val.name, { type, args: val });
-            pos = end;
-            break;
-          }
-          case "map": {
-            const { val, end } = map.fromString(version, str, pos);
-            controls.set(val.name, { type, args: val });
-            pos = end;
-            break;
-          }
-          case "color": {
-            const { val, end } = c.fromString(version, str, pos);
-            controls.set(val.name, { type, args: val });
-            pos = end;
-            break;
-          }
-          case "box": {
-            const { val, end } = b.fromString(version, str, pos);
-            controls.set(val.name, { type, args: val });
-            pos = end;
-            break;
-          }
-          case "circle": {
-            const { val, end } = circle.fromString(version, str, pos);
-            controls.set(val.name, { type, args: val });
-            pos = end;
-            break;
-          }
-          case "clock": {
-            const { val, end } = clock.fromString(version, str, pos);
-            controls.set(val.name, { type, args: val });
-            pos = end;
-            break;
-          }
-        }
+        const { val, end } = sd[type].fromString(version, str, pos);
+        controls.set(
+          val.name,
+          // @ts-expect-error
+          {
+            type,
+            args: val,
+          },
+        );
+        pos = end;
       }
       return {
         controls,

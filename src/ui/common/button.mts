@@ -30,7 +30,7 @@ export function button({
 
     const wrap = () => {
       onHold();
-      interval = Math.max(100, interval - 10);
+      interval = Math.max(25, interval - 10);
       timeoutIdId = setTimeout(wrap, interval);
     };
 

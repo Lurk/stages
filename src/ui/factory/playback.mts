@@ -31,24 +31,24 @@ export function playback({ canvas, container, animation }: PlaybackArgs) {
     },
   });
 
+  const play = () => {
+    if (animation.isPlaying()) {
+      playButton.setText("▶");
+      animation.pause();
+      backButton.toggleDisabled(false);
+      forwardButton.toggleDisabled(false);
+    } else {
+      backButton.toggleDisabled(true);
+      forwardButton.toggleDisabled(true);
+      playButton.setText("⏸");
+      animation.play();
+    }
+  };
+
   const playButton = button({
     text: animation.isPlaying() ? "⏸" : "▶",
     container,
-    onClick: () => {
-      if (animation.isPlaying()) {
-        playButton.setText("▶");
-        animation.pause();
-        recButton.toggleDisabled(true);
-        backButton.toggleDisabled(false);
-        forwardButton.toggleDisabled(false);
-      } else {
-        backButton.toggleDisabled(true);
-        recButton.toggleDisabled(false);
-        forwardButton.toggleDisabled(true);
-        playButton.setText("⏸");
-        animation.play();
-      }
-    },
+    onClick: play,
   });
 
   const forwardButton = button({
@@ -69,6 +69,9 @@ export function playback({ canvas, container, animation }: PlaybackArgs) {
         backButton.toggleDisabled(true);
         forwardButton.toggleDisabled(true);
         screenshotButton.toggleDisabled(true);
+        if (!animation.isPlaying()) {
+          play();
+        }
         rec.start();
       } else {
         backButton.toggleDisabled(false);

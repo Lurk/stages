@@ -19,6 +19,7 @@ import { color, ColorArgs } from "./values/color.mjs";
 import { BoxArgs, box } from "./outputs/box.mjs";
 import { circle, CircleArgs } from "./outputs/circle.mjs";
 import { clock, ClockArgs } from "./values/clock.mjs";
+import { seq8, Seq8Args } from "./values/seq8.mjs";
 
 export type CreatorConfig =
   | { type: "slider"; args: Readonly<SliderArgs> }
@@ -31,7 +32,8 @@ export type CreatorConfig =
   | { type: "color"; args: Readonly<ColorArgs> }
   | { type: "box"; args: Readonly<BoxArgs> }
   | { type: "circle"; args: Readonly<CircleArgs> }
-  | { type: "clock"; args: Readonly<ClockArgs> };
+  | { type: "clock"; args: Readonly<ClockArgs> }
+  | { type: "seq8"; args: Readonly<Seq8Args> };
 
 export const CONTROL_TYPES: CreatorConfig["type"][] = [
   "box",
@@ -45,6 +47,7 @@ export const CONTROL_TYPES: CreatorConfig["type"][] = [
   "oscillator",
   "random",
   "slider",
+  "seq8",
 ] as const;
 
 export function controlTypeGuard(t: unknown): t is CreatorConfig["type"] {
@@ -165,6 +168,13 @@ function init(
         });
       case "clock":
         return clock({
+          state,
+          onRemove,
+          args: config.args,
+          onChange: (args) => url.updateControl({ type: config.type, args }),
+        });
+      case "seq8":
+        return seq8({
           state,
           onRemove,
           args: config.args,

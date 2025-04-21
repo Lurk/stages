@@ -7,6 +7,7 @@ import { connect } from "./connect.mjs";
 
 export type ClockArgs = {
   name: string;
+  source?: string | number;
   rate?: string | number;
 };
 
@@ -17,47 +18,61 @@ export function clock({
   onRemove,
 }: ComponentArgs<ClockArgs>) {
   const container = renderContainer({
-    id: "clock",
+    id: args.name,
     type: "clock",
   });
 
   container.onRemove(() => {
-    state.values.unregister("clock");
+    state.values.unregister(args.name);
     onRemove();
   });
 
-  let clockState: Readonly<ClockArgs> = { ...args };
+  let componentState: Readonly<ClockArgs> = { ...args };
 
   const rate = connect({
     connectable: state.values,
     omit: "clock",
     container,
-    id: "rate",
+    id: `${args.name}_rate`,
     label: "rate",
     value: args.rate,
     onChange(rate) {
-      clockState = { ...clockState, rate };
-      onChange(clockState);
+      componentState = { ...componentState, rate };
+      onChange(componentState);
+    },
+  });
+
+  const source = connect({
+    connectable: state.values,
+    omit: args.name,
+    container,
+    id: `${args.name}_source`,
+    label: "source",
+    value: args.source ?? "now",
+    onChange(source) {
+      componentState = { ...componentState, source };
+      onChange(componentState);
     },
   });
 
   const table = document.createElement("div");
   table.classList.add("clockTable");
 
-  for (let i = 1; i <= 16; i++) {
+  for (let j = 1; j <= 16; j++) {
     const row = document.createElement("div");
-    spanWithText(row, `${i}:`);
+    spanWithText(row, `${j}:`);
     const val = spanWithText(row, "0");
     table.appendChild(row);
 
-    state.values.register(`${args.name}_${i}`, (now, i) => {
+    state.values.register(`${args.name}_${j}`, (now, i) => {
       const rateValue = getOneNumber(rate(now, i));
+      const sourceValue = getOneNumber(source(now, i));
       let value = 0;
       if (rateValue !== 0) {
-        value = Math.floor(now / rateValue);
+        value = Math.floor(sourceValue / (rateValue * j));
       }
 
-      val(value.toString());
+      val((1 + value).toString());
       return [value];
     });
   }
@@ -65,7 +80,7 @@ export function clock({
 }
 
 export const clockSerde: ComponentSerde<ClockArgs> = () => {
-  const keys = ["name", "rate"] as const;
+  const keys = ["name", "rate", "source"] as const;
 
   return {
     toString: (args) => keys.map((key) => serialize(args[key])).join(""),
@@ -73,6 +88,7 @@ export const clockSerde: ComponentSerde<ClockArgs> = () => {
       let local_start = start;
       const res: ClockArgs = {
         name: "",
+        source: "now",
         rate: 0,
       };
 
