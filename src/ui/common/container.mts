@@ -53,7 +53,7 @@ export function renderContainer({
 
   return {
     el: container,
-    showValue: () => {}, //limiter(100, value),
+    showValue: limiter(100, value),
     onRemove: (cb) => {
       onRemoveCallbacks.push(cb);
     },
