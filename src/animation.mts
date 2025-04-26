@@ -7,63 +7,101 @@ export type AnimationArgs = {
   outputs: Map<string, Output>;
 };
 
+export type AnimationState = "paused" | "playing" | "recording";
+type OnStateChangeCb = (state: AnimationState) => void;
 type OnFrameCb = (now: number) => void;
 export type Animation = {
   onFrameSubscribe: (cb: OnFrameCb) => void;
   onFrameUnsubscribe: (cb: OnFrameCb) => void;
-  isPlaying: () => boolean;
+  onStateChangeSubscribe: (cb: OnStateChangeCb) => void;
+  onStateChangeUnsubscribe: (cb: OnStateChangeCb) => void;
+  getState: () => "paused" | "playing" | "recording";
   getNow: () => number;
+  getFrame: () => number;
   play: () => void;
   pause: () => void;
   forward: () => void;
   backward: () => void;
+  screenshot: () => void;
+  record: () => void;
+};
+
+type State = {
+  state: AnimationState;
+  now: number;
+  frame: number;
 };
 
 export function animation(args: AnimationArgs): Animation {
   const onFrameCallbacks: OnFrameCb[] = [];
+  const onStateChangeCallbacks: OnStateChangeCb[] = [];
   const frameLength = 1000 / 60;
-  const state = {
-    isPlaying: true,
-    now: 0,
-    frame: 0,
+  const pos = 35387;
+  const state: State = {
+    state: "paused",
+    now: pos * frameLength,
+    frame: pos,
+  };
+
+  const changeState = (newState: AnimationState) => {
+    state.state = newState;
+    onStateChangeCallbacks.forEach((cb) => cb(state.state));
   };
 
   args.canvas.onResizeSubscribe(() => {
     frame({ ...args, now: state.now });
+    onFrameCallbacks.forEach((cb) => cb(state.now));
   });
+
+  const forward = () => {
+    state.frame += 1;
+    state.now = state.frame * frameLength;
+    frame({ ...args, now: state.now });
+    onFrameCallbacks.forEach((cb) => cb(state.now));
+  };
+
+  const download = (blob: Blob | null) => {
+    if (blob) {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `stages_${state.frame}.png`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      return true;
+    }
+    return false;
+  };
 
   const play = () => {
     requestAnimationFrame(() => {
-      if (state.isPlaying) {
+      if (state.state === "playing") {
         state.frame += 1;
         state.now = state.frame * frameLength;
+        frame({ ...args, now: state.now });
+        onFrameCallbacks.forEach((cb) => cb(state.now));
+        play();
       }
-      frame({ ...args, now: state.now });
-      onFrameCallbacks.forEach((cb) => cb(state.now));
-      play();
     });
   };
 
-  play();
-
   return {
     play() {
-      state.isPlaying = true;
+      changeState("playing");
       play();
     },
     pause: () => {
-      state.isPlaying = false;
+      changeState("paused");
     },
-    forward: () => {
-      state.frame += 1;
-      state.now = state.frame * frameLength;
-    },
+    forward,
     backward: () => {
       state.frame = state.frame > 0 ? state.frame - 1 : 0;
       state.now = state.frame * frameLength;
+      frame({ ...args, now: state.now });
+      onFrameCallbacks.forEach((cb) => cb(state.now));
     },
-    isPlaying: () => state.isPlaying,
+    getState: () => state.state,
     getNow: () => state.now,
+    getFrame: () => state.frame,
     onFrameSubscribe: (cb) => {
       onFrameCallbacks.push(cb);
     },
@@ -72,6 +110,41 @@ export function animation(args: AnimationArgs): Animation {
       if (index > -1) {
         onFrameCallbacks.splice(index, 1);
       }
+    },
+    onStateChangeSubscribe: (cb) => {
+      onStateChangeCallbacks.push(cb);
+    },
+    onStateChangeUnsubscribe: (cb) => {
+      const index = onStateChangeCallbacks.indexOf(cb);
+      if (index > -1) {
+        onStateChangeCallbacks.splice(index, 1);
+      }
+    },
+    screenshot: () => {
+      args.canvas.ctx.canvas.toBlob(download, "image/png", 1.0);
+    },
+    record: () => {
+      if (state.state !== "paused") {
+        return;
+      }
+      changeState("recording");
+      const advance = () => {
+        if (state.state !== "recording") {
+          return;
+        }
+        args.canvas.ctx.canvas.toBlob(
+          (b) => {
+            if (download(b)) {
+              forward();
+            }
+            requestAnimationFrame(advance);
+          },
+          "image/png",
+          1.0,
+        );
+      };
+
+      requestAnimationFrame(advance);
     },
   };
 }

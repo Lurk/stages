@@ -1,19 +1,14 @@
-import { Canvas } from "../../canvas.mjs";
 import { Animation } from "../../animation.mjs";
-import { recorder } from "../../recorder.mjs";
 import { button } from "../common/button.mjs";
 import { spanWithText } from "../common/span.mjs";
 import { divider } from "../common/divider.mjs";
-import { toISOTime } from "../../utils.mjs";
 
 export type PlaybackArgs = {
-  canvas: Canvas;
   animation: Animation;
   container: HTMLDivElement;
 };
 
-export function playback({ canvas, container, animation }: PlaybackArgs) {
-  const rec = recorder(canvas.ctx);
+export function playback({ container, animation }: PlaybackArgs) {
   const now = spanWithText(container, "0");
 
   animation.onFrameSubscribe((time) => {
@@ -32,21 +27,15 @@ export function playback({ canvas, container, animation }: PlaybackArgs) {
   });
 
   const play = () => {
-    if (animation.isPlaying()) {
-      playButton.setText("▶");
+    if (animation.getState() === "playing") {
       animation.pause();
-      backButton.toggleDisabled(false);
-      forwardButton.toggleDisabled(false);
     } else {
-      backButton.toggleDisabled(true);
-      forwardButton.toggleDisabled(true);
-      playButton.setText("⏸");
       animation.play();
     }
   };
 
   const playButton = button({
-    text: animation.isPlaying() ? "⏸" : "▶",
+    text: animation.getState() ? "⏸" : "▶",
     container,
     onClick: play,
   });
@@ -61,24 +50,13 @@ export function playback({ canvas, container, animation }: PlaybackArgs) {
   });
 
   const recButton = button({
-    text: rec.state() === "inactive" ? "●" : "◼",
+    text: animation.getState() === "recording" ? "●" : "◼",
     container,
     onClick: () => {
-      if (rec.state() === "inactive") {
-        playButton.toggleDisabled(true);
-        backButton.toggleDisabled(true);
-        forwardButton.toggleDisabled(true);
-        screenshotButton.toggleDisabled(true);
-        if (!animation.isPlaying()) {
-          play();
-        }
-        rec.start();
+      if (animation.getState() === "paused") {
+        animation.record();
       } else {
-        backButton.toggleDisabled(false);
-        playButton.toggleDisabled(false);
-        forwardButton.toggleDisabled(false);
-        screenshotButton.toggleDisabled(false);
-        rec.stop();
+        animation.pause();
       }
     },
   });
@@ -87,15 +65,34 @@ export function playback({ canvas, container, animation }: PlaybackArgs) {
     text: "✴",
     container,
     onClick: () => {
-      const data = canvas.ctx.canvas.toDataURL("image/png");
-      const a = document.createElement("a");
-      a.href = data;
-      a.download = `stages ${toISOTime(new Date())}.png`;
-      a.click();
-      URL.revokeObjectURL(data);
+      animation.screenshot();
     },
   });
-  rec.subscribe((state) =>
-    recButton.setText(state === "inactive" ? "●" : "◼"),
-  );
+
+  animation.onStateChangeSubscribe((state) => {
+    switch (state) {
+      case "playing":
+        playButton.setText("⏸");
+        backButton.toggleDisabled(true);
+        forwardButton.toggleDisabled(true);
+        recButton.toggleDisabled(true);
+        screenshotButton.toggleDisabled(false);
+        break;
+      case "paused":
+        playButton.setText("▶");
+        backButton.toggleDisabled(false);
+        forwardButton.toggleDisabled(false);
+        recButton.toggleDisabled(false);
+        screenshotButton.toggleDisabled(false);
+        playButton.toggleDisabled(false);
+        break;
+      case "recording":
+        recButton.setText("◼");
+        playButton.toggleDisabled(true);
+        backButton.toggleDisabled(true);
+        forwardButton.toggleDisabled(true);
+        screenshotButton.toggleDisabled(true);
+        break;
+    }
+  });
 }

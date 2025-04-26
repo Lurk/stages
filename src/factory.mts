@@ -195,7 +195,7 @@ export function factory() {
   assert(controls, "#controls element was not wound");
   const canvas = initFullScreenCanvas({
     id: "canvas",
-    backgroundCollor: "#2b2a2a",
+    backgroundCollor: "rgba(43, 42, 42, 0.01)",
   });
   const a = animation({
     canvas,

@@ -20,7 +20,6 @@ export function render(args: RenderProps) {
 
   playback({
     animation: args.animation,
-    canvas: args.canvas,
     container,
   });
 

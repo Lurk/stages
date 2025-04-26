@@ -216,7 +216,9 @@ export const mathSerde: ComponentSerde<MathArgs> = () => {
         ) {
           res[key] = v;
         } else {
-          throw new Error(`Invalid value for ${key}: ${v}`);
+          throw new Error(
+            `Invalid value for ${key}: ${v} at ${local_start}\n parsed: ${JSON.stringify(res)}`,
+          );
         }
         local_start = end;
       });
